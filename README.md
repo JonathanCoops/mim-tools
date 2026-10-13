@@ -5,8 +5,8 @@ Free web tools for [Money in Motion](https://moneyinmotion.org/). Plain HTML, CS
 | Tool | Folder | Status |
 |---|---|---|
 | Which Baby Step am I on? (quiz) | `quiz/` | Live |
-| Debt Snowball Planner | `debt-planner/` | Coming soon page |
-| Saving for Mission Builder | `saving-for-mission/` | Coming soon page |
+| Debt Snowball Planner | `debt-planner/` | Live |
+| Saving for Mission Builder | `saving-for-mission/` | Live |
 
 ## Folder structure
 
@@ -24,8 +24,21 @@ quiz/
   logic.js              The placement rules (no words, no page code)
   content.js            Every word the quiz uses
   quiz.js               Puts it on screen
-debt-planner/index.html         Placeholder, to be replaced
-saving-for-mission/index.html   Placeholder, to be replaced
+debt-planner/
+  index.html            The planner page
+  snowball.js           The sums (no words, no page code)
+  content.js            Every word the planner uses
+  planner.js            Puts it on screen
+  planner.css           Styles for this tool only
+  snowball.test.js      Tests the sums and the copy
+saving-for-mission/
+  index.html            The builder page
+  logic.js              The sums, A to G (no words, no page code)
+  content.js            Every word the builder uses, and the worked example
+  builder.js            Puts it on screen
+  pdfs.js               The two PDFs: My Mission Cost Plan, Partner with me
+  builder.css           Styles for this tool only
+  tests/mission.test.js Tests the sums, the worked example and the copy
 tests/quiz-logic.test.js        Tests every path through the quiz
 ```
 
@@ -39,14 +52,15 @@ Open the file, change the text between the quote marks, save. Keep the quote mar
 |---|---|
 | `links.privacyPolicy` | Your website's privacy page. Shown next to the email form. |
 | `mailerlite.formAction` | The `action="..."` address from your MailerLite embedded form's HTML code (Forms > Embedded forms > your form > HTML). Looks like `https://assets.mailerlite.com/jsonp/123456/forms/123456789/subscribe`. |
-| MailerLite field | In MailerLite, create a text field called `baby_step`. The quiz fills it with `Step 0`, `Step 1`, `Step 2`, `Step 3`, `Step 3b`, `Step 4`, `Step 5`, `Step 6` or `Step 7`, so an automation can send each person the right email. |
+| MailerLite fields | In MailerLite, create two text fields. `baby_step`: the quiz fills it with `Step 0`, `Step 1`, `Step 2`, `Step 3`, `Step 3b`, `Step 4`, `Step 5`, `Step 6` or `Step 7`, so an automation can send each person the right email. `tool` (`mailerlite.toolField`): every tool fills it with where the sign-up came from, `quiz`, `debt-planner` or `saving-for-mission`. |
 | `mailerlite.extraFields` | Any other hidden inputs in your embed code (name and value). `ml-submit` and `anticsrf` are already there. |
 | `mailerlite.consentText` / `successMessage` | Check these match what subscribers actually receive (e.g. mention the confirmation email if you use double opt-in). |
+| `mailerlite.debtPlanner` / `savingForMission` | The same two messages for the Debt Snowball Planner and the Saving for Mission Builder, which send the tool's name instead of a Baby Step. |
 | `videos` | A full link to Jonathan's video for each step (`0` to `7`, plus `3b` and `6b`). Videos open in a new tab; they aren't embedded, so no video site sets cookies here. |
 | `debtHelp` | The three free debt charities shown when someone's answers suggest real pressure. |
 | `links` | Website, Money & Faith course and the app links (App Store, Google Play, web). |
 
-To change the **wording** of the quiz, edit `quiz/content.js`. To change the wording of the **steps themselves**, edit `assets/baby-steps.js`. To change **colours or fonts**, edit the first `:root` block in `assets/styles.css` (each colour has a light and a dark value).
+To change the **wording** of a tool, edit its `content.js` (`quiz/`, `debt-planner/` or `saving-for-mission/`). To change the wording of the **steps themselves**, edit `assets/baby-steps.js`. To change **colours or fonts**, edit the first `:root` block in `assets/styles.css` (each colour has a light and a dark value).
 
 ## Previewing
 
@@ -58,17 +72,23 @@ python3 -m http.server 8000
 
 then open <http://localhost:8000/>. (Opening `index.html` straight from disk mostly works too, but the copy-link button and PDF download behave best over `http://`.)
 
-## Testing the quiz rules
+## Testing
 
 ```
 node tests/quiz-logic.test.js
+node debt-planner/snowball.test.js
+node saving-for-mission/tests/mission.test.js
 ```
 
-It walks all 39,168 possible ways through the quiz and checks each result against a separate copy of the rules, then checks the copy (three actions per step, approved verses only, no banned words, UK spelling). Run it after changing `logic.js` or `content.js`.
+No installs needed, just Node. Run the one for a tool after changing its sums or its `content.js`.
 
-## Notes for future sessions (Tools 2 and 3)
+- **Quiz:** walks all 39,168 possible ways through the quiz and checks each result against a separate copy of the rules, then checks the copy (three actions per step, approved verses only, no banned words, UK spelling).
+- **Debt Snowball Planner:** checks the snowball sums, including thousands of random plans against a separate copy of the maths, and the copy.
+- **Saving for Mission Builder:** checks the worked example comes out at A £2,400 to G £560 from any start date, the sums and edge cases, and the copy.
 
-- **Page shell:** copy `debt-planner/index.html`: header, `<main>`, `<footer data-mim-footer>` and the scripts. The footer (disclaimer, app and website links) fills itself in from `config.js`.
+## Notes for adding a tool
+
+- **Page shell:** copy the header, `<main>`, `<footer data-mim-footer>` and the scripts from any tool's `index.html`. The footer (disclaimer, app and website links) fills itself in from `config.js`.
 - **Saved answers:** use `MIM.storage.get/set/remove` (never throws). Give the tool its own key, e.g. `mim.debt.v1`, and list it on the body: `<body data-mim-storage="mim.debt.v1">`. The footer then shows "Clear my answers" and fires a `mim:cleared` event on `document` so the tool can reset.
 - **PDF:** load `assets/pdf.js` and call `MIMPdf.download({ filename, eyebrow, title, subtitle, content, onePage })`. Build `content` with `MIM.h()` and the `pdf-*` classes in `styles.css`. Header and footer are added for you. Set `onePage: false` if the content can run to several pages. If the PDF library can't load, it opens the print window instead.
 - **Email:** `MIM.emailForm({ heading, intro, buttonLabel, hiddenFields: { field: value } })` returns a ready-made MailerLite form section.
