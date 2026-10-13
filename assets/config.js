@@ -122,6 +122,21 @@ window.MIM_CONFIG = {
   },
 
   /* ---------------------------------------------------------------------
+   * Christmas Without Debt
+   * Its email sign-up ("Want a nudge each payday until Christmas?") uses the
+   * same MailerLite form as the quiz (formAction above), and fills the
+   * "tool" field with "christmas" instead of a Baby Step. Only the email
+   * address, first name (if given) and "christmas" are sent: no budgets,
+   * no names from the gift list, no amounts and no paydays.
+   * ------------------------------------------------------------------- */
+  christmas: {
+    // Goes into the MailerLite "tool" field (toolField above).
+    tag: 'christmas',
+    consentText: "We'll send a quick email to confirm it's you, then a short nudge every so often until Christmas, plus the occasional email from Money in Motion. Unsubscribe any time. Only your email, your first name if you give it, and the name of this tool are sent. Your plan and the names on your list stay on this device.",
+    successMessage: "Nearly done. Check your inbox and tap the confirm link, then your nudges start. No email in a few minutes? Have a look in your spam folder."
+  },
+
+  /* ---------------------------------------------------------------------
    * Jonathan's videos, one per step
    * Paste a full link (YouTube, Vimeo, Instagram...) for each step.
    * Videos open in a new tab rather than being embedded, so no video
