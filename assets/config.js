@@ -129,16 +129,16 @@ window.MIM_CONFIG = {
    * Leave a PLACEHOLDER in and that step shows "video coming soon".
    * ------------------------------------------------------------------- */
   videos: {
-    '0':  'PLACEHOLDER_VIDEO_URL_STEP_0',
-    '1':  'PLACEHOLDER_VIDEO_URL_STEP_1',
-    '2':  'PLACEHOLDER_VIDEO_URL_STEP_2',
-    '3':  'PLACEHOLDER_VIDEO_URL_STEP_3',
-    '3b': 'PLACEHOLDER_VIDEO_URL_STEP_3B',
-    '4':  'PLACEHOLDER_VIDEO_URL_STEP_4',
-    '5':  'PLACEHOLDER_VIDEO_URL_STEP_5',
-    '6':  'PLACEHOLDER_VIDEO_URL_STEP_6',
-    '6b': 'PLACEHOLDER_VIDEO_URL_STEP_6B',
-    '7':  'PLACEHOLDER_VIDEO_URL_STEP_7'
+    '0':  'https://www.youtube.com/watch?v=bZw6_iw-j1A',
+    '1':  'https://www.youtube.com/watch?v=HDv2S90dM3E',
+    '2':  'https://www.youtube.com/watch?v=bRGaa12_FxI',
+    '3':  'https://www.youtube.com/watch?v=cIYNPBAa-6o',
+    '3b': 'https://www.youtube.com/watch?v=5RfUzS8wT2Q',
+    '4':  'https://www.youtube.com/watch?v=LYlI2iVICY8',
+    '5':  'https://www.youtube.com/watch?v=NdglBuXYlV8',
+    '6':  'https://www.youtube.com/watch?v=Lw9pRAxB9pM',
+    '6b': 'https://www.youtube.com/watch?v=56IIoIzmKBU',
+    '7':  'https://www.youtube.com/watch?v=BjTN6e-XGHI'
   },
 
   /* ---------------------------------------------------------------------
