@@ -4,13 +4,17 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Debt Snowball Planner | Money in Motion</title>
-  <meta name="description" content="List your debts, smallest balance first, and see the month each one disappears. Coming soon from Money in Motion.">
+  <meta name="description" content="A free planner from Money in Motion. List your debts, smallest balance first, see the month you'll be debt-free, and download a one-page plan for the fridge.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Debt Snowball Planner">
+  <meta property="og:description" content="List your debts, see the month you'll be debt-free, and download a one-page plan for the fridge. Free and private.">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../assets/styles.css">
+  <link rel="stylesheet" href="planner.css">
 </head>
-<body>
-  <a class="skip-link" href="#main">Skip to content</a>
+<body data-mim-storage="mim.debt.v1">
+  <a class="skip-link" href="#main">Skip to the planner</a>
 
   <header class="site-header">
     <div class="container">
@@ -22,18 +26,14 @@
     </div>
   </header>
 
-  <main id="main">
+  <main id="main" class="dp">
     <div class="container">
-      <section class="hero">
-        <span class="badge">Coming soon</span>
-        <h1>Debt Snowball Planner</h1>
-        <p class="lead">List your debts, smallest balance first, and see the month each one disappears.</p>
-        <p>This one's still being built. In the meantime, find out which Baby Step you're on.</p>
-        <div class="button-row">
-          <a class="btn btn-primary" href="../quiz/">Take the quiz</a>
-          <a class="btn btn-secondary" href="../">See all the tools</a>
-        </div>
-      </section>
+      <div id="debt-app">
+        <noscript>
+          <h1>Debt Snowball Planner</h1>
+          <p>This planner needs JavaScript switched on in your browser. Nothing you enter leaves your device.</p>
+        </noscript>
+      </div>
     </div>
   </main>
 
@@ -45,5 +45,9 @@
 
   <script src="../assets/config.js"></script>
   <script src="../assets/site.js"></script>
+  <script src="../assets/pdf.js"></script>
+  <script src="snowball.js"></script>
+  <script src="content.js"></script>
+  <script src="planner.js"></script>
 </body>
 </html>

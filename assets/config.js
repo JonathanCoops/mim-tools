@@ -78,6 +78,10 @@ window.MIM_CONFIG = {
     // The MailerLite field that receives the quiz result.
     stepField: 'baby_step',
 
+    // The MailerLite field that says which tool someone signed up from:
+    // "quiz", "debt-planner" or "saving-for-mission".
+    toolField: 'tool',
+
     // Ask for a first name as well as an email address? (true or false)
     askForName: true,
 
@@ -92,7 +96,29 @@ window.MIM_CONFIG = {
     consentText: "We'll send a quick email to confirm it's you, then your plan and the occasional email from Money in Motion. Unsubscribe any time. Only your email, first name and result are sent. Your other answers stay on this device.",
 
     // Shown after someone signs up. {step} becomes their step, e.g. "Step 2".
-    successMessage: "Nearly done. Check your inbox and tap the confirm link, then your {step} plan is on its way. No email in a few minutes? Have a look in your spam folder."
+    successMessage: "Nearly done. Check your inbox and tap the confirm link, then your {step} plan is on its way. No email in a few minutes? Have a look in your spam folder.",
+
+    // Debt Snowball Planner: "Send me encouragement while I pay this off".
+    // Same form as above; fills the tool field with "debt-planner".
+    // No debts, balances or dates are ever sent.
+    debtPlanner: {
+      toolField: 'tool',
+      toolValue: 'debt-planner',
+      consentText: "We'll send a quick email to confirm it's you, then the occasional email to keep you going while you pay this off, plus news from Money in Motion. Unsubscribe any time. Only your email and first name are sent. Your debts stay on this device.",
+      successMessage: "Nearly done. Check your inbox and tap the confirm link. No email in a few minutes? Have a look in your spam folder."
+    }
+  },
+
+  /* ---------------------------------------------------------------------
+   * Saving for Mission Builder
+   * Its email sign-up uses the same MailerLite form as the quiz (formAction
+   * above), but says which tool it came from instead of a Baby Step.
+   * ------------------------------------------------------------------- */
+  savingForMission: {
+    // Goes into the MailerLite "tool" field (toolField above).
+    tag: 'saving-for-mission',
+    consentText: "We'll send a quick email to confirm it's you, then the occasional email from Money in Motion. Unsubscribe any time. Only your email, your first name if you give it, and the name of this tool are sent. Your figures stay on this device.",
+    successMessage: "Nearly done. Check your inbox and tap the confirm link. No email in a few minutes? Have a look in your spam folder."
   },
 
   /* ---------------------------------------------------------------------
@@ -126,6 +152,15 @@ window.MIM_CONFIG = {
     html2pdf: {
       src: 'https://cdn.jsdelivr.net/npm/html2pdf.js@0.14.0/dist/html2pdf.bundle.min.js',
       integrity: 'sha384-EaWTV/aVUkLz3tfwg3+5ycX7Q/d9ET9ruOKUgUuFIRUCfzHO1eo2J62a844iWPmY'
+    },
+
+    // Draws the "watch it fall" chart in the Debt Snowball Planner. Loaded
+    // only when someone sees their plan. Same rule: a new version needs a
+    // new integrity value (cdnjs shows it under "Copy SRI"). If it can't
+    // load, the planner shows the numbers as a table instead.
+    chartjs: {
+      src: 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.1/chart.umd.min.js',
+      integrity: 'sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ'
     }
   }
 };
