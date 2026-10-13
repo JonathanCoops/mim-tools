@@ -342,6 +342,7 @@
       hiddenFields: (function () {
         var f = {};
         f[(config.mailerlite && config.mailerlite.stepField) || 'baby_step'] = label;
+        f.tool = 'quiz';
         return f;
       })(),
       stepLabel: label
