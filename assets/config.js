@@ -73,6 +73,11 @@ window.MIM_CONFIG = {
     // The MailerLite field that receives the quiz result.
     stepField: 'baby_step',
 
+    // The MailerLite field that says which tool someone signed up from.
+    // In MailerLite, create a text field called tool (Subscribers > Fields).
+    // The Saving for Mission Builder fills it with "saving-for-mission".
+    toolField: 'tool',
+
     // Ask for a first name as well as an email address? (true or false)
     askForName: true,
 
@@ -88,6 +93,20 @@ window.MIM_CONFIG = {
     // Shown after someone signs up. {step} becomes their step, e.g. "Step 2".
     // CHECK: if your form uses double opt-in, mention the confirmation email.
     successMessage: "Done. Your {step} plan is on its way. If it hasn't arrived in a few minutes, have a look in your spam folder."
+  },
+
+  /* ---------------------------------------------------------------------
+   * Saving for Mission Builder
+   * Its email sign-up uses the same MailerLite form as the quiz (formAction
+   * above), but says which tool it came from instead of a Baby Step.
+   * ------------------------------------------------------------------- */
+  savingForMission: {
+    // Goes into the MailerLite "tool" field (toolField above).
+    tag: 'saving-for-mission',
+
+    // CHECK: make sure these match what subscribers will actually get.
+    consentText: "We'll send you the occasional email from Money in Motion. Unsubscribe any time. Only your email, your first name if you give it, and the name of this tool are sent. Your figures stay on this device.",
+    successMessage: "Done, you're signed up. If nothing has arrived in a few minutes, have a look in your spam folder."
   },
 
   /* ---------------------------------------------------------------------
