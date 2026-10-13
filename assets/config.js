@@ -26,8 +26,8 @@ window.MIM_CONFIG = {
     appAndroid: 'https://play.google.com/store/apps/details?id=com.moneyinmotion.app',
     appWeb: 'https://app.moneyinmotion.org/',
 
-    // PLACEHOLDER: your website's privacy page. Shown next to the email form.
-    privacyPolicy: 'PLACEHOLDER_PRIVACY_POLICY_URL'
+    // Your website's privacy page. Shown next to the email form.
+    privacyPolicy: 'https://moneyinmotion.org/privacy'
   },
 
   /* ---------------------------------------------------------------------
@@ -67,8 +67,13 @@ window.MIM_CONFIG = {
    * 5. If your embed code has other hidden inputs, copy their name and value
    *    into extraFields.
    * ------------------------------------------------------------------- */
+  // Connected 13 Oct 2026 to the MailerLite embedded form
+  // "Free Tools sign-up (mim-tools)", which adds people to the group
+  // "Leads - Free Tools". Fields used: baby_step (quiz result) and
+  // tool (quiz / debt-planner / saving-for-mission).
+  // The form uses double opt-in: people must click a confirmation email.
   mailerlite: {
-    formAction: 'PLACEHOLDER_MAILERLITE_FORM_ACTION_URL',
+    formAction: 'https://assets.mailerlite.com/jsonp/1795296/forms/201243958262629596/subscribe',
 
     // The MailerLite field that receives the quiz result.
     stepField: 'baby_step',
@@ -87,12 +92,12 @@ window.MIM_CONFIG = {
       'anticsrf': 'true'
     },
 
-    // CHECK: make sure this matches what subscribers will actually get.
-    consentText: "We'll email you your plan, then the occasional email from Money in Motion. Unsubscribe any time. Only your email, name and step number are sent. Your other answers stay on this device.",
+    // Matches what subscribers get: a confirmation email first (double opt-in),
+    // then their plan, then the occasional Money in Motion email.
+    consentText: "We'll send a quick email to confirm it's you, then your plan and the occasional email from Money in Motion. Unsubscribe any time. Only your email, first name and result are sent. Your other answers stay on this device.",
 
     // Shown after someone signs up. {step} becomes their step, e.g. "Step 2".
-    // CHECK: if your form uses double opt-in, mention the confirmation email.
-    successMessage: "Done. Your {step} plan is on its way. If it hasn't arrived in a few minutes, have a look in your spam folder."
+    successMessage: "Nearly done. Check your inbox and tap the confirm link, then your {step} plan is on its way. No email in a few minutes? Have a look in your spam folder."
   },
 
   /* ---------------------------------------------------------------------
