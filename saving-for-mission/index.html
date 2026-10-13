@@ -4,13 +4,17 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Saving for Mission Builder | Money in Motion</title>
-  <meta name="description" content="Plan your saving around what matters to you, and see how to get there. Coming soon from Money in Motion.">
+  <meta name="description" content="Heading on a mission trip, gap year or church team trip? A free 15-minute builder from Money in Motion that turns the cost into a saving plan, with a page to share with supporters.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Saving for Mission Builder">
+  <meta property="og:description" content="A free 15-minute builder that turns the cost of a mission trip into a saving plan.">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../assets/styles.css">
+  <link rel="stylesheet" href="builder.css">
 </head>
 <body>
-  <a class="skip-link" href="#main">Skip to content</a>
+  <a class="skip-link" href="#main">Skip to the builder</a>
 
   <header class="site-header">
     <div class="container">
@@ -22,19 +26,20 @@
     </div>
   </header>
 
-  <main id="main">
+  <main id="main" class="sfm">
     <div class="container">
-      <section class="hero">
-        <span class="badge">Coming soon</span>
-        <h1>Saving for Mission Builder</h1>
-        <p class="lead">Plan your saving around what matters to you, and see how to get there.</p>
-        <p>This one's still being built. In the meantime, find out which Baby Step you're on.</p>
-        <div class="button-row">
-          <a class="btn btn-primary" href="../quiz/">Take the quiz</a>
-          <a class="btn btn-secondary" href="../">See all the tools</a>
-        </div>
-      </section>
+      <div id="mission-app">
+        <noscript>
+          <h1>Saving for Mission Builder</h1>
+          <p>This builder needs JavaScript switched on in your browser. Nothing you enter leaves your device.</p>
+        </noscript>
+      </div>
     </div>
+
+    <aside class="container sfm-more" aria-label="More from Money in Motion">
+      <p>Find your monthly margin and stick to your plan with <a data-mim-link="appWeb" href="https://app.moneyinmotion.org/" target="_blank" rel="noopener noreferrer">the free Money in Motion app</a>.</p>
+      <p><a data-mim-link="moneyAndFaith" href="https://moneyinmotion.org/money-and-faith" target="_blank" rel="noopener noreferrer">The Money &amp; Faith course</a> takes you through budgeting, debt, saving and generosity over four weeks.</p>
+    </aside>
   </main>
 
   <footer class="site-footer" data-mim-footer>
@@ -45,5 +50,10 @@
 
   <script src="../assets/config.js"></script>
   <script src="../assets/site.js"></script>
+  <script src="../assets/pdf.js"></script>
+  <script src="logic.js"></script>
+  <script src="content.js"></script>
+  <script src="pdfs.js"></script>
+  <script src="builder.js"></script>
 </body>
 </html>
