@@ -87,7 +87,21 @@ window.MIM_CONFIG = {
 
     // Shown after someone signs up. {step} becomes their step, e.g. "Step 2".
     // CHECK: if your form uses double opt-in, mention the confirmation email.
-    successMessage: "Done. Your {step} plan is on its way. If it hasn't arrived in a few minutes, have a look in your spam folder."
+    successMessage: "Done. Your {step} plan is on its way. If it hasn't arrived in a few minutes, have a look in your spam folder.",
+
+    // Debt Snowball Planner: "Send me encouragement while I pay this off".
+    // It uses the same form as above. In MailerLite, create a text field
+    // called tool (Subscribers > Fields). This sign-up fills it with
+    // "debt-planner", so an automation can send the right emails.
+    // No debts, balances or dates are ever sent.
+    debtPlanner: {
+      toolField: 'tool',
+      toolValue: 'debt-planner',
+      // CHECK: make sure these match what subscribers will actually get.
+      consentText: "We'll send the occasional email to keep you going while you pay this off, plus news from Money in Motion. Unsubscribe any time. Only your email and name are sent. Your debts stay on this device.",
+      // CHECK: if your form uses double opt-in, mention the confirmation email.
+      successMessage: "Done, you're signed up. If nothing has arrived in a few minutes, have a look in your spam folder."
+    }
   },
 
   /* ---------------------------------------------------------------------
@@ -121,6 +135,15 @@ window.MIM_CONFIG = {
     html2pdf: {
       src: 'https://cdn.jsdelivr.net/npm/html2pdf.js@0.14.0/dist/html2pdf.bundle.min.js',
       integrity: 'sha384-EaWTV/aVUkLz3tfwg3+5ycX7Q/d9ET9ruOKUgUuFIRUCfzHO1eo2J62a844iWPmY'
+    },
+
+    // Draws the "watch it fall" chart in the Debt Snowball Planner. Loaded
+    // only when someone sees their plan. Same rule: a new version needs a
+    // new integrity value (cdnjs shows it under "Copy SRI"). If it can't
+    // load, the planner shows the numbers as a table instead.
+    chartjs: {
+      src: 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.1/chart.umd.min.js',
+      integrity: 'sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ'
     }
   }
 };
