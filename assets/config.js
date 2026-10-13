@@ -26,8 +26,8 @@ window.MIM_CONFIG = {
     appAndroid: 'https://play.google.com/store/apps/details?id=com.moneyinmotion.app',
     appWeb: 'https://app.moneyinmotion.org/',
 
-    // PLACEHOLDER: your website's privacy page. Shown next to the email form.
-    privacyPolicy: 'PLACEHOLDER_PRIVACY_POLICY_URL'
+    // Your website's privacy page. Shown next to the email form.
+    privacyPolicy: 'https://moneyinmotion.org/privacy'
   },
 
   /* ---------------------------------------------------------------------
@@ -67,11 +67,20 @@ window.MIM_CONFIG = {
    * 5. If your embed code has other hidden inputs, copy their name and value
    *    into extraFields.
    * ------------------------------------------------------------------- */
+  // Connected 13 Oct 2026 to the MailerLite embedded form
+  // "Free Tools sign-up (mim-tools)", which adds people to the group
+  // "Leads - Free Tools". Fields used: baby_step (quiz result) and
+  // tool (quiz / debt-planner / saving-for-mission).
+  // The form uses double opt-in: people must click a confirmation email.
   mailerlite: {
-    formAction: 'PLACEHOLDER_MAILERLITE_FORM_ACTION_URL',
+    formAction: 'https://assets.mailerlite.com/jsonp/1795296/forms/201243958262629596/subscribe',
 
     // The MailerLite field that receives the quiz result.
     stepField: 'baby_step',
+
+    // The MailerLite field that says which tool someone signed up from:
+    // "quiz", "debt-planner" or "saving-for-mission".
+    toolField: 'tool',
 
     // Ask for a first name as well as an email address? (true or false)
     askForName: true,
@@ -82,26 +91,34 @@ window.MIM_CONFIG = {
       'anticsrf': 'true'
     },
 
-    // CHECK: make sure this matches what subscribers will actually get.
-    consentText: "We'll email you your plan, then the occasional email from Money in Motion. Unsubscribe any time. Only your email, name and step number are sent. Your other answers stay on this device.",
+    // Matches what subscribers get: a confirmation email first (double opt-in),
+    // then their plan, then the occasional Money in Motion email.
+    consentText: "We'll send a quick email to confirm it's you, then your plan and the occasional email from Money in Motion. Unsubscribe any time. Only your email, first name and result are sent. Your other answers stay on this device.",
 
     // Shown after someone signs up. {step} becomes their step, e.g. "Step 2".
-    // CHECK: if your form uses double opt-in, mention the confirmation email.
-    successMessage: "Done. Your {step} plan is on its way. If it hasn't arrived in a few minutes, have a look in your spam folder.",
+    successMessage: "Nearly done. Check your inbox and tap the confirm link, then your {step} plan is on its way. No email in a few minutes? Have a look in your spam folder.",
 
     // Debt Snowball Planner: "Send me encouragement while I pay this off".
-    // It uses the same form as above. In MailerLite, create a text field
-    // called tool (Subscribers > Fields). This sign-up fills it with
-    // "debt-planner", so an automation can send the right emails.
+    // Same form as above; fills the tool field with "debt-planner".
     // No debts, balances or dates are ever sent.
     debtPlanner: {
       toolField: 'tool',
       toolValue: 'debt-planner',
-      // CHECK: make sure these match what subscribers will actually get.
-      consentText: "We'll send the occasional email to keep you going while you pay this off, plus news from Money in Motion. Unsubscribe any time. Only your email and name are sent. Your debts stay on this device.",
-      // CHECK: if your form uses double opt-in, mention the confirmation email.
-      successMessage: "Done, you're signed up. If nothing has arrived in a few minutes, have a look in your spam folder."
+      consentText: "We'll send a quick email to confirm it's you, then the occasional email to keep you going while you pay this off, plus news from Money in Motion. Unsubscribe any time. Only your email and first name are sent. Your debts stay on this device.",
+      successMessage: "Nearly done. Check your inbox and tap the confirm link. No email in a few minutes? Have a look in your spam folder."
     }
+  },
+
+  /* ---------------------------------------------------------------------
+   * Saving for Mission Builder
+   * Its email sign-up uses the same MailerLite form as the quiz (formAction
+   * above), but says which tool it came from instead of a Baby Step.
+   * ------------------------------------------------------------------- */
+  savingForMission: {
+    // Goes into the MailerLite "tool" field (toolField above).
+    tag: 'saving-for-mission',
+    consentText: "We'll send a quick email to confirm it's you, then the occasional email from Money in Motion. Unsubscribe any time. Only your email, your first name if you give it, and the name of this tool are sent. Your figures stay on this device.",
+    successMessage: "Nearly done. Check your inbox and tap the confirm link. No email in a few minutes? Have a look in your spam folder."
   },
 
   /* ---------------------------------------------------------------------
