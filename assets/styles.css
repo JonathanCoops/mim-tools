@@ -1,58 +1,132 @@
 /* =====================================================================
    Money in Motion Free Tools: shared styles
    =====================================================================
+   Set to the Money in Motion Brand Guide 2.0 (August 2026).
+
    BRAND SETTINGS: every colour and font lives in this first block.
-   Each colour has a light-mode and a dark-mode value. Swap the hex codes
-   for the brand colours and the whole site follows. Nothing below this
-   block needs editing to rebrand.
+   Each colour has a light-mode and a dark-mode value. Swap the values here
+   and the whole site follows. Nothing below this block needs editing to
+   rebrand.
    ===================================================================== */
 
+/* ----- Type -----
+   The brand typeface is Mava MotionEV. Its web licence isn't confirmed yet
+   (Brand Guide, section 12), so the site uses the guide's approved backup,
+   Poppins (SIL Open Font Licence), served from this site so no font service
+   sees who's visiting. Mava is first in the font list, so a device that has
+   it installed uses it. Four weights only, as the guide asks. */
+@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 400; font-display: swap; src: url(brand/fonts/poppins-latin-400-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 500; font-display: swap; src: url(brand/fonts/poppins-latin-500-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 600; font-display: swap; src: url(brand/fonts/poppins-latin-600-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 900; font-display: swap; src: url(brand/fonts/poppins-latin-900-normal.woff2) format('woff2'); }
+
 :root {
+  /* ----- The brand palette (Brand Guide, section 3) -----
+     Deep Forest and Warm Cream do most of the work. Motion Orange is the
+     shout: once per screen at most, and never for text. */
+  --mim-forest: #194229;
+  --mim-cream: #F9F7E7;
+  --mim-orange: #FF5933;
+  --mim-lime: #D4D882;
+  --mim-ink: #272B2A;
+  --mim-purple: #B188D8;   /* Money & Faith: the brace on questions to answer */
+  --mim-sky: #8DC3D8;      /* calm panels: the "talk to someone" box */
+  --mim-amber: #EC9C48;    /* a warm highlight where orange would be too loud */
+  /* Tints and shades, which stay in the family */
+  --mim-lime-pale: #F1F3C8;
+  --mim-forest-deep: #10281A;
+
   /* ----- Fonts ----- */
-  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-heading: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --font-body: 'Mava MotionEV', 'Poppins', 'Helvetica Neue', Arial, sans-serif;
+  --font-heading: var(--font-body);
 
-  /* ----- Light mode ----- */
-  --bg-light: #faf6f0;            /* page background */
-  --surface-light: #ffffff;       /* cards */
-  --surface-alt-light: #f3ece2;   /* quiet panels */
-  --text-light: #1e2b2f;          /* main text */
-  --text-muted-light: #4d5a59;    /* secondary text */
-  --border-light: #ddd2c3;        /* lines and outlines */
-  --primary-light: #1c6a57;       /* buttons, links, progress */
-  --primary-hover-light: #14503f;
-  --on-primary-light: #ffffff;    /* text on primary */
-  --primary-soft-light: #e2f0ea;  /* selected answers, ticks */
-  --accent-light: #a94b22;        /* "you're here", highlights */
-  --on-accent-light: #ffffff;
-  --accent-soft-light: #fbe8dc;
-  --care-bg-light: #fff3e3;       /* "talk to someone" box */
-  --care-border-light: #d9893a;
-  --focus-light: #a94b22;         /* keyboard focus ring */
-  --shadow-light: rgba(30, 43, 47, 0.08);
+  /* ----- Light mode: Warm Cream page, white cards, Ink to read ----- */
+  --bg-light: #F9F7E7;            /* page background */
+  --surface-light: #FFFFFF;       /* cards */
+  --surface-alt-light: #ECECDC;   /* quiet panels */
+  --text-light: #272B2A;          /* main text (Ink) */
+  --text-muted-light: #4C6C58;    /* secondary text */
+  --heading-light: #194229;       /* headings (Deep Forest) */
+  --border-light: rgba(25, 66, 41, 0.16); /* lines */
+  --field-light: #708A7A;         /* input and control edges (3:1 or more) */
+  --track-light: rgba(25, 66, 41, 0.14);
+  --primary-light: #194229;       /* buttons, links, progress (Deep Forest) */
+  --primary-hover-light: #0F2C1A;
+  --on-primary-light: #F9F7E7;    /* text on primary */
+  --primary-soft-light: #F1F3C8;  /* selected answers, totals (Lime tint) */
+  --accent-light: #C2331A;        /* a readable orange, for problems only */
+  --on-accent-light: #FFFFFF;
+  --accent-soft-light: #FFE6DE;
+  --care-bg-light: #E3F0F5;       /* "talk to someone" box (Sky tint) */
+  --care-border-light: #8DC3D8;
+  --focus-light: #194229;         /* keyboard focus ring */
+  --shadow-light: rgba(25, 66, 41, 0.08);
+  /* Feature blocks: Deep Forest with Fresh Lime and Cream */
+  --band-light: #194229;
+  --band-text-light: #F9F7E7;
+  --band-muted-light: #C3CCB9;
+  --band-heading-light: #D4D882;
+  --band-line-light: rgba(249, 247, 231, 0.18);
+  --band-btn-light: #D4D882;
+  --band-btn-text-light: #194229;
+  --band-shape-light: rgba(212, 216, 130, 0.08);
+  --band-gears-light: rgba(212, 216, 130, 0.14);
+  /* The second feature block: Fresh Lime with Deep Forest */
+  --band-alt-light: #D4D882;
+  --band-alt-text-light: #194229;
+  --band-alt-muted-light: #3B5A41;
+  --band-alt-heading-light: #194229;
+  --band-alt-line-light: rgba(25, 66, 41, 0.2);
+  --band-alt-btn-light: #194229;
+  --band-alt-btn-text-light: #F9F7E7;
+  --band-alt-shape-light: rgba(25, 66, 41, 0.07);
+  --band-alt-gears-light: rgba(25, 66, 41, 0.12);
 
-  /* ----- Dark mode ----- */
-  --bg-dark: #121a1c;
-  --surface-dark: #1b2629;
-  --surface-alt-dark: #223033;
-  --text-dark: #f1ece4;
-  --text-muted-dark: #b6c0bd;
-  --border-dark: #3a4a4a;
-  --primary-dark: #62c7a9;
-  --primary-hover-dark: #85d6be;
-  --on-primary-dark: #0b1d18;
-  --primary-soft-dark: #1d3b34;
-  --accent-dark: #f2a676;
-  --on-accent-dark: #2a1408;
-  --accent-soft-dark: #3b2a21;
-  --care-bg-dark: #2e2519;
-  --care-border-dark: #d08a3e;
-  --focus-dark: #f2a676;
-  --shadow-dark: rgba(0, 0, 0, 0.35);
+  /* ----- Dark mode: the brand's Deep Forest sections, Fresh Lime to lead ----- */
+  --bg-dark: #10281A;
+  --surface-dark: #194229;
+  --surface-alt-dark: #294F36;
+  --text-dark: #F9F7E7;
+  --text-muted-dark: #C3CCB9;
+  --heading-dark: #D4D882;
+  --border-dark: rgba(249, 247, 231, 0.18);
+  --field-dark: #899C88;
+  --track-dark: rgba(249, 247, 231, 0.16);
+  --primary-dark: #D4D882;
+  --primary-hover-dark: #E2E5A3;
+  --on-primary-dark: #194229;
+  --primary-soft-dark: rgba(212, 216, 130, 0.16);
+  --accent-dark: #FFA894;
+  --on-accent-dark: #194229;
+  --accent-soft-dark: rgba(255, 89, 51, 0.16);
+  --care-bg-dark: rgba(141, 195, 216, 0.14);
+  --care-border-dark: #8DC3D8;
+  --focus-dark: #D4D882;
+  --shadow-dark: rgba(0, 0, 0, 0.3);
+  /* In dark mode the two feature blocks swap over */
+  --band-dark: var(--band-alt-light);
+  --band-text-dark: var(--band-alt-text-light);
+  --band-muted-dark: var(--band-alt-muted-light);
+  --band-heading-dark: var(--band-alt-heading-light);
+  --band-line-dark: var(--band-alt-line-light);
+  --band-btn-dark: var(--band-alt-btn-light);
+  --band-btn-text-dark: var(--band-alt-btn-text-light);
+  --band-shape-dark: var(--band-alt-shape-light);
+  --band-gears-dark: var(--band-alt-gears-light);
+  --band-alt-dark: #194229;
+  --band-alt-text-dark: var(--band-text-light);
+  --band-alt-muted-dark: var(--band-muted-light);
+  --band-alt-heading-dark: var(--band-heading-light);
+  --band-alt-line-dark: var(--band-line-light);
+  --band-alt-btn-dark: var(--band-btn-light);
+  --band-alt-btn-text-dark: var(--band-btn-text-light);
+  --band-alt-shape-dark: var(--band-shape-light);
+  --band-alt-gears-dark: var(--band-gears-light);
 
-  /* ----- Shape and spacing ----- */
-  --radius: 14px;
-  --radius-small: 8px;
+  /* ----- Shape and spacing (section 5) ----- */
+  --radius: 24px;          /* cards, panels */
+  --radius-medium: 16px;   /* small cards */
+  --radius-small: 8px;     /* tags, inputs */
   --content-width: 42rem;
   --wide-width: 66rem;
 }
@@ -68,7 +142,10 @@
   --surface-alt: var(--surface-alt-light);
   --text: var(--text-light);
   --text-muted: var(--text-muted-light);
+  --heading: var(--heading-light);
   --border: var(--border-light);
+  --field: var(--field-light);
+  --track: var(--track-light);
   --primary: var(--primary-light);
   --primary-hover: var(--primary-hover-light);
   --on-primary: var(--on-primary-light);
@@ -80,6 +157,24 @@
   --care-border: var(--care-border-light);
   --focus: var(--focus-light);
   --shadow: var(--shadow-light);
+  --band: var(--band-light);
+  --band-text: var(--band-text-light);
+  --band-muted: var(--band-muted-light);
+  --band-heading: var(--band-heading-light);
+  --band-line: var(--band-line-light);
+  --band-btn: var(--band-btn-light);
+  --band-btn-text: var(--band-btn-text-light);
+  --band-shape: var(--band-shape-light);
+  --band-gears: var(--band-gears-light);
+  --band-alt: var(--band-alt-light);
+  --band-alt-text: var(--band-alt-text-light);
+  --band-alt-muted: var(--band-alt-muted-light);
+  --band-alt-heading: var(--band-alt-heading-light);
+  --band-alt-line: var(--band-alt-line-light);
+  --band-alt-btn: var(--band-alt-btn-light);
+  --band-alt-btn-text: var(--band-alt-btn-text-light);
+  --band-alt-shape: var(--band-alt-shape-light);
+  --band-alt-gears: var(--band-alt-gears-light);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -89,7 +184,10 @@
     --surface-alt: var(--surface-alt-dark);
     --text: var(--text-dark);
     --text-muted: var(--text-muted-dark);
+    --heading: var(--heading-dark);
     --border: var(--border-dark);
+    --field: var(--field-dark);
+    --track: var(--track-dark);
     --primary: var(--primary-dark);
     --primary-hover: var(--primary-hover-dark);
     --on-primary: var(--on-primary-dark);
@@ -101,11 +199,29 @@
     --care-border: var(--care-border-dark);
     --focus: var(--focus-dark);
     --shadow: var(--shadow-dark);
+    --band: var(--band-dark);
+    --band-text: var(--band-text-dark);
+    --band-muted: var(--band-muted-dark);
+    --band-heading: var(--band-heading-dark);
+    --band-line: var(--band-line-dark);
+    --band-btn: var(--band-btn-dark);
+    --band-btn-text: var(--band-btn-text-dark);
+    --band-shape: var(--band-shape-dark);
+    --band-gears: var(--band-gears-dark);
+    --band-alt: var(--band-alt-dark);
+    --band-alt-text: var(--band-alt-text-dark);
+    --band-alt-muted: var(--band-alt-muted-dark);
+    --band-alt-heading: var(--band-alt-heading-dark);
+    --band-alt-line: var(--band-alt-line-dark);
+    --band-alt-btn: var(--band-alt-btn-dark);
+    --band-alt-btn-text: var(--band-alt-btn-text-dark);
+    --band-alt-shape: var(--band-alt-shape-dark);
+    --band-alt-gears: var(--band-alt-gears-dark);
   }
 }
 
 /* =====================================================================
-   Base
+   Base: the type scale from section 4
    ===================================================================== */
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -123,27 +239,31 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-body);
-  font-size: 1.125rem;
-  line-height: 1.6;
+  font-size: 17px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
 }
 
 main { flex: 1 0 auto; }
 
+/* Headings: Black for H1 and H2, SemiBold below. Sentence case, tight. */
 h1, h2, h3, .h1, .h2, .h3 {
-  font-family: var(--font-heading);
-  font-weight: 700;
-  line-height: 1.2;
   margin: 0 0 0.6em;
+  font-family: var(--font-heading);
+  color: var(--heading);
   text-wrap: balance;
 }
-h1, .h1 { font-size: clamp(1.9rem, 6.5vw, 2.75rem); letter-spacing: -0.01em; }
-h2, .h2 { font-size: clamp(1.45rem, 4.5vw, 1.85rem); }
-h3, .h3 { font-size: 1.3rem; }
+h1, .h1 { font-size: clamp(2rem, 6.5vw, 3rem); font-weight: 900; line-height: 1.02; letter-spacing: -0.022em; }
+h2, .h2 { font-size: clamp(1.6rem, 4.5vw, 2.1rem); font-weight: 900; line-height: 1.1; letter-spacing: -0.015em; }
+h3, .h3 { font-size: clamp(1.25rem, 2.4vw, 1.45rem); font-weight: 600; line-height: 1.25; letter-spacing: -0.01em; }
+/* Display: hero type, Black, big and tight */
+.display { font-size: clamp(2.6rem, 11vw, 4.4rem); font-weight: 900; line-height: 0.95; letter-spacing: -0.03em; }
 
 p { margin: 0 0 1em; }
 p:last-child { margin-bottom: 0; }
+strong { font-weight: 600; }
 
-a { color: var(--primary); text-underline-offset: 0.15em; }
+a { color: var(--primary); text-underline-offset: 3px; }
 a:hover { color: var(--primary-hover); }
 
 :focus-visible {
@@ -169,10 +289,11 @@ img, svg { max-width: 100%; height: auto; }
   position: absolute;
   left: 1rem; top: -4rem;
   z-index: 10;
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 999px;
   background: var(--primary);
   color: var(--on-primary);
-  border-radius: var(--radius-small);
+  font-weight: 600;
 }
 .skip-link:focus { top: 1rem; color: var(--on-primary); }
 
@@ -185,16 +306,19 @@ img, svg { max-width: 100%; height: auto; }
 .container-wide { max-width: var(--wide-width); }
 
 .muted { color: var(--text-muted); }
-.small { font-size: 0.95rem; }
-.lead { font-size: 1.2rem; color: var(--text-muted); }
-.eyebrow {
+.small { font-size: 15px; line-height: 1.55; }
+/* Standfirst: Medium, a little larger */
+.lead { font-size: clamp(18px, 2.2vw, 21px); font-weight: 500; line-height: 1.5; color: var(--text); }
+/* Label: SemiBold, small capitals, spaced */
+.eyebrow, .label {
   display: inline-block;
   margin-bottom: 0.75rem;
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  line-height: 1.2;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--heading);
 }
 
 .stack > * + * { margin-top: 1.5rem; }
@@ -205,46 +329,56 @@ img, svg { max-width: 100%; height: auto; }
    ===================================================================== */
 
 .site-header {
-  padding: 1rem 0;
+  padding: 0.85rem 0;
   border-bottom: 1px solid var(--border);
-  background: var(--surface);
+  background: var(--bg);
 }
+.site-header .container { display: flex; align-items: center; }
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
-  min-height: 44px;
-  color: var(--text);
+  gap: 0.9rem;
+  min-height: 56px;
+  color: var(--heading);
   text-decoration: none;
-  font-family: var(--font-heading);
-  font-weight: 700;
-  font-size: 1.15rem;
 }
-.brand:hover { color: var(--text); }
-.brand-mark { width: 32px; height: 32px; flex: none; }
+.brand:hover { color: var(--heading); }
+.brand picture { display: block; line-height: 0; }
+/* The logo file, never the name typed out (section 2). At least 110px wide. */
+.brand-logo { display: block; width: 136px; height: auto; }
+@media (min-width: 40rem) { .brand-logo { width: 150px; } }
 .brand-sub {
-  font-family: var(--font-body);
-  font-weight: 500;
-  font-size: 0.95rem;
-  color: var(--text-muted);
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  background: var(--surface-alt);
+  color: var(--heading);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  line-height: 1.2;
+  text-transform: uppercase;
 }
 
 .site-footer {
   margin-top: 4rem;
   padding: 2.5rem 0 3rem;
-  border-top: 1px solid var(--border);
-  background: var(--surface-alt);
-  font-size: 0.95rem;
-  color: var(--text-muted);
+  background: var(--mim-ink);
+  color: #C9CCC2;
+  font-size: 15px;
 }
+@media (prefers-color-scheme: dark) { .site-footer { background: #0A1C11; } }
 .site-footer p { margin-bottom: 0.75rem; }
-.footer-disclaimer { color: var(--text); font-weight: 600; }
+.footer-disclaimer { color: var(--mim-cream); font-weight: 600; }
 .footer-links a { display: inline-block; padding: 0.35rem 0; }
-.footer-small { font-size: 0.85rem; }
+.site-footer a, .site-footer .link-button { color: var(--mim-lime); }
+.site-footer a:hover, .site-footer .link-button:hover { color: var(--mim-lime-pale); }
+.site-footer :focus-visible { outline-color: var(--mim-lime); }
+.footer-small { font-size: 13px; }
 .footer-status { margin-left: 0.25rem; }
 
 /* =====================================================================
-   Buttons and links
+   Buttons and links: pill, SemiBold, sentence case (section 5).
+   Deep Forest on light, Fresh Lime on dark. Outlined is the quiet option.
    ===================================================================== */
 
 .btn {
@@ -252,21 +386,23 @@ img, svg { max-width: 100%; height: auto; }
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  min-height: 3.25rem;
-  padding: 0.75rem 1.4rem;
-  border: 2px solid transparent;
+  min-height: 3rem;
+  padding: 0.8rem 1.75rem;
+  border: 0;
   border-radius: 999px;
   font: inherit;
-  font-weight: 650;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   line-height: 1.25;
   text-align: center;
   text-decoration: none;
   cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease, color 0.15s ease;
 }
 .btn-primary { background: var(--primary); color: var(--on-primary); }
 .btn-primary:hover { background: var(--primary-hover); color: var(--on-primary); }
-.btn-secondary { background: transparent; color: var(--primary); border-color: var(--primary); }
+.btn-secondary { background: transparent; color: var(--primary); box-shadow: inset 0 0 0 2px var(--primary); }
 .btn-secondary:hover { background: var(--primary-soft); color: var(--primary); }
 .btn-block { width: 100%; }
 .btn[disabled], .btn[aria-busy="true"] { opacity: 0.65; cursor: progress; }
@@ -285,30 +421,125 @@ img, svg { max-width: 100%; height: auto; }
   background: none;
   color: var(--primary);
   font: inherit;
+  font-weight: 500;
   text-decoration: underline;
-  text-underline-offset: 0.15em;
+  text-underline-offset: 3px;
   cursor: pointer;
 }
 .link-button:hover { color: var(--primary-hover); }
 
 /* =====================================================================
-   Cards
+   Cards: white, 24px corners, no shadow; the cream page does the framing
    ===================================================================== */
 
 .card {
   background: var(--surface);
-  border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 1.5rem 1.25rem;
-  box-shadow: 0 1px 2px var(--shadow), 0 8px 24px var(--shadow);
+  padding: 1.5rem;
 }
-.card-quiet { background: var(--surface-alt); box-shadow: none; }
+.card-quiet { background: var(--surface-alt); }
 @media (min-width: 40rem) {
-  .card { padding: 2rem; }
+  .card { padding: 2.25rem; }
 }
 
-/* Home page */
-.hero { padding: 3rem 0 2rem; }
+/* =====================================================================
+   Feature blocks ("bands", section 9): Deep Forest with Lime and Cream,
+   or the Lime version (.band-alt). They swap over in dark mode.
+   Their background carries the graphic language from section 5: a soft
+   squircle and the gear cluster, in one flat tint, cropped by the edge.
+   ===================================================================== */
+
+.band {
+  position: relative;
+  /* clip, not hidden: a hidden box can still be scrolled by code (such as
+     scrollIntoView on a heading inside it), which would shift its contents */
+  overflow: hidden;
+  overflow: clip;
+  isolation: isolate;
+  padding: 2rem 1.5rem;
+  border-radius: var(--radius);
+  background: var(--band);
+  color: var(--band-text);
+}
+@media (min-width: 40rem) { .band { padding: 2.75rem; } }
+.band-alt {
+  --band: var(--band-alt);
+  --band-text: var(--band-alt-text);
+  --band-muted: var(--band-alt-muted);
+  --band-heading: var(--band-alt-heading);
+  --band-line: var(--band-alt-line);
+  --band-btn: var(--band-alt-btn);
+  --band-btn-text: var(--band-alt-btn-text);
+  --band-shape: var(--band-alt-shape);
+  --band-gears: var(--band-alt-gears);
+}
+.band::before, .band::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+}
+.band::before {
+  width: 15rem;
+  height: 15rem;
+  right: -4.5rem;
+  top: -4rem;
+  border-radius: 40px;
+  background: var(--band-shape);
+  transform: rotate(12deg);
+}
+.band::after {
+  width: 11rem;
+  height: 11rem;
+  right: -2.5rem;
+  bottom: -3rem;
+  background: var(--band-gears);
+  -webkit-mask: url(brand/gear-mark.svg) center / contain no-repeat;
+  mask: url(brand/gear-mark.svg) center / contain no-repeat;
+  transform: rotate(-10deg);
+}
+.band.band-plain::before, .band.band-plain::after { display: none; }
+.band h1, .band h2, .band h3, .band .h3 { color: var(--band-heading); }
+.band .muted, .band .small.muted { color: var(--band-muted); }
+.band .lead { color: var(--band-text); }
+.band a, .band .link-button { color: var(--band-heading); }
+.band a:hover, .band .link-button:hover { color: var(--band-heading); }
+.band :focus-visible { outline-color: var(--band-heading); }
+.band .btn-primary { background: var(--band-btn); color: var(--band-btn-text); }
+.band .btn-primary:hover { background: var(--band-btn); color: var(--band-btn-text); filter: brightness(1.07); }
+.band .btn-secondary { background: transparent; color: var(--band-text); box-shadow: inset 0 0 0 2px var(--band-text); }
+.band .btn-secondary:hover { background: var(--band-line); color: var(--band-text); }
+/* Pill chips: fully rounded, solid fill */
+.band .eyebrow, .chip {
+  display: inline-block;
+  margin: 0 0 1.25rem;
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  background: var(--band-btn);
+  color: var(--band-btn-text);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+  text-transform: none;
+}
+.band .form-status { color: var(--band-text); }
+
+/* A tool's first screen */
+.intro-band { margin-bottom: 1.5rem; }
+.intro-band h1 { margin-bottom: 1rem; }
+.intro-band .lead { max-width: 32rem; margin-bottom: 0; }
+.intro-band > * { position: relative; max-width: 36rem; }
+
+/* =====================================================================
+   Home page
+   ===================================================================== */
+
+.hero { margin: 2rem 0 2rem; }
+@media (min-width: 40rem) { .hero { padding: 3.5rem 3rem; } }
+.hero > * { position: relative; }
+.hero h1 { max-width: 40rem; margin-bottom: 1.25rem; }
+.hero .lead { max-width: 34rem; margin-bottom: 0; }
 .tool-grid {
   display: grid;
   gap: 1.25rem;
@@ -318,47 +549,60 @@ img, svg { max-width: 100%; height: auto; }
   list-style: none;
 }
 @media (min-width: 48rem) {
-  .tool-grid { grid-template-columns: repeat(3, 1fr); }
+  .tool-grid { grid-template-columns: repeat(2, 1fr); }
 }
 .tool-card {
   display: flex;
   flex-direction: column;
   height: 100%;
+  border: 2px solid transparent;
+  transition: border-color 0.15s ease;
 }
-.tool-card h2 { font-size: 1.4rem; }
+.tool-card:hover { border-color: var(--border); }
+.tool-card h2 { font-size: clamp(1.45rem, 3vw, 1.75rem); margin-bottom: 0.5rem; }
 .tool-card p { flex: 1 0 auto; color: var(--text-muted); }
-.tool-card .btn { margin-top: 1rem; }
+.tool-card .btn { align-self: flex-start; margin-top: 1.25rem; }
 .badge {
   display: inline-block;
   align-self: flex-start;
-  margin-bottom: 0.75rem;
-  padding: 0.2rem 0.7rem;
+  margin-bottom: 1rem;
+  padding: 0.3rem 0.85rem;
   border-radius: 999px;
-  background: var(--accent-soft);
-  color: var(--text);
-  font-size: 0.85rem;
-  font-weight: 650;
+  background: var(--primary-soft);
+  color: var(--heading);
+  font-size: 13px;
+  font-weight: 600;
 }
 .badge-live { background: var(--primary-soft); }
+.more-band { margin-top: 2.5rem; }
+.more-band h2 { font-size: clamp(1.5rem, 4vw, 1.9rem); }
+.more-band p { max-width: 40rem; }
+.more-band .button-row { margin-top: 1.5rem; max-width: 34rem; }
 
 /* =====================================================================
-   Forms
+   Forms: 8px corners, an edge you can see
    ===================================================================== */
 
 .field { margin-bottom: 1rem; }
-.field label { display: block; margin-bottom: 0.35rem; font-weight: 600; }
+.field label { display: block; margin-bottom: 0.35rem; font-weight: 600; line-height: 1.35; }
 .optional { font-weight: 400; color: var(--text-muted); }
-input[type="email"], input[type="text"] {
+input[type="email"], input[type="text"], input[type="date"], select, textarea {
   width: 100%;
   min-height: 3.25rem;
   padding: 0.7rem 1rem;
-  border: 2px solid var(--border);
+  border: 2px solid var(--field);
   border-radius: var(--radius-small);
   background: var(--surface);
   color: var(--text);
   font: inherit;
+  font-size: 17px;
 }
-input[type="email"]:focus, input[type="text"]:focus { border-color: var(--primary); }
+textarea { min-height: 8rem; line-height: 1.6; resize: vertical; }
+input[type="date"] { -webkit-appearance: none; appearance: none; text-align: left; max-width: 16rem; }
+input[type="date"]::-webkit-date-and-time-value { text-align: left; }
+input:focus, select:focus, textarea:focus { border-color: var(--primary); }
+input[aria-invalid="true"] { border-color: var(--accent); }
+::placeholder { color: var(--text-muted); opacity: 0.8; }
 .form-status { margin: 0.75rem 0 0; min-height: 1.6em; font-weight: 600; }
 .form-status:empty { min-height: 0; margin: 0; }
 .form-status.is-error { color: var(--accent); }
@@ -374,29 +618,37 @@ input[type="email"]:focus, input[type="text"]:focus { border-color: var(--primar
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.65rem;
 }
 .back-button {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
   min-height: 44px;
-  padding: 0 0.25rem;
+  padding: 0 1rem 0 0.75rem;
   border: 0;
-  background: none;
-  color: var(--primary);
+  border-radius: 999px;
+  background: var(--surface-alt);
+  color: var(--heading);
   font: inherit;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
 }
-.back-button:hover { color: var(--primary-hover); }
-.quiz-count { font-size: 0.95rem; color: var(--text-muted); }
+.back-button:hover { background: var(--primary-soft); color: var(--heading); }
+.quiz-count {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
 
 .progress {
-  height: 10px;
+  height: 8px;
   margin-bottom: 2rem;
   border-radius: 999px;
-  background: var(--surface-alt);
+  background: var(--track);
   overflow: hidden;
 }
 .progress-fill {
@@ -406,7 +658,7 @@ input[type="email"]:focus, input[type="text"]:focus { border-color: var(--primar
   transition: width 0.3s ease;
 }
 
-.question-title { font-size: clamp(1.6rem, 5.5vw, 2.1rem); }
+.question-title { font-size: clamp(1.75rem, 6vw, 2.5rem); }
 .question-help { color: var(--text-muted); }
 .question-help p { margin-bottom: 0.5rem; }
 
@@ -423,9 +675,9 @@ input[type="email"]:focus, input[type="text"]:focus { border-color: var(--primar
   gap: 0.85rem;
   width: 100%;
   min-height: 3.75rem;
-  padding: 0.85rem 1.1rem;
+  padding: 0.9rem 1.15rem;
   border: 2px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-medium);
   background: var(--surface);
   color: var(--text);
   font: inherit;
@@ -435,7 +687,7 @@ input[type="email"]:focus, input[type="text"]:focus { border-color: var(--primar
   cursor: pointer;
   transition: border-color 0.15s ease, background-color 0.15s ease;
 }
-@media (hover: hover) { .option:hover { border-color: var(--primary); } }
+@media (hover: hover) { .option:hover { border-color: var(--field); } }
 .option[aria-pressed="true"] {
   border-color: var(--primary);
   background: var(--primary-soft);
@@ -443,7 +695,7 @@ input[type="email"]:focus, input[type="text"]:focus { border-color: var(--primar
 .option-dot {
   flex: none;
   width: 1.4rem; height: 1.4rem;
-  border: 2px solid var(--border);
+  border: 2px solid var(--field);
   border-radius: 50%;
   background: var(--surface);
 }
@@ -453,46 +705,59 @@ input[type="email"]:focus, input[type="text"]:focus { border-color: var(--primar
   box-shadow: inset 0 0 0 4px var(--surface);
 }
 
-.checks { border: 0; margin: 1.75rem 0 0; padding: 0; }
+/* Tick boxes and radio choices as soft cards */
+.checks { border: 0; margin: 1.75rem 0 0; padding: 0; min-width: 0; }
 .check {
   display: flex;
   align-items: flex-start;
   gap: 0.85rem;
-  min-height: 3.75rem;
-  margin-bottom: 0.75rem;
+  min-height: 3.5rem;
+  margin-bottom: 0.6rem;
   padding: 0.95rem 1.1rem;
   border: 2px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-medium);
   background: var(--surface);
   font-weight: 600;
   line-height: 1.35;
   cursor: pointer;
 }
-@media (hover: hover) { .check:hover { border-color: var(--primary); } }
+@media (hover: hover) { .check:hover { border-color: var(--field); } }
 .check:has(input:checked) { border-color: var(--primary); background: var(--primary-soft); }
 .check input {
   flex: none;
-  width: 1.4rem; height: 1.4rem;
+  width: 1.35rem; height: 1.35rem;
   margin: 0;
   accent-color: var(--primary);
 }
 .checks-continue { margin-top: 1rem; }
 
 /* Intro */
-.intro-points { padding-left: 1.2rem; }
-.intro-points li { margin-bottom: 0.4rem; }
+.intro-points { margin: 1.25rem 0 0; padding: 0; list-style: none; }
+.intro-points li { position: relative; margin-bottom: 0.6rem; padding-left: 1.9rem; }
+.intro-points li::before {
+  content: "";
+  position: absolute;
+  left: 0.15rem;
+  top: 0.5rem;
+  width: 0.85rem;
+  height: 0.85rem;
+  border-radius: 4px;
+  background: var(--heading);
+  transform: rotate(12deg);
+}
+.intro-points + .button-row { margin-top: 1.5rem; }
 .welcome-back { margin: 1.5rem 0; }
 
 details.steps-details {
   margin-top: 2rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-medium);
   background: var(--surface);
 }
 details.steps-details summary {
   min-height: 3.25rem;
   padding: 0.9rem 1.25rem;
-  font-weight: 650;
+  font-weight: 600;
+  color: var(--heading);
   cursor: pointer;
 }
 details.steps-details[open] summary { border-bottom: 1px solid var(--border); }
@@ -503,34 +768,40 @@ details.steps-details[open] summary { border-bottom: 1px solid var(--border); }
    ===================================================================== */
 
 .result-hero { text-align: left; }
+/* The result banner: Deep Forest, with the step in an orange squircle,
+   this screen's one Motion Orange element (Ink on Orange, 4.6:1) */
+.result-banner { margin: -0.25rem -0.25rem 1.5rem; padding: 1.5rem 1.5rem 1.6rem; border-radius: var(--radius-medium); }
+@media (min-width: 40rem) { .result-banner { margin: -0.75rem -0.75rem 1.75rem; padding: 2rem 2.25rem; } }
 .step-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 4.5rem;
-  height: 4.5rem;
-  margin-bottom: 1rem;
+  min-width: 4.25rem;
+  height: 4.25rem;
+  margin-bottom: 1.1rem;
   padding: 0 0.75rem;
-  border-radius: 999px;
-  background: var(--accent);
-  color: var(--on-accent);
-  font-family: var(--font-heading);
+  border-radius: 18px;
+  background: var(--mim-orange);
+  color: var(--mim-ink);
   font-size: 2rem;
-  font-weight: 700;
+  font-weight: 900;
   line-height: 1;
+  transform: rotate(-6deg);
 }
-.result-title { margin-bottom: 0.25rem; }
+.result-title { margin-bottom: 0.3rem; }
 .result-subtitle {
-  font-family: var(--font-heading);
-  font-size: 1.35rem;
-  color: var(--text-muted);
   margin-bottom: 1.25rem;
+  font-size: clamp(1.2rem, 3.5vw, 1.4rem);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--text-muted);
 }
+.result-banner .result-subtitle { margin-bottom: 0; color: var(--band-text); }
 .heading-for {
-  padding: 0.85rem 1rem;
-  border-left: 4px solid var(--accent);
-  border-radius: 0 var(--radius-small) var(--radius-small) 0;
-  background: var(--accent-soft);
+  padding: 0.9rem 1.1rem;
+  border-left: 6px solid var(--mim-amber);
+  border-radius: 0 var(--radius-medium) var(--radius-medium) 0;
+  background: var(--surface-alt);
   font-weight: 600;
 }
 
@@ -554,43 +825,44 @@ details.steps-details[open] summary { border-bottom: 1px solid var(--border); }
   align-items: center;
   justify-content: center;
   width: 2.1rem; height: 2.1rem;
-  border-radius: 50%;
+  border-radius: 10px;
   background: var(--primary);
   color: var(--on-primary);
-  font-weight: 700;
+  font-weight: 900;
   font-size: 1rem;
 }
 
+/* Faith: one short line, after the practical point */
 .faith-line {
   margin: 1.5rem 0 0;
   padding-top: 1.25rem;
   border-top: 1px solid var(--border);
-  font-family: var(--font-heading);
-  font-style: italic;
-  color: var(--text-muted);
+  font-weight: 500;
+  color: var(--heading);
 }
 
+/* "Talk to someone": Sky Blue, the calm colour */
 .care-box {
   padding: 1.5rem 1.25rem;
-  border: 3px solid var(--care-border);
-  border-radius: var(--radius);
+  border-left: 6px solid var(--care-border);
+  border-radius: 0 var(--radius) var(--radius) 0;
   background: var(--care-bg);
 }
 @media (min-width: 40rem) { .care-box { padding: 2rem; } }
-.care-box h2 { margin-bottom: 0.5rem; }
+.care-box h2 { margin-bottom: 0.6rem; font-size: clamp(1.3rem, 3vw, 1.6rem); }
 .help-list { margin: 1.25rem 0; padding: 0; list-style: none; }
 .help-list li {
   margin-bottom: 0.75rem;
-  padding: 0.85rem 1rem;
-  border-radius: var(--radius-small);
+  padding: 0.9rem 1.1rem;
+  border-radius: var(--radius-medium);
   background: var(--surface);
 }
-.help-list a { font-weight: 700; font-size: 1.1rem; }
-.help-list p { margin: 0.2rem 0 0; font-size: 1rem; color: var(--text-muted); }
+.help-list a { font-weight: 600; font-size: 17px; }
+.help-list p { margin: 0.2rem 0 0; font-size: 15px; color: var(--text-muted); }
 
 .note h2 { margin-bottom: 0.4rem; }
 
-.video-link { font-weight: 650; }
+.video-link { font-weight: 600; }
 
 .ladder { margin: 0; padding: 0; list-style: none; }
 .ladder li {
@@ -598,7 +870,7 @@ details.steps-details[open] summary { border-bottom: 1px solid var(--border); }
   grid-template-columns: 2.6rem 1fr;
   gap: 0.85rem;
   align-items: start;
-  padding: 0.7rem 0;
+  padding: 0.75rem 0;
   border-bottom: 1px solid var(--border);
 }
 .ladder li:last-child { border-bottom: 0; }
@@ -607,33 +879,34 @@ details.steps-details[open] summary { border-bottom: 1px solid var(--border); }
   align-items: center;
   justify-content: center;
   width: 2.6rem; height: 2.6rem;
-  border: 2px solid var(--border);
-  border-radius: 50%;
-  font-weight: 700;
+  border: 2px solid var(--field);
+  border-radius: 12px;
+  font-weight: 900;
   font-size: 0.95rem;
+  color: var(--heading);
 }
-.ladder-title { display: block; font-weight: 650; line-height: 1.3; }
-.ladder-desc { display: block; font-size: 0.95rem; color: var(--text-muted); }
+.ladder-title { display: block; font-weight: 600; line-height: 1.3; color: var(--heading); }
+.ladder-desc { display: block; font-size: 15px; color: var(--text-muted); }
 .ladder-tag {
   display: inline-block;
-  margin-top: 0.3rem;
-  padding: 0.05rem 0.6rem;
+  margin-top: 0.35rem;
+  padding: 0.1rem 0.65rem;
   border-radius: 999px;
-  font-size: 0.8rem;
-  font-weight: 650;
+  font-size: 12px;
+  font-weight: 600;
   background: var(--surface-alt);
   color: var(--text-muted);
 }
-.ladder .is-done .ladder-num { border-color: var(--primary); background: var(--primary-soft); color: var(--primary); }
+.ladder .is-done .ladder-num { border-color: var(--primary); background: var(--primary-soft); color: var(--heading); }
 .ladder .is-current {
   margin: 0.25rem -0.75rem;
   padding: 0.85rem 0.75rem;
   border: 0;
-  border-radius: var(--radius-small);
-  background: var(--accent-soft);
+  border-radius: var(--radius-medium);
+  background: var(--primary-soft);
 }
-.ladder .is-current .ladder-num { border-color: var(--accent); background: var(--accent); color: var(--on-accent); }
-.ladder .is-current .ladder-tag { background: var(--accent); color: var(--on-accent); }
+.ladder .is-current .ladder-num { border-color: var(--primary); background: var(--primary); color: var(--on-primary); }
+.ladder .is-current .ladder-tag { background: var(--primary); color: var(--on-primary); }
 .ladder .is-skipped .ladder-title,
 .ladder .is-skipped .ladder-num { color: var(--text-muted); }
 .ladder .is-skipped .ladder-num { border-style: dashed; }
@@ -655,7 +928,8 @@ details.steps-details[open] summary { border-bottom: 1px solid var(--border); }
 
 /* =====================================================================
    PDF sheet (assets/pdf.js)
-   Always printed in light colours, whatever the device's mode.
+   Always printed in light colours, whatever the device's mode. White
+   paper, a Deep Forest header band with the logo for dark backgrounds.
    ===================================================================== */
 
 .pdf-sheet {
@@ -664,7 +938,10 @@ details.steps-details[open] summary { border-bottom: 1px solid var(--border); }
   --surface-alt: var(--surface-alt-light);
   --text: var(--text-light);
   --text-muted: var(--text-muted-light);
+  --heading: var(--heading-light);
   --border: var(--border-light);
+  --field: var(--field-light);
+  --track: var(--track-light);
   --primary: var(--primary-light);
   --on-primary: var(--on-primary-light);
   --primary-soft: var(--primary-soft-light);
@@ -682,7 +959,7 @@ details.steps-details[open] summary { border-bottom: 1px solid var(--border); }
   background: var(--surface-light);
   color: var(--text);
   font-family: var(--font-body);
-  font-size: 13.5px;
+  font-size: 13px;
   line-height: 1.5;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
@@ -690,43 +967,47 @@ details.steps-details[open] summary { border-bottom: 1px solid var(--border); }
 .pdf-sheet * { box-sizing: border-box; }
 .pdf-head {
   margin: 0 -48px;
-  padding: 20px 48px 16px;
-  background: var(--primary);
-  color: var(--on-primary);
+  padding: 14px 48px 12px;
+  background: var(--mim-forest);
+  color: var(--mim-cream);
 }
-.pdf-brand { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
-.pdf-brand-name { font-family: var(--font-heading); font-size: 20px; font-weight: 700; }
-.pdf-brand-tool { font-size: 13px; opacity: 0.95; }
+.pdf-brand { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+/* 50px tall is 35mm wide: the guide's minimum for print */
+.pdf-brand-logo { display: block; width: auto; height: 50px; }
+.pdf-brand-name { font-family: var(--font-heading); font-size: 20px; font-weight: 900; }
+.pdf-brand-tool { font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
 .pdf-title-block { padding: 22px 0 10px; }
-.pdf-title { margin: 0; font-family: var(--font-heading); font-size: 32px; line-height: 1.15; color: var(--text); }
-.pdf-subtitle { margin: 4px 0 0; font-family: var(--font-heading); font-size: 19px; color: var(--accent); font-weight: 700; }
+.pdf-title { margin: 0; font-family: var(--font-heading); font-size: 30px; font-weight: 900; letter-spacing: -0.022em; line-height: 1.15; color: var(--mim-forest); }
+.pdf-subtitle { margin: 2px 0 0; font-size: 14px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
 .pdf-body { flex: 1 0 auto; }
 .pdf-body p { margin: 0 0 8px; }
 .pdf-section { margin-bottom: 14px; }
 .pdf-h2 {
   margin: 0 0 8px;
   font-family: var(--font-heading);
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--text);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--mim-forest);
 }
 .pdf-muted { color: var(--text-muted); }
 .pdf-small { font-size: 12px; }
 .pdf-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 28px; }
 .pdf-callout {
   margin-bottom: 16px;
-  padding: 12px 16px;
-  border: 2px solid var(--care-border);
-  border-radius: 10px;
+  padding: 10px 16px;
+  border-left: 4px solid var(--care-border);
+  border-radius: 0 12px 12px 0;
   background: var(--care-bg);
 }
 .pdf-callout .pdf-h2 { margin-bottom: 4px; }
 .pdf-callout p { margin-bottom: 4px; }
 .pdf-highlight {
   padding: 8px 12px;
-  border-left: 4px solid var(--accent);
-  background: var(--accent-soft);
+  border-left: 4px solid var(--mim-forest);
+  border-radius: 0 8px 8px 0;
+  background: var(--primary-soft);
   font-weight: 600;
+  color: var(--mim-forest);
 }
 .pdf-checklist { margin: 0; padding: 0; list-style: none; }
 .pdf-checklist li { display: flex; gap: 10px; margin-bottom: 10px; }
@@ -734,17 +1015,17 @@ details.steps-details[open] summary { border-bottom: 1px solid var(--border); }
   flex: none;
   width: 16px; height: 16px;
   margin-top: 2px;
-  border: 2px solid var(--primary);
-  border-radius: 3px;
+  border: 2px solid var(--mim-forest);
+  border-radius: 4px;
 }
-.pdf-quote { font-family: var(--font-heading); font-style: italic; color: var(--text-muted); }
+.pdf-quote { font-weight: 500; color: var(--text-muted); }
 .pdf-ladder { margin: 0; padding: 0; list-style: none; }
 .pdf-ladder li {
   display: flex;
   gap: 10px;
   align-items: flex-start;
   padding: 5px 8px;
-  border-radius: 6px;
+  border-radius: 8px;
 }
 .pdf-ladder-num {
   flex: none;
@@ -752,31 +1033,32 @@ details.steps-details[open] summary { border-bottom: 1px solid var(--border); }
   align-items: center;
   justify-content: center;
   width: 28px; height: 28px;
-  border: 2px solid var(--border);
-  border-radius: 50%;
+  border: 2px solid var(--field);
+  border-radius: 8px;
   font-size: 11.5px;
-  font-weight: 700;
+  font-weight: 900;
+  color: var(--mim-forest);
 }
 .pdf-ladder-text { display: block; line-height: 1.3; }
-.pdf-ladder-title { display: block; font-weight: 700; font-size: 12.5px; }
+.pdf-ladder-title { display: block; font-weight: 600; font-size: 12.5px; color: var(--mim-forest); }
 .pdf-ladder-desc { display: block; font-size: 11.5px; color: var(--text-muted); }
-.pdf-ladder .is-done .pdf-ladder-num { border-color: var(--primary); background: var(--primary-soft); color: var(--primary); }
-.pdf-ladder .is-current { background: var(--accent-soft); }
-.pdf-ladder .is-current .pdf-ladder-num { border-color: var(--accent); background: var(--accent); color: var(--on-accent); }
+.pdf-ladder .is-done .pdf-ladder-num { border-color: var(--mim-forest); background: var(--primary-soft); }
+.pdf-ladder .is-current { background: var(--primary-soft); }
+.pdf-ladder .is-current .pdf-ladder-num { border-color: var(--mim-forest); background: var(--mim-forest); color: var(--mim-cream); }
 .pdf-ladder .is-skipped { opacity: 0.6; }
 .pdf-ladder .is-skipped .pdf-ladder-num { border-style: dashed; }
 .pdf-app {
   margin-top: 8px;
   padding: 12px 16px;
-  border-radius: 10px;
+  border-radius: 12px;
   background: var(--primary-soft);
 }
-.pdf-app a, .pdf-sheet a { color: var(--primary); text-decoration: none; font-weight: 600; }
+.pdf-app a, .pdf-sheet a { color: var(--mim-forest); text-decoration: none; font-weight: 600; }
 .pdf-foot {
   margin-top: 18px;
   padding-top: 12px;
   border-top: 1px solid var(--border);
-  font-size: 11.5px;
+  font-size: 11px;
   color: var(--text-muted);
 }
 .pdf-foot p { margin: 0 0 2px; }
@@ -784,22 +1066,22 @@ details.steps-details[open] summary { border-bottom: 1px solid var(--border); }
 .pdf-here {
   display: inline-block;
   margin-left: 6px;
-  padding: 0 7px;
+  padding: 0 8px;
   border-radius: 999px;
-  background: var(--accent);
-  color: var(--on-accent);
-  font-size: 10.5px;
-  font-weight: 700;
+  background: var(--mim-forest);
+  color: var(--mim-cream);
+  font-size: 10px;
+  font-weight: 600;
   vertical-align: 1px;
   white-space: nowrap;
 }
 
 /* Tighter spacing, added automatically when a sheet won't fit one page */
-.pdf-sheet.pdf-compact { font-size: 12.5px; line-height: 1.42; }
-.pdf-compact .pdf-head { padding-top: 16px; padding-bottom: 12px; }
+.pdf-sheet.pdf-compact { font-size: 12px; line-height: 1.42; }
+.pdf-compact .pdf-head { padding-top: 12px; padding-bottom: 10px; }
 .pdf-compact .pdf-title-block { padding: 14px 0 6px; }
-.pdf-compact .pdf-title { font-size: 28px; }
-.pdf-compact .pdf-subtitle { font-size: 17px; }
+.pdf-compact .pdf-title { font-size: 26px; }
+.pdf-compact .pdf-subtitle { font-size: 12.5px; }
 .pdf-compact .pdf-section,
 .pdf-compact .pdf-callout { margin-bottom: 10px; }
 .pdf-compact .pdf-callout { padding: 8px 14px; }
@@ -819,12 +1101,14 @@ details.steps-details[open] summary { border-bottom: 1px solid var(--border); }
   @page { size: A4; margin: 12mm; }
   body { background: var(--surface-light); color: var(--text-light); display: block; min-height: 0; }
   .site-header, .skip-link, .no-print, .back-button, .button-row, .email-card, .share { display: none !important; }
-  .card { box-shadow: none; border-color: var(--border-light); }
-  .site-footer { margin-top: 1.5rem; background: none; }
+  .card { box-shadow: none; }
+  .site-footer { margin-top: 1.5rem; background: none; color: var(--text-light); }
+  .site-footer .footer-disclaimer { color: var(--text-light); }
 
-  /* Print fallback for PDFs: show only the sheet */
+  /* Print fallback for PDFs: show only the sheet, drawn a little smaller
+     because the printer's margins leave less room than the PDF has */
   html.mim-print-sheet body > *:not(#mim-print-root) { display: none !important; }
   html.mim-print-sheet #mim-print-root { display: block; }
-  html.mim-print-sheet .pdf-sheet { width: auto; min-height: 0; padding: 0 0 12px; }
+  html.mim-print-sheet .pdf-sheet { width: auto; min-height: 0; padding: 0 0 12px; zoom: 0.88; }
   html.mim-print-sheet .pdf-head { margin: 0 0 4px; padding: 14px 18px; border-radius: 8px; }
 }

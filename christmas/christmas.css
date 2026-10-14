@@ -1,125 +1,35 @@
 /* =====================================================================
    Christmas Without Debt
-   Styled to the Money in Motion Brand Guide 2.0 (August 2026).
-
-   Sits on top of /assets/styles.css. The first block swaps the shared
-   colour, font and shape settings for the brand's, for this page only,
-   so the shared parts (buttons, cards, the footer, the PDF sheet) follow.
-   Everything after that uses those settings, never raw colours, so dark
-   mode and any later brand change still work from one place.
+   Styles for this tool only. The brand (colours, fonts, buttons, cards,
+   fields, the header, the footer and the PDF sheet) comes from
+   /assets/styles.css, set to the Money in Motion Brand Guide 2.0.
    ===================================================================== */
 
-/* ----- Type -----
-   The brand typeface is Mava MotionEV. Its web licence isn't confirmed yet
-   (Brand Guide, section 12), so the page uses the guide's approved backup,
-   Poppins (SIL Open Font Licence), served from this site so no font service
-   sees who's visiting. Mava is first in the list, so a device that has it
-   installed uses it. Four weights only, as the guide asks. */
-@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 400; font-display: swap; src: url(../assets/brand/fonts/poppins-latin-400-normal.woff2) format('woff2'); }
-@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 500; font-display: swap; src: url(../assets/brand/fonts/poppins-latin-500-normal.woff2) format('woff2'); }
-@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 600; font-display: swap; src: url(../assets/brand/fonts/poppins-latin-600-normal.woff2) format('woff2'); }
-@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 900; font-display: swap; src: url(../assets/brand/fonts/poppins-latin-900-normal.woff2) format('woff2'); }
-
 :root {
-  /* The brand palette (section 3). Deep Forest and Warm Cream do most of
-     the work, Motion Orange is the shout (once per screen, never text). */
-  --mim-forest: #194229;
-  --mim-cream: #F9F7E7;
-  --mim-orange: #FF5933;
-  --mim-lime: #D4D882;
-  --mim-ink: #272B2A;
-  --mim-purple: #B188D8;
-  --mim-sky: #8DC3D8;
-  --mim-amber: #EC9C48;
-  /* Tints and shades, which stay in the family */
-  --mim-lime-pale: #F1F3C8;
-  --mim-forest-deep: #10281A;
-
-  --font-body: 'Mava MotionEV', 'Poppins', 'Helvetica Neue', Arial, sans-serif;
-  --font-heading: var(--font-body);
-  --radius: 24px;        /* cards, panels */
-  --radius-small: 8px;   /* tags, inputs */
-  --radius-medium: 16px; /* small cards */
-
-  /* Light mode: Warm Cream page, white cards, Ink to read, Deep Forest to lead */
-  --bg-light: #F9F7E7;
-  --surface-light: #FFFFFF;
-  --surface-alt-light: #ECECDC;
-  --text-light: #272B2A;
-  --text-muted-light: #4C6C58;
-  --border-light: rgba(25, 66, 41, 0.16);
-  --primary-light: #194229;
-  --primary-hover-light: #0F2C1A;
-  --on-primary-light: #F9F7E7;
-  --primary-soft-light: #F1F3C8;
-  --accent-light: #C2331A;       /* readable orange, for problems only */
-  --on-accent-light: #FFFFFF;
-  --accent-soft-light: #FFE6DE;
-  --care-bg-light: #E3F0F5;      /* Sky Blue, the calm colour */
-  --care-border-light: #8DC3D8;
-  --focus-light: #194229;
-  --shadow-light: rgba(25, 66, 41, 0.08);
-
-  /* Dark mode: the brand's Deep Forest sections, with Fresh Lime to lead */
-  --bg-dark: #10281A;
-  --surface-dark: #194229;
-  --surface-alt-dark: #294F36;
-  --text-dark: #F9F7E7;
-  --text-muted-dark: #C3CCB9;
-  --border-dark: rgba(249, 247, 231, 0.18);
-  --primary-dark: #D4D882;
-  --primary-hover-dark: #E2E5A3;
-  --on-primary-dark: #194229;
-  --primary-soft-dark: rgba(212, 216, 130, 0.16);
-  --accent-dark: #FFA894;
-  --on-accent-dark: #194229;
-  --accent-soft-dark: rgba(255, 89, 51, 0.16);
-  --care-bg-dark: rgba(141, 195, 216, 0.14);
-  --care-border-dark: #8DC3D8;
-  --focus-dark: #D4D882;
-  --shadow-dark: rgba(0, 0, 0, 0.3);
-
-  /* This page's own settings, light mode */
-  --xm-heading: var(--mim-forest);
-  --xm-field: #708A7A;                 /* input and control edges: 3:1 or more */
-  --xm-track: rgba(25, 66, 41, 0.14);
-  --xm-quiet: var(--surface-alt-light);
-  /* Feature blocks ("bands"): Deep Forest with Fresh Lime and Cream */
-  --xm-band: var(--mim-forest);
-  --xm-band-text: var(--mim-cream);
-  --xm-band-muted: #C3CCB9;
-  --xm-band-heading: var(--mim-lime);
-  --xm-band-line: rgba(249, 247, 231, 0.18);
-  --xm-band-btn: var(--mim-lime);
-  --xm-band-btn-text: var(--mim-forest);
-  --xm-band-pill: var(--mim-lime);
-  --xm-band-pill-text: var(--mim-forest);
-  --xm-band-shape: rgba(212, 216, 130, 0.08);
-  --xm-band-gears: rgba(212, 216, 130, 0.14);
+  /* This tool's names for the shared brand settings */
+  --xm-heading: var(--heading);
+  --xm-field: var(--field);
+  --xm-track: var(--track);
+  --xm-quiet: var(--surface-alt);
+  --xm-band: var(--band);
+  --xm-band-text: var(--band-text);
+  --xm-band-muted: var(--band-muted);
+  --xm-band-heading: var(--band-heading);
+  --xm-band-line: var(--band-line);
+  --xm-band-btn: var(--band-btn);
+  --xm-band-btn-text: var(--band-btn-text);
+  --xm-band-pill: var(--band-btn);
+  --xm-band-pill-text: var(--band-btn-text);
+  --xm-band-shape: var(--band-shape);
+  --xm-band-gears: var(--band-gears);
+  /* The seasonal sparkles, and the "short by" figure on the running total */
   --xm-spark-1: var(--mim-lime);
   --xm-spark-2: var(--mim-amber);
   --xm-short-bg: transparent;
   --xm-short-text: var(--mim-amber);   /* 5.1:1 on Deep Forest */
 }
-
 @media (prefers-color-scheme: dark) {
   :root {
-    --xm-heading: var(--mim-lime);
-    --xm-field: #899C88;
-    --xm-track: rgba(249, 247, 231, 0.16);
-    --xm-quiet: var(--surface-alt-dark);
-    /* Feature blocks turn to Fresh Lime with Deep Forest: Forest on Lime */
-    --xm-band: var(--mim-lime);
-    --xm-band-text: var(--mim-forest);
-    --xm-band-muted: #3B5A41;
-    --xm-band-heading: var(--mim-forest);
-    --xm-band-line: rgba(25, 66, 41, 0.2);
-    --xm-band-btn: var(--mim-forest);
-    --xm-band-btn-text: var(--mim-cream);
-    --xm-band-pill: var(--mim-forest);
-    --xm-band-pill-text: var(--mim-lime);
-    --xm-band-shape: rgba(25, 66, 41, 0.07);
-    --xm-band-gears: rgba(25, 66, 41, 0.12);
     --xm-spark-1: var(--mim-forest);
     --xm-spark-2: var(--mim-orange);
     --xm-short-bg: var(--mim-amber);
@@ -127,117 +37,9 @@
   }
 }
 
-/* =====================================================================
-   Page basics: type scale (section 4) and the shared pieces, re-tuned
-   ===================================================================== */
-
-body {
-  font-family: var(--font-body);
-  font-size: 17px;
-  line-height: 1.65;
-  -webkit-font-smoothing: antialiased;
-}
-h1, h2, h3, .h1, .h2, .h3 { font-family: var(--font-heading); color: var(--xm-heading); }
-h1, .h1 { font-weight: 900; letter-spacing: -0.022em; line-height: 1.02; }
-h2, .h2 { font-weight: 900; letter-spacing: -0.015em; line-height: 1.1; }
-h3, .h3 { font-size: clamp(1.25rem, 2.4vw, 1.45rem); font-weight: 600; letter-spacing: -0.01em; line-height: 1.25; }
-strong { font-weight: 600; }
-a { color: var(--primary); text-underline-offset: 3px; }
-:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
-.small { font-size: 15px; line-height: 1.55; }
-.muted { color: var(--text-muted); }
-
-.skip-link { background: var(--primary); color: var(--on-primary); border-radius: 999px; font-weight: 600; }
-
-/* Header: the logo, never the name typed out (section 2) */
-.xm-header {
-  padding: 0.85rem 0;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg);
-}
-.xm-header .container { display: flex; align-items: center; }
-.xm-brand { gap: 0.9rem; min-height: 56px; }
-.xm-brand picture { display: block; line-height: 0; }
-/* At least 110px wide, the guide's minimum for the full lockup */
-.xm-logo { display: block; width: 136px; height: auto; }
-@media (min-width: 40rem) { .xm-logo { width: 150px; } }
-.xm-brand-sub {
-  padding: 0.3rem 0.8rem;
-  border-radius: 999px;
-  background: var(--xm-quiet);
-  color: var(--xm-heading);
-  font-family: var(--font-body);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  line-height: 1.2;
-  text-transform: uppercase;
-}
-
-/* Buttons: pill, SemiBold, sentence case. Deep Forest on light, Fresh Lime on dark. */
-.xm .btn, .site-footer .btn {
-  min-height: 3rem;
-  padding: 0.8rem 1.75rem;
-  border: 0;
-  font-size: 16px;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-}
-.xm .btn-primary { background: var(--primary); color: var(--on-primary); }
-.xm .btn-primary:hover { background: var(--primary-hover); color: var(--on-primary); }
-.xm .btn-secondary { background: transparent; color: var(--primary); box-shadow: inset 0 0 0 2px var(--primary); }
-.xm .btn-secondary:hover { background: var(--primary-soft); color: var(--primary); }
-.xm .link-button { color: var(--primary); font-weight: 500; text-underline-offset: 3px; }
-
-/* Cards: white, 24px corners, no shadow; the cream page does the framing */
-.xm .card {
-  border: 0;
-  border-radius: var(--radius);
-  box-shadow: none;
-  padding: 1.5rem;
-}
+.xm textarea { min-height: 11rem; }
+.xm .card { padding: 1.5rem; }
 @media (min-width: 40rem) { .xm .card { padding: 2.5rem; } }
-.xm .card-quiet { background: var(--xm-quiet); }
-
-/* Form fields: 8px corners, an edge you can see */
-.xm input[type="text"],
-.xm input[type="email"],
-.xm input[type="date"],
-.xm select,
-.xm textarea {
-  width: 100%;
-  min-height: 3.25rem;
-  padding: 0.7rem 1rem;
-  border: 2px solid var(--xm-field);
-  border-radius: var(--radius-small);
-  background: var(--surface);
-  color: var(--text);
-  font: inherit;
-  font-size: 17px;
-}
-.xm textarea { min-height: 11rem; line-height: 1.6; resize: vertical; }
-.xm input[type="date"] { -webkit-appearance: none; appearance: none; text-align: left; max-width: 16rem; }
-.xm input[type="date"]::-webkit-date-and-time-value { text-align: left; }
-.xm input:focus, .xm select:focus, .xm textarea:focus { border-color: var(--primary); }
-.xm input[aria-invalid="true"] { border-color: var(--accent); }
-.xm ::placeholder { color: var(--text-muted); opacity: 0.8; }
-.xm .field label { font-weight: 600; line-height: 1.35; }
-.xm .optional { font-weight: 400; color: var(--text-muted); }
-.xm .form-status { font-weight: 600; }
-
-/* Tick boxes and radio choices as soft cards */
-.xm .check {
-  min-height: 3.5rem;
-  margin-bottom: 0.6rem;
-  padding: 0.95rem 1.1rem;
-  border: 2px solid var(--border);
-  border-radius: var(--radius-medium);
-  background: var(--surface);
-  font-weight: 600;
-}
-@media (hover: hover) { .xm .check:hover { border-color: var(--xm-field); } }
-.xm .check:has(input:checked) { border-color: var(--primary); background: var(--primary-soft); }
-.xm .check input { width: 1.35rem; height: 1.35rem; accent-color: var(--primary); }
 
 /* =====================================================================
    Shared helpers on this page
@@ -289,6 +91,7 @@ p.xm-hint { margin: 0.25rem 0 0.75rem; }
 .xm-band {
   position: relative;
   overflow: hidden;
+  overflow: clip;
   isolation: isolate;
   border-radius: var(--radius);
   background: var(--xm-band);
@@ -1027,7 +830,7 @@ p.xm-hint { margin: 0.25rem 0 0.75rem; }
 .xm .email-card h2 { font-size: clamp(1.45rem, 4vw, 1.8rem); font-weight: 900; letter-spacing: -0.015em; }
 
 /* =====================================================================
-   Bottom of every step, and the footer
+   Bottom of every step
    ===================================================================== */
 
 .xm-nav { flex-direction: row-reverse; }
@@ -1041,17 +844,6 @@ p.xm-hint { margin: 0.25rem 0 0.75rem; }
 }
 .xm-confirm-text { font-weight: 600; }
 
-.site-footer {
-  margin-top: 4rem;
-  border-top: 0;
-  background: var(--mim-ink);
-  color: #C9CCC2;
-}
-.site-footer .footer-disclaimer { color: var(--mim-cream); font-weight: 600; }
-.site-footer a, .site-footer .link-button { color: var(--mim-lime); }
-.site-footer a:hover, .site-footer .link-button:hover { color: var(--mim-lime-pale); }
-.site-footer :focus-visible { outline-color: var(--mim-lime); }
-@media (prefers-color-scheme: dark) { .site-footer { background: #0A1C11; } }
 
 /* =====================================================================
    A little snow when the plan balances, in brand colours
@@ -1083,22 +875,8 @@ p.xm-hint { margin: 0.25rem 0 0.75rem; }
 
 /* =====================================================================
    PDFs (built in pdfs.js, laid out on the shared .pdf-sheet)
-   Inside .pdf-sheet the colours are always the light-mode ones, which the
-   first block on this page has already set to the brand's.
+   Inside .pdf-sheet the colours are always the light-mode ones.
    ===================================================================== */
-
-.pdf-sheet { line-height: 1.5; }
-.pdf-sheet .pdf-head { padding: 14px 48px 12px; }
-.pdf-sheet .pdf-brand { align-items: center; }
-.pdf-sheet .pdf-brand-logo { display: block; width: auto; height: 50px; } /* 35mm wide: the print minimum */
-.pdf-sheet .pdf-brand-tool { font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
-.pdf-sheet .pdf-title { font-weight: 900; letter-spacing: -0.022em; color: var(--mim-forest); }
-.pdf-sheet .pdf-subtitle { margin-top: 2px; font-size: 14px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
-.pdf-sheet .pdf-h2 { font-size: 15px; font-weight: 600; color: var(--mim-forest); }
-.pdf-sheet .pdf-quote { font-style: normal; font-weight: 500; }
-.pdf-sheet .pdf-app { border-radius: 12px; }
-.pdf-sheet .pdf-foot-disclaimer { font-weight: 600; }
-.pdf-sheet .pdf-box { border-color: var(--mim-forest); }
 
 /* Lets the pledge and footer sit at the bottom of the page */
 .pdf-body:has(> .xm-pdf-end) { display: flex; flex-direction: column; }
@@ -1273,9 +1051,6 @@ p.xm-hint { margin: 0.25rem 0 0.75rem; }
 .pdf-compact .xm-pdf-end { padding-top: 8px; }
 
 @media print {
-  /* The print fallback has less room than the PDF (the printer adds margins),
-     so the sheet is drawn a little smaller to stay on one page. */
-  html.mim-print-sheet #mim-print-root .pdf-sheet { zoom: 0.88; }
   .xm-summary { position: static; box-shadow: none; }
   .xm-top, .xm-nav, .xm-saved, .xm-chips-block, .xm-add, .xm-add-row, .xm-remove, .xm-message-block, .xm-snow { display: none !important; }
 }

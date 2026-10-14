@@ -26,9 +26,11 @@ window.MIMMissionPdfs = (function () {
   function letterLabel(l) { return [letter(l), C.letters[l].label]; }
 
   // A two-column list of label and amount. rows: [label, value, className]
+  // Amounts stay on one line; words (where, when) can wrap.
   function rows(list) {
     return h('table', { className: 'sfm-pdf-rows' }, h('tbody', null, list.map(function (row) {
-      return h('tr', { className: row[2] || null }, h('td', null, row[0]), h('td', null, row[1]));
+      var words = typeof row[1] === 'string' && !/^[+−-]?\s?£|^\d/.test(row[1]);
+      return h('tr', { className: row[2] || null }, h('td', null, row[0]), h('td', { className: words ? 'sfm-pdf-text' : null }, row[1]));
     })));
   }
 

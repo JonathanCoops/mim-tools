@@ -164,9 +164,10 @@
     var saved = loadSaved();
     var intro = C.intro;
     var nodes = [
-      h('p', { className: 'eyebrow' }, intro.eyebrow),
-      h('h1', { tabindex: '-1' }, intro.title),
-      h('p', { className: 'lead' }, intro.lead),
+      h('div', { className: 'band intro-band' },
+        h('p', { className: 'eyebrow' }, intro.eyebrow),
+        h('h1', { className: 'display', tabindex: '-1' }, intro.title),
+        h('p', { className: 'lead' }, intro.lead)),
       h('ul', { className: 'intro-points' }, intro.points.map(function (p) { return h('li', null, p); }))
     ];
 
@@ -297,9 +298,10 @@
       : h('p', { className: 'small muted' }, R.videoComingSoon);
 
     nodes.push(h('section', { className: 'card result-hero', 'aria-labelledby': 'result-title' },
-      h('div', { className: 'step-badge', 'aria-hidden': 'true' }, r.step),
-      h('h1', { className: 'result-title', id: 'result-title', tabindex: '-1' }, fill(R.youreOn, { step: label })),
-      h('p', { className: 'result-subtitle' }, meta.title),
+      h('div', { className: 'band result-banner' },
+        h('div', { className: 'step-badge', 'aria-hidden': 'true' }, r.step),
+        h('h1', { className: 'result-title', id: 'result-title', tabindex: '-1' }, fill(R.youreOn, { step: label })),
+        h('p', { className: 'result-subtitle' }, meta.title)),
       h('p', null, copy.meaning),
       r.headingFor ? h('p', { className: 'heading-for' }, headingForText(r.headingFor)) : null,
       h('h2', { className: 'h3' }, R.thisWeek),

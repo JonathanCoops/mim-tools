@@ -1,37 +1,22 @@
 /* =====================================================================
    Saving for Mission Builder
-   Sits on top of /assets/styles.css and only uses its colour variables,
-   so dark mode and any rebrand carry straight through.
+   Sits on top of /assets/styles.css (Brand Guide 2.0) and only uses its
+   variables, so dark mode and any rebrand carry straight through.
    ===================================================================== */
 
 .sfm { padding: 2rem 0 0; }
 .sfm-screen > * + * { margin-top: 1.25rem; }
 
-/* ----- Form controls the shared styles don't cover ----- */
+/* ----- Form controls (the field styles themselves are shared) ----- */
 
-.sfm input[type="date"],
-.sfm select,
-.sfm textarea {
-  width: 100%;
-  min-height: 3.25rem;
-  padding: 0.7rem 1rem;
-  border: 2px solid var(--border);
-  border-radius: var(--radius-small);
-  background: var(--surface);
-  color: var(--text);
-  font: inherit;
-}
-.sfm textarea { min-height: 8rem; line-height: 1.5; resize: vertical; }
-.sfm input[type="date"] { -webkit-appearance: none; appearance: none; text-align: left; }
-.sfm input[type="date"]::-webkit-date-and-time-value { text-align: left; }
-.sfm input:focus, .sfm select:focus, .sfm textarea:focus { border-color: var(--primary); }
-.sfm input[aria-invalid="true"] { border-color: var(--accent); }
+.sfm input[type="date"] { max-width: none; }
 .sfm .field label { line-height: 1.35; }
 
 .sfm-hint {
   display: block;
   margin: 0.1rem 0 0.35rem;
-  font-size: 0.95rem;
+  font-size: 15px;
+  line-height: 1.5;
   font-weight: 400;
   color: var(--text-muted);
 }
@@ -39,38 +24,39 @@
 
 .sfm-fieldset { margin: 0 0 1rem; padding: 0; border: 0; min-width: 0; }
 .sfm-fieldset legend { padding: 0; margin-bottom: 0.5rem; font-weight: 600; }
-.sfm-legend { font-family: var(--font-heading); font-size: 1.3rem; font-weight: 700; margin-bottom: 0.4rem; }
+.sfm-legend { font-family: var(--font-heading); font-size: clamp(1.25rem, 2.4vw, 1.45rem); font-weight: 600; letter-spacing: -0.01em; color: var(--heading); margin-bottom: 0.4rem; }
 .sfm-two { display: grid; gap: 0 1rem; grid-template-columns: 1fr; }
 @media (min-width: 30rem) { .sfm-two { grid-template-columns: 1fr 1fr; } }
 
 /* ----- Step navigation ----- */
 
-.sfm-count { margin: 0 0 0.5rem; font-size: 0.95rem; font-weight: 600; color: var(--text-muted); }
+.sfm-count { margin: 0 0 0.6rem; font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
 .sfm-steps ol { display: flex; gap: 0.4rem; margin: 0; padding: 0; list-style: none; }
 .sfm-steps li { flex: 1 1 0; }
 .sfm-step-btn {
   width: 100%;
-  min-height: 44px;
+  min-height: 48px;
   padding: 0;
   border: 2px solid var(--border);
-  border-radius: 999px;
+  border-radius: 14px;
   background: var(--surface);
   color: var(--text-muted);
   font: inherit;
-  font-weight: 700;
+  font-size: 1.1rem;
+  font-weight: 900;
   cursor: pointer;
 }
-@media (hover: hover) { .sfm-step-btn:hover { border-color: var(--primary); color: var(--primary); } }
-.sfm-step-btn.is-before { border-color: var(--primary); background: var(--primary-soft); color: var(--primary); }
-.sfm-step-btn[aria-current="step"] { border-color: var(--primary); background: var(--primary); color: var(--on-primary); }
+@media (hover: hover) { .sfm-step-btn:hover { border-color: var(--field); color: var(--heading); } }
+.sfm-step-btn.is-before { border-color: var(--primary); background: var(--primary); color: var(--on-primary); }
+.sfm-step-btn[aria-current="step"] { border-color: var(--mim-orange); background: var(--mim-orange); color: var(--mim-ink); }
 
 /* ----- Summary bar: A to G on every step ----- */
 
 .sfm-summary {
-  padding: 0.35rem;
-  border: 1px solid var(--border);
+  padding: 0.4rem;
   border-radius: var(--radius);
-  background: var(--surface-alt);
+  background: var(--band);
+  color: var(--band-text);
 }
 .sfm-summary-grid {
   display: grid;
@@ -80,20 +66,20 @@
 }
 /* Stays in view on bigger screens, where there's room for it. */
 @media (min-width: 48rem) and (min-height: 44rem) {
-  .sfm-summary { position: sticky; top: 0.5rem; z-index: 2; box-shadow: 0 6px 18px var(--shadow); }
+  .sfm-summary { position: sticky; top: 0.5rem; z-index: 2; box-shadow: 0 10px 24px var(--shadow); }
 }
 .sfm-tile {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  padding: 0.3rem 0.35rem 0.35rem;
-  border-radius: var(--radius-small);
-  background: var(--surface);
+  padding: 0.35rem 0.45rem 0.4rem;
+  border-radius: 12px;
 }
 .sfm-tile dt {
   font-size: 0.7rem;
+  font-weight: 500;
   line-height: 1.2;
-  color: var(--text-muted);
+  color: var(--band-muted);
 }
 .sfm-tile .sfm-letter {
   display: inline;
@@ -102,16 +88,17 @@
   margin-right: 0.2em;
   border-radius: 0;
   background: none;
-  color: var(--primary);
+  color: var(--band-heading);
   font-size: inherit;
-  font-weight: 800;
+  font-weight: 900;
 }
 .sfm-tile dd {
   margin: auto 0 0;
   padding-top: 0.15rem;
   overflow: hidden;
-  font-size: 0.92rem;
-  font-weight: 700;
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: var(--band-text);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -119,79 +106,90 @@
 @media (min-width: 40rem) {
   .sfm-summary { padding: 0.5rem; }
   .sfm-summary-grid { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.4rem; }
-  .sfm-tile { padding: 0.4rem 0.5rem 0.45rem; }
+  .sfm-tile { padding: 0.45rem 0.6rem 0.5rem; }
   .sfm-tile dt { font-size: 0.75rem; }
-  .sfm-tile dd { font-size: 1rem; }
+  .sfm-tile dd { font-size: 1.05rem; }
 }
-.sfm-tile.is-active { background: var(--primary-soft); box-shadow: inset 0 0 0 2px var(--primary); }
-.sfm-tile.is-empty dd { font-weight: 500; color: var(--text-muted); }
-.sfm-tile.is-funded dd { color: var(--primary); }
+.sfm-tile.is-active { background: var(--band-line); box-shadow: inset 0 0 0 2px var(--band-heading); }
+.sfm-tile.is-active dt, .sfm-tile.is-active.is-empty dd { color: var(--band-text); }  /* muted is under 4.5:1 on the tinted tile */
+.sfm-tile.is-empty dd { font-weight: 500; color: var(--band-muted); }
+.sfm-tile.is-funded { background: var(--band-btn); }
+.sfm-tile.is-funded dt, .sfm-tile.is-funded dd, .sfm-tile.is-funded .sfm-letter { color: var(--band-btn-text); }
 
 .sfm-letter {
   display: inline-flex;
   flex: none;
   align-items: center;
   justify-content: center;
-  width: 1.3rem;
-  height: 1.3rem;
-  border-radius: 50%;
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 6px;
   background: var(--primary);
   color: var(--on-primary);
   font-family: var(--font-body);
   font-size: 0.72rem;
-  font-weight: 800;
+  font-weight: 900;
   line-height: 1;
 }
 
 /* ----- Banners and notes ----- */
 
 .sfm-banner {
-  padding: 0.85rem 1rem;
-  border-left: 4px solid var(--accent);
-  border-radius: 0 var(--radius-small) var(--radius-small) 0;
-  background: var(--accent-soft);
+  padding: 0.9rem 1.1rem;
+  border-left: 6px solid var(--mim-amber);
+  border-radius: 0 var(--radius-medium) var(--radius-medium) 0;
+  background: var(--surface-alt);
 }
 .sfm-banner p { margin: 0 0 0.25rem; font-weight: 600; }
 
-.sfm-title { font-size: clamp(1.7rem, 5.5vw, 2.2rem); }
-.sfm-sub { margin-top: 2rem; margin-bottom: 0.3rem; }
+.sfm-title { font-size: clamp(1.85rem, 6vw, 2.5rem); line-height: 1.05; }
+.sfm-sub { margin-top: 2.25rem; margin-bottom: 0.4rem; }
 .sfm-sub + p { margin-bottom: 0.75rem; }
 
+/* Scripture pull-outs: Soft Purple, the Money & Faith accent, used sparingly */
 .sfm-verse {
   margin: 1.25rem 0 1.5rem;
-  padding: 0.15rem 0 0.15rem 1rem;
-  border-left: 4px solid var(--accent);
+  padding: 0.15rem 0 0.15rem 1.1rem;
+  border-left: 4px solid var(--mim-purple);
 }
 .sfm-verse blockquote { margin: 0; }
 .sfm-verse p {
   margin: 0;
   font-family: var(--font-heading);
-  font-size: 1.15rem;
-  font-style: italic;
-  color: var(--text);
+  font-size: 1.1rem;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--heading);
 }
-.sfm-verse figcaption { margin-top: 0.25rem; font-size: 0.9rem; font-weight: 650; color: var(--text-muted); }
+.sfm-verse figcaption {
+  margin-top: 0.4rem;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
 .steps-details-body .sfm-verse:first-child { margin-top: 0; }
 .steps-details-body .sfm-verse:last-child { margin-bottom: 0; }
 
 .sfm-status { margin: 0.75rem 0 0; color: var(--text-muted); }
 .sfm-status.is-warning { color: var(--accent); font-weight: 600; }
 .sfm-status.is-good { color: var(--primary); font-weight: 600; }
-.sfm-note { margin: -0.4rem 0 1rem; font-size: 0.95rem; font-weight: 600; color: var(--accent); }
+.sfm-note { margin: -0.4rem 0 1rem; font-size: 15px; font-weight: 600; color: var(--accent); }
 .sfm-note:empty { display: none; }
 .sfm-note-quiet {
   margin-top: 1.5rem;
-  padding: 0.85rem 1rem;
-  border-radius: var(--radius-small);
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-medium);
   background: var(--surface-alt);
-  font-size: 1rem;
+  font-size: 15px;
 }
 .sfm-tip {
   margin-top: 1.25rem;
-  padding: 0.85rem 1rem;
-  border-radius: var(--radius-small);
-  background: var(--surface-alt);
-  font-size: 1rem;
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-medium);
+  background: var(--primary-soft);
+  font-size: 15px;
 }
 
 /* ----- Money lines ----- */
@@ -230,7 +228,7 @@
   padding-right: 0.6rem;
   font-variant-numeric: tabular-nums;
 }
-.sfm-problem { display: block; font-size: 0.85rem; font-weight: 600; line-height: 1.3; color: var(--accent); }
+.sfm-problem { display: block; font-size: 14px; font-weight: 600; line-height: 1.3; color: var(--accent); }
 .sfm-problem:empty { display: none; }
 .sfm-problem:not(:empty) { margin-top: 0.25rem; }
 
@@ -241,15 +239,17 @@
   justify-content: space-between;
   gap: 0.25rem 1rem;
   margin-top: 1.25rem;
-  padding: 0.85rem 1rem;
-  border-radius: var(--radius-small);
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-medium);
   background: var(--primary-soft);
 }
-.sfm-total-label { display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 700; }
+.sfm-total-label { display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 600; color: var(--heading); }
 .sfm-total-value {
   font-family: var(--font-heading);
-  font-size: 1.75rem;
-  font-weight: 700;
+  font-size: 2rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--heading);
   line-height: 1.1;
   font-variant-numeric: tabular-nums;
 }
@@ -274,7 +274,7 @@
   grid-template-columns: 7.5rem minmax(0, 1fr) 2.75rem;
   grid-template-areas: "label label remove" "r amount amount";
   padding-bottom: 0.6rem;
-  border-bottom: 1px dashed var(--border);
+  border-bottom: 1px solid var(--border);
 }
 @media (min-width: 36rem) {
   .sfm-row { grid-template-columns: minmax(0, 1fr) 8.5rem 2.75rem; }
@@ -295,7 +295,7 @@
   width: 2.75rem;
   height: 3.25rem;
   padding: 0;
-  border: 2px solid var(--border);
+  border: 2px solid var(--field);
   border-radius: var(--radius-small);
   background: var(--surface);
   color: var(--text-muted);
@@ -309,29 +309,31 @@
 .sfm-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.5rem 0 0.25rem; padding: 0; list-style: none; }
 .sfm-chip {
   min-height: 44px;
-  padding: 0.35rem 0.95rem;
-  border: 2px dashed var(--primary);
+  padding: 0.4rem 1.1rem;
+  border: 0;
   border-radius: 999px;
-  background: transparent;
-  color: var(--primary);
+  background: var(--mim-lime);
+  color: var(--mim-forest);
   font: inherit;
-  font-size: 1rem;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
 }
-@media (hover: hover) { .sfm-chip:hover { background: var(--primary-soft); } }
+@media (hover: hover) { .sfm-chip:hover { background: var(--mim-lime-pale); box-shadow: inset 0 0 0 2px var(--mim-lime); } }
 .sfm-add-row { margin: 0.25rem 0 0; }
 .sfm-add {
   min-height: 44px;
-  padding: 0;
+  padding: 0.4rem 1.1rem;
   border: 0;
-  background: none;
-  color: var(--primary);
+  border-radius: 999px;
+  background: var(--surface-alt);
+  color: var(--heading);
   font: inherit;
-  font-weight: 650;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
 }
-@media (hover: hover) { .sfm-add:hover { color: var(--primary-hover); text-decoration: underline; } }
+@media (hover: hover) { .sfm-add:hover { background: var(--primary-soft); } }
 .sfm-chip[disabled], .sfm-add[disabled] { opacity: 0.5; cursor: not-allowed; }
 
 /* ----- Worked sums (Steps 4 and 5) ----- */
@@ -342,20 +344,20 @@
   align-items: baseline;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0.5rem 0;
-  border-bottom: 1px dashed var(--border);
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--border);
 }
 .sfm-sum-row dt { display: flex; align-items: baseline; gap: 0.5rem; }
 .sfm-sum-row dt .sfm-letter { position: relative; top: 0.15rem; }
 .sfm-sum-row dd { margin: 0; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.sfm-sum-row.is-result { border-bottom: 0; font-weight: 700; }
-.sfm-sum-row.is-result dd { font-family: var(--font-heading); font-size: 1.35rem; font-weight: 700; }
+.sfm-sum-row.is-result { border-bottom: 0; font-weight: 600; color: var(--heading); }
+.sfm-sum-row.is-result dd { font-family: var(--font-heading); font-size: 1.4rem; font-weight: 900; }
 .sfm-sum-row.is-result + .sfm-sum-row { border-top: 2px solid var(--border); }
 
 /* ----- Step 5 ----- */
 
 .sfm-coverage { margin: 1.5rem 0 0; }
-.sfm-coverage-title { margin-bottom: 0.5rem; font-weight: 700; }
+.sfm-coverage-title { margin-bottom: 0.5rem; font-weight: 600; color: var(--heading); }
 .sfm-bar {
   display: flex;
   height: 1.5rem;
@@ -368,7 +370,7 @@
 .sfm-bar-part.is-hand, .sfm-swatch.is-hand { background: var(--primary); }
 .sfm-bar-part.is-saving, .sfm-swatch.is-saving { background: var(--primary-soft); }
 .sfm-bar-part.is-gap, .sfm-swatch.is-gap { background: var(--surface); }
-.sfm-key { display: flex; flex-wrap: wrap; gap: 0.35rem 1.25rem; margin: 0.6rem 0 0; padding: 0; list-style: none; font-size: 0.95rem; }
+.sfm-key { display: flex; flex-wrap: wrap; gap: 0.35rem 1.25rem; margin: 0.6rem 0 0; padding: 0; list-style: none; font-size: 15px; }
 .sfm-key li { display: inline-flex; align-items: center; gap: 0.4rem; }
 .sfm-swatch {
   display: inline-block;
@@ -381,12 +383,12 @@
 
 .sfm-funded {
   margin-top: 1.5rem;
-  padding: 1.25rem;
+  padding: 1.5rem;
   border: 2px solid var(--primary);
   border-radius: var(--radius);
   background: var(--primary-soft);
 }
-.sfm-funded h2 { margin-bottom: 0.4rem; }
+.sfm-funded h2 { margin-bottom: 0.4rem; font-weight: 900; }
 
 .sfm-partner-figures { margin-bottom: 1.5rem; }
 .sfm-people { margin: 0; padding: 0; list-style: none; }
@@ -398,15 +400,15 @@
   justify-content: center;
   width: 2rem;
   height: 2rem;
-  border-radius: 50%;
+  border-radius: 8px;
   background: var(--surface-alt);
-  font-weight: 700;
+  color: var(--heading);
+  font-weight: 900;
   font-size: 0.95rem;
 }
 .sfm-page-box {
-  margin-top: 1.5rem;
-  padding: 1rem;
-  border: 1px solid var(--border);
+  margin-top: 1.75rem;
+  padding: 1.25rem;
   border-radius: var(--radius);
   background: var(--surface-alt);
 }
@@ -416,19 +418,19 @@
 /* ----- Step 6 ----- */
 
 .sfm-checks { margin-top: 1.25rem; }
-.sfm-checks .check a { font-weight: 650; }
+.sfm-checks .check a { font-weight: 600; }
 .sfm-checks .sfm-legend + p { margin-bottom: 0.75rem; }
 .sfm-care { margin-top: 1rem; }
 .sfm-closing {
-  margin: 2rem 0;
-  padding: 1.25rem 0;
+  margin: 2rem 0 0;
+  padding: 1.25rem 0 0;
   border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
   font-family: var(--font-heading);
-  font-size: 1.35rem;
-  font-style: italic;
-  line-height: 1.4;
-  text-align: center;
+  font-size: clamp(1.25rem, 3.5vw, 1.45rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+  color: var(--heading);
   text-wrap: balance;
 }
 .sfm-keep .button-row .btn { flex-basis: 16rem; }
@@ -440,23 +442,23 @@
 .sfm-saved p { margin: 0; }
 .sfm-confirm {
   margin-top: 0.75rem;
-  padding: 1rem;
-  border: 2px solid var(--care-border);
-  border-radius: var(--radius);
-  background: var(--care-bg);
+  padding: 1.1rem 1.25rem;
+  border-left: 6px solid var(--mim-amber);
+  border-radius: 0 var(--radius-medium) var(--radius-medium) 0;
+  background: var(--surface-alt);
 }
-.sfm-confirm-text { font-weight: 650; }
+.sfm-confirm-text { font-weight: 600; }
 .sfm-intro-buttons { margin-top: 1.5rem; }
 
 .sfm-more {
   margin-top: 3rem;
   padding-top: 1.5rem;
   border-top: 1px solid var(--border);
-  font-size: 1rem;
+  font-size: 15px;
   color: var(--text-muted);
 }
 .sfm-more p { margin-bottom: 0.5rem; }
-.sfm-more a { font-weight: 650; }
+.sfm-more a { font-weight: 600; }
 .sfm-more + * { margin-top: 2rem; }
 
 /* =====================================================================
@@ -465,27 +467,28 @@
 
 .sfm-pdf-strip { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 16px; }
 .sfm-pdf-tile { padding: 6px 7px 7px; border: 1.5px solid var(--border); border-radius: 8px; background: var(--surface-alt); }
-.sfm-pdf-tile.is-gap { border-color: var(--accent); background: var(--accent-soft); }
-.sfm-pdf-tile-head { display: flex; align-items: flex-start; gap: 4px; min-height: 28px; font-size: 10px; line-height: 1.25; color: var(--text-muted); }
-.sfm-pdf-tile-value { display: block; margin-top: 3px; font-size: 15px; font-weight: 700; color: var(--text); }
+.sfm-pdf-tile.is-gap { border-color: var(--mim-forest); background: var(--mim-lime); }
+.sfm-pdf-tile-head { display: flex; align-items: flex-start; gap: 4px; min-height: 28px; font-size: 9.5px; line-height: 1.25; color: var(--text-muted); }
+.sfm-pdf-tile.is-gap .sfm-pdf-tile-head { color: var(--mim-forest); }
+.sfm-pdf-tile-value { display: block; margin-top: 3px; font-size: 14.5px; font-weight: 900; color: var(--mim-forest); }
 .sfm-pdf-letter {
   display: inline-block;
   flex: none;
   width: 15px;
   height: 15px;
   margin-right: 4px;
-  border-radius: 50%;
+  border-radius: 4px;
   background: var(--primary);
   color: var(--on-primary);
   font-size: 9px;
-  font-weight: 800;
+  font-weight: 900;
   line-height: 15px;
   text-align: center;
   vertical-align: 1px;
 }
 .sfm-pdf-tile-head .sfm-pdf-letter { margin-right: 0; }
 
-.sfm-pdf-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
+.sfm-pdf-cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 26px; }
 .sfm-pdf-step { margin-bottom: 14px; break-inside: avoid; page-break-inside: avoid; }
 .sfm-pdf-step-head {
   display: flex;
@@ -495,46 +498,50 @@
   padding-bottom: 4px;
   border-bottom: 2px solid var(--primary);
   font-family: var(--font-heading);
-  font-size: 15px;
-  font-weight: 700;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--mim-forest);
 }
 .sfm-pdf-num {
   display: inline-block;
   width: 20px;
   height: 20px;
-  border-radius: 50%;
-  background: var(--accent);
-  color: var(--on-accent);
+  border-radius: 6px;
+  background: var(--mim-forest);
+  color: var(--mim-cream);
   font-family: var(--font-body);
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 900;
   line-height: 20px;
   text-align: center;
 }
-.sfm-pdf-rows { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.sfm-pdf-rows { width: 100%; border-collapse: collapse; font-size: 12px; }
 .sfm-pdf-rows td { padding: 3px 0; border-bottom: 1px solid var(--border); vertical-align: top; }
 .sfm-pdf-rows td:last-child { padding-left: 10px; text-align: right; white-space: nowrap; font-weight: 600; }
-.sfm-pdf-rows tr.is-total td { border-bottom: 0; padding-top: 5px; font-weight: 700; }
-.sfm-pdf-rows tr.is-total td:last-child { font-size: 14px; }
+/* Words (where, when) can wrap; only the money stays on one line */
+.sfm-pdf-rows td.sfm-pdf-text { white-space: normal; overflow-wrap: anywhere; }
+.sfm-pdf-rows tr.is-total td { border-bottom: 0; padding-top: 5px; font-weight: 600; color: var(--mim-forest); }
+.sfm-pdf-rows tr.is-total td:last-child { font-size: 13.5px; font-weight: 900; }
 .sfm-pdf-rows tr:last-child td { border-bottom: 0; }
 .sfm-pdf-small { font-size: 12px; }
 .sfm-pdf-muted { color: var(--text-muted); }
-.sfm-pdf-sub { margin: 8px 0 3px; font-weight: 700; font-size: 12.5px; }
-.sfm-pdf-debt { margin: 6px 0 0; padding: 6px 9px; border: 1.5px solid var(--care-border); border-radius: 6px; background: var(--care-bg); font-size: 11.5px; }
+.sfm-pdf-sub { margin: 8px 0 3px; font-weight: 600; font-size: 12.5px; color: var(--mim-forest); }
+.sfm-pdf-debt { margin: 6px 0 0; padding: 6px 9px; border-left: 4px solid var(--care-border); border-radius: 0 8px 8px 0; background: var(--care-bg); font-size: 11px; }
 .sfm-pdf-gap {
   display: flex;
   align-items: center;
   gap: 6px;
   margin: 2px 0 6px;
   padding: 7px 10px;
-  border-radius: 8px;
-  background: var(--accent-soft);
-  font-weight: 700;
+  border-radius: 10px;
+  background: var(--mim-lime);
+  color: var(--mim-forest);
+  font-weight: 600;
 }
 .sfm-pdf-gap .sfm-pdf-letter { margin-right: 0; }
-.sfm-pdf-gap strong { margin-left: auto; font-family: var(--font-heading); font-size: 20px; }
-.sfm-pdf-checklist li { margin-bottom: 6px; font-size: 12.5px; }
-.sfm-pdf-checklist .pdf-box { display: inline-block; text-align: center; font-size: 11px; font-weight: 800; line-height: 12px; color: var(--on-primary); }
+.sfm-pdf-gap strong { margin-left: auto; font-family: var(--font-heading); font-size: 20px; font-weight: 900; }
+.sfm-pdf-checklist li { margin-bottom: 6px; font-size: 12px; }
+.sfm-pdf-checklist .pdf-box { display: inline-block; text-align: center; font-size: 11px; font-weight: 900; line-height: 12px; color: var(--on-primary); }
 .sfm-pdf-checklist .pdf-box.is-done { background: var(--primary); }
 .sfm-pdf-closing {
   margin: 4px 0 10px;
@@ -542,12 +549,21 @@
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
   font-family: var(--font-heading);
-  font-size: 15px;
-  font-style: italic;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--mim-forest);
   text-align: center;
 }
 .pdf-sheet .sfm-pdf-app { margin-top: 0; padding: 8px 14px; }
 .sfm-pdf-app p { margin: 0; }
+/* Tighter spacing, when pdf.js decides the plan is too full for one page */
+.pdf-compact .sfm-pdf-strip { margin-bottom: 10px; }
+.pdf-compact .sfm-pdf-tile-head { min-height: 24px; }
+.pdf-compact .sfm-pdf-step { margin-bottom: 9px; }
+.pdf-compact .sfm-pdf-rows { font-size: 11.5px; }
+.pdf-compact .sfm-pdf-rows td { padding: 2px 0; line-height: 1.3; }
+.pdf-compact .sfm-pdf-checklist li { margin-bottom: 4px; font-size: 11.5px; }
+.pdf-compact .sfm-pdf-closing { margin: 2px 0 6px; padding: 6px 0; font-size: 13.5px; }
 
 /* Partner with me */
 .sfm-pdf-partner { display: grid; grid-template-columns: 1.35fr 1fr; gap: 36px; padding-top: 6px; }
@@ -556,18 +572,20 @@
 .sfm-pdf-note {
   margin-bottom: 22px;
   padding: 16px 20px;
-  border-left: 4px solid var(--accent);
-  background: var(--surface-alt);
-  font-size: 15.5px;
-  line-height: 1.6;
+  border-left: 4px solid var(--mim-forest);
+  border-radius: 0 12px 12px 0;
+  background: var(--primary-soft);
+  font-size: 14px;
+  line-height: 1.55;
 }
 .sfm-pdf-note p:last-child { margin-bottom: 0; }
 .sfm-pdf-figures { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.sfm-pdf-figure { padding: 14px 16px; border: 1.5px solid var(--border); border-radius: 10px; }
-.sfm-pdf-figure.is-gap { border-color: var(--accent); background: var(--accent-soft); }
+.sfm-pdf-figure { padding: 14px 16px; border: 1.5px solid var(--border); border-radius: 16px; }
+.sfm-pdf-figure.is-gap { border-color: var(--mim-forest); background: var(--mim-lime); }
+.sfm-pdf-figure.is-gap .sfm-pdf-figure-label { color: var(--mim-forest); }
 .sfm-pdf-figure-label { display: block; min-height: 38px; font-size: 13px; line-height: 1.35; color: var(--text-muted); }
-.sfm-pdf-figure-value { display: block; font-family: var(--font-heading); font-size: 27px; font-weight: 700; line-height: 1.2; }
-.sfm-pdf-signoff { margin-top: 26px; font-family: var(--font-heading); font-size: 20px; font-style: italic; line-height: 1.35; }
+.sfm-pdf-figure-value { display: block; font-family: var(--font-heading); font-size: 26px; font-weight: 900; letter-spacing: -0.02em; line-height: 1.2; color: var(--mim-forest); }
+.sfm-pdf-signoff { margin-top: 26px; font-family: var(--font-heading); font-size: 19px; font-weight: 600; line-height: 1.35; color: var(--mim-forest); }
 
 .sfm-thermo { text-align: left; }
 .sfm-thermo .sfm-pdf-sub { margin-top: 0; margin-bottom: 14px; font-size: 15px; }

@@ -10,9 +10,9 @@
  *     title: "You're on Step 2",
  *     subtitle: 'Pay off all consumer debt',  // optional
  *     content: someElement,                    // a DOM node (or array of nodes)
- *     logo: '../assets/brand/logo-on-dark.svg', // optional: show the logo file in
- *                                              // the header band instead of the
- *                                              // name typed out
+ *     logo: false,                             // optional: the header band shows
+ *                                              // the logo (assets/brand/logo-on-dark.svg)
+ *                                              // unless this is false, or another file
  *     onePage: true                            // default: tighten spacing to fit
  *                                              // one A4 page; false lets long
  *                                              // content run onto more pages
@@ -36,6 +36,12 @@ window.MIMPdf = (function () {
   var A4_WIDTH_PX = 794;  // 210mm at 96dpi
   var A4_HEIGHT_PX = 1120; // 297mm at 96dpi, less a hair for rounding
   var loading = null;
+
+  // The logo for the Deep Forest header band, found next to this file so it
+  // works from any page.
+  var LOGO = (function () {
+    try { return new URL('brand/logo-on-dark.svg', document.currentScript.src).href; } catch (e) { return null; }
+  })();
 
   function loadLibrary() {
     if (window.html2pdf) return Promise.resolve(window.html2pdf);
@@ -82,9 +88,10 @@ window.MIMPdf = (function () {
 
     var head = el('div', 'pdf-head');
     var brand = el('div', 'pdf-brand');
-    if (opts.logo) {
+    var logoSrc = opts.logo === false ? null : (opts.logo || LOGO);
+    if (logoSrc) {
       var logo = el('img', 'pdf-brand-logo');
-      logo.src = opts.logo;
+      logo.src = logoSrc;
       logo.alt = 'Money in Motion';
       brand.appendChild(logo);
     } else {
@@ -127,6 +134,19 @@ window.MIMPdf = (function () {
     document.body.removeChild(holder);
   }
 
+  // Waits (a moment at most) for any pictures on the sheet, such as the logo.
+  function imagesReady(node, ms) {
+    var waits = Array.prototype.map.call(node.querySelectorAll('img'), function (img) {
+      if (img.complete) return null;
+      return new Promise(function (resolve) {
+        img.addEventListener('load', resolve);
+        img.addEventListener('error', resolve);
+        setTimeout(resolve, ms);
+      });
+    });
+    return Promise.all(waits);
+  }
+
   // Fallback: show only the sheet and open the print window.
   function printSheet(sheet) {
     var root = document.getElementById('mim-print-root');
@@ -144,7 +164,7 @@ window.MIMPdf = (function () {
       window.removeEventListener('afterprint', cleanup);
     };
     window.addEventListener('afterprint', cleanup);
-    window.print();
+    return imagesReady(root, 2000).then(function () { window.print(); });
   }
 
   function download(opts) {
@@ -170,8 +190,7 @@ window.MIMPdf = (function () {
       .then(function () { return 'pdf'; })
       .catch(function (err) {
         if (window.console) console.warn('MIM: PDF download failed, opening print instead.', err);
-        printSheet(sheet);
-        return 'print';
+        return printSheet(sheet).then(function () { return 'print'; });
       });
   }
 

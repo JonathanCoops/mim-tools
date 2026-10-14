@@ -9,7 +9,12 @@
   <meta property="og:title" content="Money in Motion Free Tools">
   <meta property="og:description" content="Free, private money tools from Money in Motion.">
   <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="theme-color" content="#F9F7E7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#10281A" media="(prefers-color-scheme: dark)">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/brand/app-icon-512.png">
+  <link rel="preload" href="assets/brand/fonts/poppins-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/brand/fonts/poppins-latin-900-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/styles.css">
 </head>
 <body>
@@ -18,8 +23,10 @@
   <header class="site-header">
     <div class="container container-wide">
       <a class="brand" href="./">
-        <img class="brand-mark" src="assets/favicon.svg" alt="" width="32" height="32">
-        <span>Money in Motion</span>
+        <picture>
+          <source srcset="assets/brand/logo-on-dark.svg" media="(prefers-color-scheme: dark)">
+          <img class="brand-logo" src="assets/brand/logo.svg" alt="Money in Motion" width="150" height="56">
+        </picture>
         <span class="brand-sub">Free tools</span>
       </a>
     </div>
@@ -27,9 +34,9 @@
 
   <main id="main">
     <div class="container container-wide">
-      <section class="hero">
+      <section class="hero band">
         <p class="eyebrow">Free and private</p>
-        <h1>Money in Motion Free Tools</h1>
+        <h1 class="display">Free money tools</h1>
         <p class="lead">Simple tools to help you get your money organised, one step at a time. They work on your phone, and your numbers never leave it.</p>
       </section>
 
@@ -68,8 +75,8 @@
         </li>
       </ul>
 
-      <section class="card card-quiet section-gap" aria-labelledby="more-heading">
-        <h2 class="h3" id="more-heading">Want to go further?</h2>
+      <section class="band band-alt more-band" aria-labelledby="more-heading">
+        <h2 id="more-heading">Want to go further?</h2>
         <p>The free Money in Motion app has a budget builder and a debt snowball tool. And if you'd like to talk about money and faith with your church or small group, have a look at the Money &amp; Faith course.</p>
         <div class="button-row">
           <a class="btn btn-primary" data-mim-link="appWeb" href="https://app.moneyinmotion.org/" target="_blank" rel="noopener noreferrer">Open the app</a>

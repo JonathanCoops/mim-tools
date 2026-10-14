@@ -15,11 +15,12 @@ Free web tools for [Money in Motion](https://moneyinmotion.org/). Plain HTML, CS
 index.html              Home page with a card for each tool
 assets/
   config.js             EVERY link and setting. Start here.
-  styles.css            Shared design. Brand colours and fonts are in the first block.
+  styles.css            Shared design for every page and PDF, built on Brand Guide 2.0.
+                        Brand colours and fonts are in the first block.
   site.js               Shared helpers: footer, safe storage, email form, share buttons
   pdf.js                Shared "download as PDF" helper (falls back to print)
   baby-steps.js         The Baby Steps framework wording, used by every tool
-  favicon.svg           Site icon (also used as the logo mark in the header)
+  favicon.svg           Site icon (the gear mark from the brand guide)
   brand/                Brand Guide 2.0 files: the logo (for light and for dark
                         backgrounds), the gear mark, the app icon, and the Poppins
                         web fonts (the guide's approved backup for Mava MotionEV,
@@ -104,12 +105,12 @@ No installs needed, just Node. Run the one for a tool after changing its sums or
 
 - **Page shell:** copy the header, `<main>`, `<footer data-mim-footer>` and the scripts from any tool's `index.html`. The footer (disclaimer, app and website links) fills itself in from `config.js`.
 - **Saved answers:** use `MIM.storage.get/set/remove` (never throws). Give the tool its own key, e.g. `mim.debt.v1`, and list it on the body: `<body data-mim-storage="mim.debt.v1">`. The footer then shows "Clear my answers" and fires a `mim:cleared` event on `document` so the tool can reset.
-- **PDF:** load `assets/pdf.js` and call `MIMPdf.download({ filename, eyebrow, title, subtitle, content, onePage })`. Add `logo: '../assets/brand/logo-on-dark.svg'` to show the logo in the header band instead of the name typed out. Build `content` with `MIM.h()` and the `pdf-*` classes in `styles.css`. Header and footer are added for you. Set `onePage: false` if the content can run to several pages. If the PDF library can't load, it opens the print window instead.
+- **PDF:** load `assets/pdf.js` and call `MIMPdf.download({ filename, eyebrow, title, subtitle, content, onePage })`. The Money in Motion logo goes in the header band for you; pass `logo: false` to type the name out instead. Build `content` with `MIM.h()` and the `pdf-*` classes in `styles.css`. Header and footer are added for you. Set `onePage: false` if the content can run to several pages. If the PDF library can't load, it opens the print window instead.
 - **Email:** `MIM.emailForm({ heading, intro, buttonLabel, hiddenFields: { field: value } })` returns a ready-made MailerLite form section.
 - **Sharing:** `MIM.shareRow({ heading, message, url })` gives Copy link and WhatsApp buttons.
 - **Links:** add new ones to `config.js` and read them from `MIM.links`. In static HTML, `<a data-mim-link="appWeb" href="...">` takes its address from config.
 - **Libraries:** only from cdnjs or jsDelivr, pinned to an exact version with an `integrity` hash, and loaded only when needed.
-- **Design:** use the CSS variables, never raw colours, so dark mode and rebranding keep working.
+- **Design:** use the CSS variables, never raw colours, so dark mode and rebranding keep working. The building blocks are in `styles.css`: `band` (a Forest block in light mode, Lime in dark) and `band-alt` (the reverse) for intros and headline results, `display` for a big title, `eyebrow` for the small label above it, `card`, and the pill buttons. Keep to the brand guide: Motion Orange at most once per screen and never as text on a light background, and the logo files used as they are, never retyped, at 110px wide or more.
 
 ## House rules
 
