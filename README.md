@@ -7,6 +7,7 @@ Free web tools for [Money in Motion](https://moneyinmotion.org/). Plain HTML, CS
 | Which Baby Step am I on? (quiz) | `quiz/` | Live |
 | Debt Snowball Planner | `debt-planner/` | Live |
 | Saving for Mission Builder | `saving-for-mission/` | Live |
+| Christmas Without Debt | `christmas/` | Live |
 
 ## Folder structure
 
@@ -19,6 +20,10 @@ assets/
   pdf.js                Shared "download as PDF" helper (falls back to print)
   baby-steps.js         The Baby Steps framework wording, used by every tool
   favicon.svg           Site icon (also used as the logo mark in the header)
+  brand/                Brand Guide 2.0 files: the logo (for light and for dark
+                        backgrounds), the gear mark, the app icon, and the Poppins
+                        web fonts (the guide's approved backup for Mava MotionEV,
+                        whose web licence is still to be confirmed)
 quiz/
   index.html            The quiz page
   logic.js              The placement rules (no words, no page code)
@@ -39,6 +44,14 @@ saving-for-mission/
   pdfs.js               The two PDFs: My Mission Cost Plan, Partner with me
   builder.css           Styles for this tool only
   tests/mission.test.js Tests the sums, the worked example and the copy
+christmas/
+  index.html            The planner page
+  logic.js              Dates, paydays and the sums (no words, no page code)
+  content.js            Every word the planner uses, and the family messages
+  app.js                Puts it on screen
+  pdfs.js               The two PDFs: My Debt-Free Christmas Plan, Christmas shopping list
+  christmas.css         Styles for this tool only, set to Brand Guide 2.0
+  tests/christmas.test.js Tests the dates, paydays, sums and the copy
 tests/quiz-logic.test.js        Tests every path through the quiz
 ```
 
@@ -78,6 +91,7 @@ then open <http://localhost:8000/>. (Opening `index.html` straight from disk mos
 node tests/quiz-logic.test.js
 node debt-planner/snowball.test.js
 node saving-for-mission/tests/mission.test.js
+node christmas/tests/christmas.test.js
 ```
 
 No installs needed, just Node. Run the one for a tool after changing its sums or its `content.js`.
@@ -90,7 +104,7 @@ No installs needed, just Node. Run the one for a tool after changing its sums or
 
 - **Page shell:** copy the header, `<main>`, `<footer data-mim-footer>` and the scripts from any tool's `index.html`. The footer (disclaimer, app and website links) fills itself in from `config.js`.
 - **Saved answers:** use `MIM.storage.get/set/remove` (never throws). Give the tool its own key, e.g. `mim.debt.v1`, and list it on the body: `<body data-mim-storage="mim.debt.v1">`. The footer then shows "Clear my answers" and fires a `mim:cleared` event on `document` so the tool can reset.
-- **PDF:** load `assets/pdf.js` and call `MIMPdf.download({ filename, eyebrow, title, subtitle, content, onePage })`. Build `content` with `MIM.h()` and the `pdf-*` classes in `styles.css`. Header and footer are added for you. Set `onePage: false` if the content can run to several pages. If the PDF library can't load, it opens the print window instead.
+- **PDF:** load `assets/pdf.js` and call `MIMPdf.download({ filename, eyebrow, title, subtitle, content, onePage })`. Add `logo: '../assets/brand/logo-on-dark.svg'` to show the logo in the header band instead of the name typed out. Build `content` with `MIM.h()` and the `pdf-*` classes in `styles.css`. Header and footer are added for you. Set `onePage: false` if the content can run to several pages. If the PDF library can't load, it opens the print window instead.
 - **Email:** `MIM.emailForm({ heading, intro, buttonLabel, hiddenFields: { field: value } })` returns a ready-made MailerLite form section.
 - **Sharing:** `MIM.shareRow({ heading, message, url })` gives Copy link and WhatsApp buttons.
 - **Links:** add new ones to `config.js` and read them from `MIM.links`. In static HTML, `<a data-mim-link="appWeb" href="...">` takes its address from config.
