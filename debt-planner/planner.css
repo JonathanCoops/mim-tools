@@ -6,7 +6,7 @@
    ===================================================================== */
 
 .dp { padding: 2rem 0 1rem; }
-.dp-intro h1 { margin-bottom: 0.4em; }
+.dp-intro .small.muted { margin: 1rem 0 0; }
 .dp-counts p { margin-bottom: 0.5rem; }
 
 /* ----- Form fields ----- */
@@ -18,7 +18,7 @@
 }
 .dp-hint {
   margin: -0.2rem 0 0.4rem;
-  font-size: 0.95rem;
+  font-size: 15px;
   line-height: 1.4;
   color: var(--text-muted);
 }
@@ -39,7 +39,7 @@
 .dp input[aria-invalid="true"] { border-color: var(--accent); }
 .dp-error {
   margin: 0.4rem 0 0;
-  font-size: 0.95rem;
+  font-size: 15px;
   font-weight: 600;
   color: var(--accent);
 }
@@ -64,23 +64,23 @@
   border-radius: var(--radius-small);
   background: var(--primary-soft);
 }
-.dp-debt-name { display: block; font-weight: 650; line-height: 1.3; overflow-wrap: anywhere; }
-.dp-debt-meta { display: block; font-size: 0.95rem; color: var(--text-muted); }
+.dp-debt-name { display: block; font-weight: 600; line-height: 1.3; color: var(--heading); overflow-wrap: anywhere; }
+.dp-debt-meta { display: block; font-size: 15px; color: var(--text-muted); }
 .dp-debt-actions { display: flex; gap: 1.25rem; }
 .dp-empty { margin-bottom: 0.5rem; }
 
 .dp-example {
   margin-top: 0.5rem;
-  padding: 1rem 1.1rem;
-  border-radius: var(--radius-small);
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-medium);
   background: var(--surface-alt);
 }
 .dp-example p { margin-bottom: 0.75rem; }
 .dp-full {
   margin-top: 1rem;
-  padding: 0.85rem 1rem;
-  border-left: 4px solid var(--care-border);
-  border-radius: 0 var(--radius-small) var(--radius-small) 0;
+  padding: 0.9rem 1.1rem;
+  border-left: 6px solid var(--care-border);
+  border-radius: 0 var(--radius-medium) var(--radius-medium) 0;
   background: var(--care-bg);
 }
 
@@ -102,12 +102,21 @@
 /* ----- Results ----- */
 
 .dp-headline {
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.6rem;
   font-size: clamp(2rem, 7.5vw, 2.9rem);
-  letter-spacing: -0.01em;
+  line-height: 1.15;
 }
-.dp-headline-date { color: var(--primary); }
-.dp-away { font-size: 1.15rem; font-weight: 600; }
+.dp-headline-date {
+  display: inline-block;
+  padding: 0 0.35em;
+  border-radius: 999px;
+  background: var(--band-btn);
+  color: var(--band-btn-text);
+  line-height: 1.2;
+}
+.dp-away { font-size: 18px; font-weight: 600; }
+.dp-hero > * { position: relative; }
+.dp-hero .muted { color: var(--band-muted); }
 
 .dp-stat {
   display: flex;
@@ -115,27 +124,31 @@
   align-items: baseline;
   gap: 0.15rem 0.75rem;
   margin: 1.25rem 0 1rem;
-  padding: 0.85rem 1rem;
-  border-radius: var(--radius-small);
-  background: var(--surface-alt);
+  padding: 0.9rem 1.1rem;
+  border-radius: var(--radius-medium);
+  background: var(--band-line);
 }
 .dp-stat-label { font-weight: 600; }
 .dp-stat-value {
   font-family: var(--font-heading);
+  color: var(--band-heading);
   font-size: 1.6rem;
-  font-weight: 700;
+  font-weight: 900;
   line-height: 1.2;
   font-variant-numeric: tabular-nums;
 }
-.dp-stat-note { flex-basis: 100%; font-size: 0.95rem; color: var(--text-muted); }
+.dp-stat-note { flex-basis: 100%; font-size: 15px; color: var(--band-text); }  /* full text colour: muted is under 4.5:1 on the tinted tile */
 
 .dp-warning {
   margin: 1rem 0 0;
-  padding: 0.85rem 1rem;
-  border-left: 4px solid var(--care-border);
-  border-radius: 0 var(--radius-small) var(--radius-small) 0;
+  padding: 0.9rem 1.1rem;
+  border-left: 6px solid var(--care-border);
+  border-radius: 0 var(--radius-medium) var(--radius-medium) 0;
   background: var(--care-bg);
+  color: var(--text);
 }
+/* On the Deep Forest block the panel stays light, so its text stays dark */
+.band .dp-warning { background: var(--mim-cream); color: var(--mim-ink); }
 
 .dp-order .ladder-title { overflow-wrap: anywhere; }
 .dp-order .ladder-desc + .ladder-desc { margin-top: 0.15rem; }
@@ -143,13 +156,13 @@
 .dp-chart { position: relative; height: 260px; margin: 1rem 0 0.5rem; }
 @media (min-width: 40rem) { .dp-chart { height: 300px; } }
 .dp-table-details { margin-top: 1rem; }
-.dp-table { width: 100%; border-collapse: collapse; font-size: 1rem; }
+.dp-table { width: 100%; border-collapse: collapse; font-size: 15px; }
 .dp-table th, .dp-table td {
   padding: 0.45rem 0.25rem;
   border-bottom: 1px solid var(--border);
   text-align: left;
 }
-.dp-table th { font-weight: 650; color: var(--text-muted); }
+.dp-table th { font-weight: 600; color: var(--text-muted); }
 .dp-table td:last-child, .dp-table th:last-child { text-align: right; font-variant-numeric: tabular-nums; }
 .dp-table tr:last-child td { border-bottom: 0; }
 
@@ -177,25 +190,26 @@
   gap: 24px;
   margin-bottom: 16px;
   padding: 14px 20px 16px;
-  border-radius: 10px;
-  background: var(--primary-soft);
+  border-radius: 16px;
+  background: var(--mim-lime);
 }
 .dp-pdf-hero p { margin: 0; }
 .pdf-body .dp-pdf-label {
   margin: 0 0 2px;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--primary);
+  color: var(--mim-forest);
 }
 .pdf-body .dp-pdf-date {
   margin: 0;
   font-family: var(--font-heading);
   font-size: 46px;
-  font-weight: 700;
+  font-weight: 900;
+  letter-spacing: -0.025em;
   line-height: 1.05;
-  color: var(--text);
+  color: var(--mim-forest);
 }
 .pdf-body .dp-pdf-date.is-long { font-size: 26px; }
 .dp-pdf-stats {
@@ -205,9 +219,9 @@
   text-align: right;
   font-size: 12.5px;
   line-height: 1.55;
-  color: var(--text-muted);
+  color: var(--mim-forest);
 }
-.dp-pdf-stats li:first-child { font-weight: 700; color: var(--text); }
+.dp-pdf-stats li:first-child { font-weight: 600; }
 
 .pdf-body .dp-pdf-hint { margin-top: -4px; margin-bottom: 6px; }
 
@@ -226,14 +240,14 @@
   align-items: center;
   justify-content: center;
   width: 22px; height: 22px;
-  border-radius: 50%;
+  border-radius: 7px;
   background: var(--primary);
   color: var(--on-primary);
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 900;
 }
 .dp-pdf-text { display: block; min-width: 0; line-height: 1.25; }
-.dp-pdf-name { display: block; font-size: 13.5px; font-weight: 700; overflow-wrap: anywhere; }
+.dp-pdf-name { display: block; font-size: 13.5px; font-weight: 600; overflow-wrap: anywhere; }
 .dp-pdf-meta { display: block; font-size: 11px; color: var(--text-muted); }
 .dp-pdf-cells { display: flex; gap: 3px; }
 .dp-pdf-cell {
@@ -242,7 +256,7 @@
   border: 1.5px solid var(--primary);
   border-radius: 3px;
 }
-.dp-pdf-clears { text-align: right; font-size: 12px; font-weight: 700; white-space: nowrap; }
+.dp-pdf-clears { text-align: right; font-size: 12px; font-weight: 600; white-space: nowrap; }
 
 /* Row sizes: planner.js picks the roomiest one that fits on the page */
 .dp-pdf-debts.is-roomy .dp-pdf-debt { padding: 12px 0; }
@@ -276,13 +290,13 @@
   border: 1.5px solid var(--border);
   border-radius: 6px;
   font-size: 10.5px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--text-muted);
 }
 .dp-pdf-month .dp-pdf-cell { width: 18px; height: 18px; border-width: 2px; }
-.dp-pdf-month.is-free { border-color: var(--accent); background: var(--accent-soft); color: var(--text); }
+.dp-pdf-month.is-free { border-color: var(--mim-forest); background: var(--mim-lime); color: var(--mim-forest); }
 .dp-pdf-month.is-after { opacity: 0.45; }
-.dp-pdf-free { font-size: 9.5px; line-height: 18px; color: var(--accent); }
+.dp-pdf-free { font-size: 9.5px; font-weight: 600; line-height: 18px; color: var(--mim-forest); }
 
 .dp-pdf-pledge {
   display: grid;
@@ -291,17 +305,17 @@
   margin-top: 4px;
   padding: 12px 18px 16px;
   border: 2px solid var(--primary);
-  border-radius: 10px;
+  border-radius: 16px;
 }
 .pdf-body .dp-pdf-pledge p { margin: 0; }
 .pdf-body .dp-pdf-pledge-title {
   grid-column: 1 / -1;
   font-family: var(--font-heading);
   font-size: 20px;
-  font-weight: 700;
+  font-weight: 900;
   color: var(--text);
 }
-.dp-pdf-line { display: flex; align-items: flex-end; gap: 8px; font-size: 12px; font-weight: 700; }
+.dp-pdf-line { display: flex; align-items: flex-end; gap: 8px; font-size: 12px; font-weight: 600; }
 .dp-pdf-line-wide { grid-column: 1 / -1; }
 .dp-pdf-rule { flex: 1; height: 24px; border-bottom: 1.5px solid var(--text-muted); }
 .dp-pdf-partner-hint { font-weight: 400; color: var(--text-muted); }

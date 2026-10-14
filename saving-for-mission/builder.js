@@ -347,9 +347,10 @@
   function renderIntro() {
     var I = C.intro;
     var nodes = [
-      h('p', { className: 'eyebrow' }, I.eyebrow),
-      h('h1', { tabindex: '-1' }, I.title),
-      h('p', { className: 'lead' }, I.lead),
+      h('div', { className: 'band intro-band' },
+        h('p', { className: 'eyebrow' }, I.eyebrow),
+        h('h1', { className: 'display', tabindex: '-1' }, I.title),
+        h('p', { className: 'lead' }, I.lead)),
       I.body.map(function (p) { return h('p', null, p); }),
       h('ul', { className: 'intro-points' }, I.points.map(function (p) { return h('li', null, p); }))
     ];

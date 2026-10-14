@@ -110,9 +110,9 @@
     el.flash = h('p', { className: 'form-status', role: 'status', 'aria-live': 'polite' });
     el.live = h('p', { className: 'visually-hidden', role: 'status', 'aria-live': 'polite' });
 
-    var intro = h('section', { className: 'dp-intro' },
+    var intro = h('section', { className: 'dp-intro band intro-band' },
       h('p', { className: 'eyebrow' }, C.intro.eyebrow),
-      h('h1', { tabindex: '-1', id: 'dp-title' }, C.intro.title),
+      h('h1', { className: 'display', tabindex: '-1', id: 'dp-title' }, C.intro.title),
       h('p', { className: 'lead' }, C.intro.lead),
       h('p', { className: 'small muted' }, C.intro.privacy),
       el.flash
@@ -523,7 +523,7 @@
       nodes.push(h('p', { className: 'dp-warning' }, text));
     });
 
-    return h('section', { className: 'card dp-hero', 'aria-labelledby': 'dp-headline' }, nodes);
+    return h('section', { className: 'card dp-hero band', 'aria-labelledby': 'dp-headline' }, nodes);
   }
 
   function orderCard(plan, start) {
