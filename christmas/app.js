@@ -44,6 +44,13 @@
       return values[key] !== undefined ? values[key] : match;
     });
   }
+  // Like fill(), but the values can be elements (to pick out a figure).
+  function fillNodes(template, values) {
+    return String(template).split(/(\{\w+\})/).filter(Boolean).map(function (part) {
+      var key = /^\{(\w+)\}$/.exec(part);
+      return key && values[key[1]] !== undefined ? values[key[1]] : part;
+    });
+  }
   function money(pounds) { return L.formatMoney(pounds); }
   function count(n, one, many) { return n + ' ' + (n === 1 ? one : many); }
   function paydaysText(n) { return count(n, C.ui.payday, C.ui.paydays); }
@@ -179,7 +186,11 @@
 
   /* ---------------- Small building blocks ---------------- */
 
-  function title(text) { return h('h1', { id: 'step-title', className: 'xm-title', tabindex: '-1' }, text); }
+  function title(text) {
+    return h('div', { className: 'xm-step-head' },
+      h('span', { className: 'xm-step-num', 'aria-hidden': 'true' }, screen),
+      h('h1', { id: 'step-title', className: 'xm-title', tabindex: '-1' }, text));
+  }
 
   function goToButton(n) {
     return h('button', { type: 'button', className: 'link-button', onClick: function () { show(String(n), 'push'); } },
@@ -269,40 +280,57 @@
       h('p', null, K.local));
   }
 
-  // A small star, drawn rather than typed so it looks the same everywhere.
-  function star(className) {
+  // A four-point sparkle: the one seasonal touch, drawn so it looks the same everywhere.
+  function sparkle(className) {
     var ns = 'http://www.w3.org/2000/svg';
     var svg = document.createElementNS(ns, 'svg');
     svg.setAttribute('viewBox', '0 0 24 24');
     svg.setAttribute('aria-hidden', 'true');
     svg.setAttribute('focusable', 'false');
-    svg.setAttribute('class', className || 'xm-star');
+    svg.setAttribute('class', className || 'xm-sparkle');
     var path = document.createElementNS(ns, 'path');
-    path.setAttribute('d', 'M12 1.5l2.6 7.3 7.7.3-6.1 4.8 2.2 7.5L12 17l-6.4 4.4 2.2-7.5L1.7 9.1l7.7-.3z');
+    path.setAttribute('d', 'M12 0c.9 6.4 5.1 10.6 12 12-6.9 1.4-11.1 5.6-12 12-.9-6.4-5.1-10.6-12-12C6.9 10.6 11.1 6.4 12 0z');
     svg.appendChild(path);
     return svg;
+  }
+
+  // Background shapes from the brand's graphic language: soft squircles and
+  // the gear cluster, cropped by the edge of the block.
+  function backdrop() {
+    return [
+      h('span', { className: 'xm-shape xm-shape-1', 'aria-hidden': 'true' }),
+      h('span', { className: 'xm-shape xm-shape-2', 'aria-hidden': 'true' }),
+      h('span', { className: 'xm-gears', 'aria-hidden': 'true' })
+    ];
   }
 
   /* ---------------- Intro ---------------- */
 
   function renderIntro() {
     var I = C.intro;
+    var hasPlan = L.hasData(state);
     var nodes = [
-      h('div', { className: 'xm-hero' },
-        h('p', { className: 'eyebrow' }, star('xm-star xm-star-small'), ' ', I.eyebrow),
-        h('h1', { tabindex: '-1' }, I.title),
-        h('p', { className: 'lead' }, I.lead),
-        h('p', { className: 'xm-stat' }, I.stat),
-        h('p', null, I.statAfter),
-        h('ul', { className: 'intro-points' }, I.points.map(function (p) { return h('li', null, p); })))
+      h('section', { className: 'xm-hero xm-band', 'aria-labelledby': 'xm-hero-title' },
+        backdrop(),
+        sparkle('xm-sparkle xm-sparkle-1'), sparkle('xm-sparkle xm-sparkle-2'), sparkle('xm-sparkle xm-sparkle-3'),
+        h('div', { className: 'xm-hero-inner' },
+          h('p', { className: 'xm-chip-label' }, I.eyebrow),
+          h('h1', { id: 'xm-hero-title', className: 'xm-display', tabindex: '-1' }, I.title),
+          h('p', { className: 'xm-hero-lead' }, I.lead),
+          hasPlan ? null : h('div', { className: 'xm-hero-actions' },
+            h('button', { type: 'button', className: 'btn btn-primary', onClick: startFresh }, I.start))))
     ];
+    var about = h('section', { className: 'xm-about', 'aria-label': I.title },
+      h('p', { className: 'xm-stat' }, I.stat),
+      h('p', { className: 'xm-about-text' }, I.statAfter),
+      h('ul', { className: 'xm-points' }, I.points.map(function (p) { return h('li', null, p); })));
 
     if (flash) {
       nodes.push(h('p', { className: 'form-status', role: 'status' }, flash));
       flash = '';
     }
 
-    if (L.hasData(state)) {
+    if (hasPlan) {
       var confirm = makeConfirm();
       var resume = state.screen !== 'intro' ? state.screen : '1';
       var againBtn = h('button', { type: 'button', className: 'link-button' }, I.startAgain);
@@ -321,10 +349,9 @@
           }, I.carryOn)),
         h('p', { className: 'xm-again' }, againBtn),
         confirm));
-      nodes.push(savedLine());
+      nodes.push(about, savedLine());
     } else {
-      nodes.push(h('div', { className: 'button-row xm-intro-buttons' },
-        h('button', { type: 'button', className: 'btn btn-primary', onClick: startFresh }, I.start)));
+      nodes.push(about);
     }
     return nodes;
   }
@@ -346,14 +373,16 @@
   function topBar(n) {
     var countText = fill(C.ui.stepCount, { n: n });
     return h('div', { className: 'xm-top' },
-      h('div', { className: 'quiz-top' },
-        h('button', { type: 'button', className: 'back-button', onClick: goBack },
+      h('div', { className: 'xm-top-row' },
+        h('button', { type: 'button', className: 'xm-back', onClick: goBack },
           h('span', { 'aria-hidden': 'true' }, '←'), ' ' + C.ui.back),
-        h('span', { className: 'quiz-count' }, countText)),
+        h('span', { className: 'xm-step-count' }, countText)),
       h('div', {
-        className: 'progress xm-progress', role: 'progressbar', 'aria-label': C.intro.title,
+        className: 'xm-progress', role: 'progressbar', 'aria-label': C.intro.title,
         'aria-valuemin': '0', 'aria-valuemax': String(STEPS), 'aria-valuenow': String(n), 'aria-valuetext': countText + ': ' + C.stepNames[n - 1]
-      }, h('div', { className: 'progress-fill', style: 'width:' + Math.round(n / STEPS * 100) + '%' })));
+      }, C.stepNames.map(function (name, i) {
+        return h('span', { className: 'xm-progress-step' + (i + 1 < n ? ' is-done' : i + 1 === n ? ' is-current' : '') });
+      })));
   }
 
   // The running total, on every step.
@@ -849,9 +878,12 @@
     var nodes = [
       title(A.title),
       h('p', null, A.intro),
-      h('div', { className: 'checks xm-worried' },
-        h('label', { className: 'check', for: 'worried' }, worried,
-          h('span', null, A.worried.label, h('span', { className: 'xm-hint', id: 'worried-hint' }, A.worried.hint)))),
+      // A question the reader answers, so it opens with the purple brace.
+      h('div', { className: 'xm-reflect' },
+        h('span', { className: 'xm-brace', 'aria-hidden': 'true' }, '{'),
+        h('div', { className: 'checks xm-worried' },
+          h('label', { className: 'check', for: 'worried' }, worried,
+            h('span', null, A.worried.label, h('span', { className: 'xm-hint', id: 'worried-hint' }, A.worried.hint))))),
       care
     ];
 
@@ -879,8 +911,8 @@
       need.hidden = !need.textContent;
     });
 
-    var party = h('div', { className: 'xm-celebrate', role: 'status' },
-      star('xm-star xm-star-big'),
+    var party = h('div', { className: 'xm-celebrate xm-band', role: 'status' },
+      sparkle('xm-sparkle xm-sparkle-badge'),
       h('div', null, h('p', { className: 'xm-celebrate-heading' }, A.celebrate.heading), h('p', null, A.celebrate.body)));
     updaters.push(function (x) { party.hidden = !x.balanced; });
 
@@ -910,7 +942,7 @@
     var P = C.plan;
     var head = r.headline;
     if (head.kind === 'covered' || head.kind === 'need') {
-      return [fill(P.headline, { amount: money(head.amount), date: L.formatDayMonth(head.date) }),
+      return [fillNodes(P.headline, { amount: h('span', { className: 'xm-headline-amount' }, money(head.amount)), date: L.formatDayMonth(head.date) }),
         head.kind === 'need' && r.perPayday > 0 ? fill(P.stretch, { more: money(head.more) }) : ''];
     }
     if (head.kind === 'already') return [P.already, P.alreadyMore];
@@ -939,9 +971,9 @@
     var r = figures();
     var lines = headlineText(r);
 
-    var head = h('div', { className: 'xm-headline' + (r.balanced ? ' is-covered' : '') },
-      star('xm-star xm-star-big'),
-      h('div', null,
+    var head = h('div', { className: 'xm-headline xm-band' + (r.balanced ? ' is-covered' : '') },
+      backdrop(),
+      h('div', { className: 'xm-headline-inner' },
         h('p', { className: 'xm-headline-main' }, lines[0]),
         lines[1] ? h('p', { className: 'xm-headline-more' }, lines[1]) : null,
         (r.headline.kind === 'need' && r.perPayday > 0) || r.headline.kind === 'noPaydays' ? goToButton(4) : null));
@@ -1024,7 +1056,7 @@
     var P = C.plan;
     var M = C.more;
     var status = h('p', { className: 'form-status', role: 'status', 'aria-live': 'polite' });
-    var keep = h('section', { className: 'card xm-keep', 'aria-labelledby': 'keep-heading' },
+    var keep = h('section', { className: 'xm-keep xm-band', 'aria-labelledby': 'keep-heading' },
       h('h2', { className: 'h3', id: 'keep-heading' }, K.heading),
       h('p', null, K.body),
       h('div', { className: 'button-row' }, pdfButton('plan', status), pdfButton('list', status)),
@@ -1171,8 +1203,11 @@
       btn.disabled = true;
       btn.setAttribute('aria-busy', 'true');
       status.textContent = K.working;
-      var r = figures();
-      window.MIMPdf.download(kind === 'plan' ? PDFS.plan(state, r) : PDFS.list(state, r)).then(function (how) {
+      var fonts = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
+      fonts.then(function () {
+        var r = figures();
+        return window.MIMPdf.download(kind === 'plan' ? PDFS.plan(state, r) : PDFS.list(state, r));
+      }).then(function (how) {
         btn.disabled = false;
         btn.removeAttribute('aria-busy');
         status.textContent = how === 'pdf' ? K.done : K.printed;

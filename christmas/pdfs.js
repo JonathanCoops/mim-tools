@@ -24,6 +24,8 @@ window.MIMChristmasPdfs = (function () {
   // for very long lists or big device fonts.
   var DENSITIES = ['is-roomy', '', 'is-many', 'is-dense', 'is-dense is-squeezed', 'is-dense is-squeezed is-trimmed'];
   var PAGE_HEIGHT = 1120; // A4 at 96dpi, the same limit assets/pdf.js uses
+  // The header band is Deep Forest, so it takes the logo made for dark backgrounds.
+  var LOGO = '../assets/brand/logo-on-dark.svg';
 
   function money(pounds) { return L.formatMoney(pounds); }
   function fill(template, values) {
@@ -214,6 +216,7 @@ window.MIMChristmasPdfs = (function () {
       eyebrow: C.pdf.eyebrow,
       title: P.title,
       subtitle: fill(P.subtitle, { year: r.christmas.y }),
+      logo: LOGO,
       onePage: true
     }, function (density) { return planContent(state, r, density); });
   }
@@ -255,6 +258,7 @@ window.MIMChristmasPdfs = (function () {
       eyebrow: C.pdf.eyebrow,
       title: S.title,
       subtitle: fill(S.subtitle, { year: r.christmas.y }),
+      logo: LOGO,
       onePage: true
     }, function (density) { return listContent(state, r, density); });
   }

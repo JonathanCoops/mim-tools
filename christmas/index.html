@@ -9,19 +9,26 @@
   <meta property="og:title" content="Christmas Without Debt">
   <meta property="og:description" content="Plan Christmas around your paydays and pay for it in cash. Free and private.">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#F9F7E7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#10281A" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="../assets/brand/gear-mark.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../assets/brand/app-icon-512.png">
+  <link rel="preload" href="../assets/brand/fonts/poppins-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/brand/fonts/poppins-latin-900-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../assets/styles.css">
   <link rel="stylesheet" href="christmas.css">
 </head>
 <body data-mim-storage="mim.christmas.v1">
   <a class="skip-link" href="#main">Skip to the planner</a>
 
-  <header class="site-header">
+  <header class="site-header xm-header">
     <div class="container">
-      <a class="brand" href="../">
-        <img class="brand-mark" src="../assets/favicon.svg" alt="" width="32" height="32">
-        <span>Money in Motion</span>
-        <span class="brand-sub">Free tools</span>
+      <a class="brand xm-brand" href="../">
+        <picture>
+          <source srcset="../assets/brand/logo-on-dark.svg" media="(prefers-color-scheme: dark)">
+          <img class="xm-logo" src="../assets/brand/logo.svg" alt="Money in Motion" width="150" height="56">
+        </picture>
+        <span class="xm-brand-sub">Free tools</span>
       </a>
     </div>
   </header>

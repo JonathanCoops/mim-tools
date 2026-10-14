@@ -10,6 +10,9 @@
  *     title: "You're on Step 2",
  *     subtitle: 'Pay off all consumer debt',  // optional
  *     content: someElement,                    // a DOM node (or array of nodes)
+ *     logo: '../assets/brand/logo-on-dark.svg', // optional: show the logo file in
+ *                                              // the header band instead of the
+ *                                              // name typed out
  *     onePage: true                            // default: tighten spacing to fit
  *                                              // one A4 page; false lets long
  *                                              // content run onto more pages
@@ -79,7 +82,14 @@ window.MIMPdf = (function () {
 
     var head = el('div', 'pdf-head');
     var brand = el('div', 'pdf-brand');
-    brand.appendChild(el('span', 'pdf-brand-name', 'Money in Motion'));
+    if (opts.logo) {
+      var logo = el('img', 'pdf-brand-logo');
+      logo.src = opts.logo;
+      logo.alt = 'Money in Motion';
+      brand.appendChild(logo);
+    } else {
+      brand.appendChild(el('span', 'pdf-brand-name', 'Money in Motion'));
+    }
     if (opts.eyebrow) brand.appendChild(el('span', 'pdf-brand-tool', opts.eyebrow));
     head.appendChild(brand);
     sheet.appendChild(head);
