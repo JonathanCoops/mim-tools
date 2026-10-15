@@ -251,9 +251,9 @@ window.MIM_QUIZ_CONTENT = {
       printed: 'Your browser couldn’t make the PDF, so the print window opened instead. Choose “Save as PDF” there.'
     },
     email: {
-      heading: 'Want your {step} plan by email?',
-      intro: 'Pop your email in and we’ll send it straight over. Your result stays on screen either way.',
-      button: 'Email me my plan'
+      heading: 'Stay in touch while you work on {step}',
+      intro: 'Pop your email in and we’ll send a short welcome, then the Thursday email from Money in Motion each week. Your result stays on screen either way.',
+      button: 'Sign me up'
     },
     share: {
       heading: 'Know someone who’d find this useful?',

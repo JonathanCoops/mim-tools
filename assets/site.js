@@ -8,7 +8,7 @@
  *   MIM.h(tag, props, …)  tiny DOM builder (text is always escaped)
  *   MIM.copyText(text)    copy to clipboard, resolves true/false
  *   MIM.whatsAppUrl(text) share link for WhatsApp
- *   MIM.emailForm(…)      MailerLite sign-up form driven by config.js
+ *   MIM.emailForm(…)      email sign-up form, sent to the front door in config.js
  *   MIM.shareRow(…)       "Copy link" and "WhatsApp" buttons
  *
  * The footer is filled in automatically on every page that has
@@ -142,48 +142,55 @@ window.MIM = (function () {
     );
   }
 
-  /* ---------------- MailerLite email form ---------------- */
+  /* ---------------- Email sign-up form ---------------- */
 
-  // opts: { heading, intro, buttonLabel, hiddenFields: { field: value }, stepLabel }
+  var SIGNUP_HELP = 'Sorry, that didn’t go through. Please try again in a minute, or email jonathan@moneyinmotion.org and we’ll add you.';
+
+  // opts: { heading, intro, buttonLabel, hiddenFields: { field: value },
+  //         consentText, successMessage }
+  // consentText and successMessage default to the quiz's, in config.js > signup.
+  // Sends JSON to the sign-up front door (config.js > signup.endpoint).
   function emailForm(opts) {
-    var ml = config.mailerlite || {};
-    var uid = 'ml-' + Math.random().toString(36).slice(2, 8);
+    var su = config.signup || {};
+    var uid = 'su-' + Math.random().toString(36).slice(2, 8);
+    var renderedAt = Date.now();
+    var consentText = opts.consentText || su.consentText || '';
     var status = h('p', { className: 'form-status', role: 'status', 'aria-live': 'polite' });
     var emailInput = h('input', {
-      id: uid + '-email', type: 'email', name: 'fields[email]', required: true,
+      id: uid + '-email', type: 'email', name: 'email', required: true, maxlength: '254',
       autocomplete: 'email', inputmode: 'email', spellcheck: 'false'
     });
+    var nameInput = null;
     var nameField = null;
-    if (ml.askForName) {
+    if (su.askForName) {
+      nameInput = h('input', { id: uid + '-name', type: 'text', name: 'name', maxlength: '80', autocomplete: 'given-name' });
       nameField = h('div', { className: 'field' },
         h('label', { for: uid + '-name' }, 'First name ', h('span', { className: 'optional' }, '(optional)')),
-        h('input', { id: uid + '-name', type: 'text', name: 'fields[name]', autocomplete: 'given-name' })
+        nameInput
       );
     }
 
-    var hidden = [];
-    var extra = ml.extraFields || {};
-    Object.keys(extra).forEach(function (name) {
-      hidden.push(h('input', { type: 'hidden', name: name, value: extra[name] }));
-    });
-    var fields = opts.hiddenFields || {};
-    Object.keys(fields).forEach(function (name) {
-      hidden.push(h('input', { type: 'hidden', name: 'fields[' + name + ']', value: fields[name] }));
-    });
+    // Honeypot: off screen, out of the tab order and hidden from screen
+    // readers, so only bots fill it in.
+    var honeypot = h('input', { type: 'text', name: 'website', id: uid + '-website', tabindex: '-1', autocomplete: 'off', 'aria-hidden': 'true' });
+    var honeypotField = h('div', { className: 'hp-field', 'aria-hidden': 'true' },
+      h('label', { for: uid + '-website' }, 'Leave this empty'),
+      honeypot
+    );
 
-    var consent = h('p', { className: 'small muted' }, ml.consentText || '');
+    var consent = h('p', { className: 'small muted' }, consentText);
     if (isSet(links.privacyPolicy)) {
       append(consent, [' ', extLink(links.privacyPolicy, 'Privacy policy')]);
     }
 
-    var button = h('button', { type: 'submit', className: 'btn btn-primary' }, opts.buttonLabel || 'Email it to me');
-    var form = h('form', { className: 'email-form', novalidate: true, action: isSet(ml.formAction) ? ml.formAction : null, method: 'post' },
+    var button = h('button', { type: 'submit', className: 'btn btn-primary' }, opts.buttonLabel || 'Sign me up');
+    var form = h('form', { className: 'email-form', novalidate: true },
       nameField,
       h('div', { className: 'field' },
         h('label', { for: uid + '-email' }, 'Email address'),
         emailInput
       ),
-      hidden,
+      honeypotField,
       consent,
       button,
       status
@@ -199,10 +206,10 @@ window.MIM = (function () {
         emailInput.focus();
         return;
       }
-      if (!isSet(ml.formAction)) {
+      if (!isSet(su.endpoint)) {
         status.classList.add('is-error');
-        status.textContent = 'Email sign-up isn’t connected yet. (Add the MailerLite form address in assets/config.js.)';
-        if (window.console) console.warn('MIM: mailerlite.formAction is not set in assets/config.js');
+        status.textContent = 'Email sign-up isn’t connected yet. (Add the sign-up address in assets/config.js.)';
+        if (window.console) console.warn('MIM: signup.endpoint is not set in assets/config.js');
         return;
       }
 
@@ -212,34 +219,47 @@ window.MIM = (function () {
 
       var done = function () {
         form.reset();
-        status.textContent = (ml.successMessage || 'Done. Check your inbox.').replace('{step}', opts.stepLabel || 'plan');
+        button.removeAttribute('aria-busy');
+        status.textContent = opts.successMessage || su.successMessage || 'You’re in. Check your inbox.';
       };
-      var fail = function (message) {
+      var fail = function () {
         button.disabled = false;
         button.removeAttribute('aria-busy');
         status.classList.add('is-error');
-        status.textContent = message;
+        status.textContent = SIGNUP_HELP;
       };
 
-      // Only this form's fields are sent, and no cookies go with them.
-      fetch(ml.formAction, { method: 'POST', body: new FormData(form), mode: 'cors', credentials: 'omit' })
-        .then(function (response) {
-          return response.json().catch(function () { return {}; }).then(function (data) {
-            if (response.ok && data.success !== false) { done(); return; }
-            fail('MailerLite didn’t accept that. Check the email address and try again.');
-          });
+      var fields = opts.hiddenFields || {};
+      var payload = {
+        email: emailInput.value.trim(),
+        name: nameInput ? nameInput.value.trim() : '',
+        tool: fields[su.toolField || 'tool'] || '',
+        baby_step: fields[su.stepField || 'baby_step'] || '',
+        consent_text: consentText,
+        page: window.location.pathname,
+        elapsed_ms: Date.now() - renderedAt,
+        website: honeypot.value
+      };
+
+      // text/plain keeps this a "simple" request, so the browser sends it
+      // without a CORS preflight. No cookies or referrer go with it.
+      fetch(su.endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload),
+        credentials: 'omit',
+        referrerPolicy: 'no-referrer'
+      })
+        .then(function (response) { return response.json(); })
+        .then(function (data) {
+          if (data && data.ok === true) done();
+          else fail();
         })
-        .catch(function () {
-          // A network error means we couldn't reach MailerLite. If the browser
-          // is online, the request will usually have gone through but the
-          // reply was blocked, so treat it as sent rather than asking twice.
-          if (navigator.onLine === false) fail('You look to be offline. Try again when you’re connected.');
-          else done();
-        });
+        .catch(fail);
     });
 
     var section = h('section', { className: 'card email-card', 'aria-labelledby': uid + '-heading' },
-      h('h2', { id: uid + '-heading', className: 'h3' }, opts.heading || 'Want this by email?'),
+      h('h2', { id: uid + '-heading', className: 'h3' }, opts.heading || 'Stay in touch'),
       opts.intro ? h('p', null, opts.intro) : null,
       form
     );

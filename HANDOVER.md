@@ -28,7 +28,7 @@ They were built in October 2026 with one-off Claude cloud-session credit, in thi
 
 ## Decisions made during the build (keep these)
 
-- **Privacy:** nothing is stored or sent except the optional email form. Answers stay in the person's browser, with a "Clear my data" link. There are no analytics or cookies. This matches the app's "no data selling" promise.
+- **Privacy:** nothing is stored or sent except the optional email form, which goes to a private Money in Motion Google Sheet (as the consent record) and to MailerLite, and nowhere else. Answers stay in the person's browser, with a "Clear my data" link. There are no analytics or cookies. This matches the app's "no data selling" promise.
 - **Email never gates anything.** Results and PDFs show before any sign-up.
 - **Videos link to YouTube**, which opens for everyone without a login, and are not embedded. All ten step links are in `assets/config.js` and were confirmed public on 15 October 2026.
 - **Step 6 was corrected on 15 October 2026:** the yearly overpayment allowance "isn't always 10%". This matches Jonathan's 16 September video "Mortgage Overpayment Allowance UK: It Isn't 10%", which Step 6 now links to.
@@ -36,29 +36,32 @@ They were built in October 2026 with one-off Claude cloud-session credit, in thi
 - **Educational, not advice.** Every page carries that line.
 - **One settings file:** every link and setting lives in `assets/config.js`.
 
-## MailerLite: current state (needs finishing)
+## Email sign-up: the front door (decided 15 October 2026)
 
-All four tools post to one MailerLite embedded form.
+All four tools post their sign-ups to a Google Apps Script web app, the "front door" (`apps-script/` in this repo). It is bound to the Google Sheet "Free Tools — Sign-up Log" on Jonathan's business account. For each sign-up it checks for spam, adds the person to MailerLite through the API, and logs a row in the Sheet's "Sign-ups" tab as the consent record (the exact consent wording they saw, the time, the tool and the result). Deploy steps are in `apps-script/README.md`.
 
-- Form "Free Tools sign-up (mim-tools)", id `201243958262629596`. Double opt-in is on. Its address is already in `config.js`.
-- Group "Leads - Free Tools", id `201243953256727774`. It had no subscribers on 15 October 2026.
+Decisions (15 October 2026, keep these):
+- **The Apps Script front door replaces the MailerLite tools form.** The embedded form "Free Tools sign-up (mim-tools)" (id `201243958262629596`) is no longer needed. It never had content and never took a sign-up.
+- **Single opt-in.** No confirmation email. Don't switch to double opt-in unless it becomes absolutely necessary. MailerLite's own double opt-in settings stay untouched. The script never sends `status` or `resubscribe`, so anyone who unsubscribed stays unsubscribed.
+- **Copy promises only what is sent:** a welcome email, then the weekly Thursday email (which goes to all active MailerLite subscribers). Christmas Without Debt also promises a short payday nudge each month until Christmas. Nothing mentions a confirm link.
+- **The welcome email is one automation**, triggered when someone joins "Leads - Free Tools". One email covers all four tools.
+- **Christmas payday nudges go out as manual campaigns** to subscribers with `tool` = `christmas`, not as an automation.
+- **The M&F Waitlist form stays as it is.** No form slot needs freeing now.
+- **MiMForm.tsx (the website's sign-up form) stays on MailerLite.** Pointing it at the front door is parked for a few weeks.
+- **The speaking form is now a native Framer form that emails Jonathan,** and the Speaking Enquiry automation is paused. That frees the automation slot for the free-tools welcome.
+
+MailerLite details:
+- Group "Leads - Free Tools", id `201243953256727774` (the script's `MAILERLITE_GROUP_ID`). It had no subscribers on 15 October 2026.
 - Fields: `baby_step` (id 1536796) and `tool` (id 1536797).
-
-**Blocker:** the form was created through the connector, which can't build form content, so it has no content yet and has never taken a sign-up. Jonathan has to open it in MailerLite, choose any template, add `baby_step` and `tool` as hidden fields, then save and publish. After that, do one test sign-up and check that both fields arrive.
-
-**No welcome emails exist yet.** The quiz promises "your Step X plan is on its way", the Christmas tool promises payday nudges and the debt planner promises encouragement.
+- The API token lives only in the script's Script Properties, never in this repo.
 
 **Free plan limits** (MailerLite free plan, checked 15 October 2026):
 - 250 active subscribers; there were 142 active, 183 in total.
-- 3 active forms.
-- 3 active automations of up to 5 steps; all three slots are in use.
-- 2,500 emails a month.
+- 3 active forms. The front door doesn't use one.
+- 3 active automations of up to 5 steps. With Speaking Enquiry paused, the free-tools welcome takes that slot. Don't pause or edit the 9-step Budget Tool and App Signup flows; they exceed the current 5-step cap and may not switch back on. The Graduate Holding Sequence and the one-question welcome are still queuing for a slot.
+- 2,500 emails a month. The Thursday email to every active subscriber counts towards this.
 
-**Plan agreed:**
-- Turn off the "M&F Waitlist" form to free a form slot (the course is live, and its last sign-up was 10 August). Do NOT turn off "M&F Graduate": it has no sign-ups because the graduate QR opt-in hasn't launched yet, and it feeds the Graduate Holding Sequence, which is a retention priority. Check in the MailerLite dashboard which three forms count as active, because the API doesn't show it.
-- Free one automation slot. Pausing Speaking Enquiry is the only realistic option, and only if Jonathan has another way to hear about enquiries. Automation slots are the real constraint, not subscribers: three things are queuing (the free-tools welcome, the Graduate Holding Sequence and the one-question welcome). Don't pause or edit the 9-step Budget Tool and App Signup flows; they exceed the current 5-step cap and may not switch back on.
-- Write one welcome email covering all four tools.
-- Build tailored per-step sequences only after an upgrade.
+Build tailored per-step sequences only after an upgrade.
 
 ## Platform decision (agreed 15 October 2026; recorded in MiM-Business-Overview)
 
@@ -74,18 +77,21 @@ All four tools post to one MailerLite embedded form.
 ## To do
 
 **Jonathan**
-1. Build and publish the MailerLite form with the two hidden fields, then do a test sign-up.
-2. Add a "Free money tools" button to moneyinmotion.org in Framer. Suggested copy: "Free tools to get you started. Find your Baby Step in two minutes, plan your way out of debt, or work out how to pay for a mission trip. Free, and your numbers never leave your phone."
-3. Send the Saving for Mission link to Tim Jones at Neuma.
-4. Click the StepChange, CAP and Citizens Advice links once. The build environment couldn't reach outside sites.
-5. Decide on a custom domain (for example tools.moneyinmotion.org): one DNS record at Porkbun plus the GitHub Pages setting.
+1. Deploy the front door (steps in `apps-script/README.md`): create the Sheet "Free Tools — Sign-up Log", paste in the script, add the two Script Properties, run `setupSheet`, deploy as a web app (Execute as: Me, access: Anyone), then paste the URL into `signup.endpoint` in `assets/config.js` (or send it to Claude). Then do one test sign-up from each tool and check the Sheet row, the MailerLite subscriber (Active, with `tool` filled in) and the welcome email.
+2. Delete or leave unpublished the unused MailerLite form "Free Tools sign-up (mim-tools)".
+3. Add a "Free money tools" button to moneyinmotion.org in Framer. Suggested copy: "Free tools to get you started. Find your Baby Step in two minutes, plan your way out of debt, or work out how to pay for a mission trip. Free, and your numbers never leave your phone."
+4. Send the Saving for Mission link to Tim Jones at Neuma.
+5. Click the StepChange, CAP and Citizens Advice links once. The build environment couldn't reach outside sites.
+6. Decide on a custom domain (for example tools.moneyinmotion.org): one DNS record at Porkbun plus the GitHub Pages setting.
 
 **Claude**
-1. After the form works: write the welcome email in Jonathan's voice and build the automation, left switched off for review.
-2. Write launch content: a TikTok media pack for Christmas Without Debt first (it is seasonal), then one for each other tool.
-3. Add the free tools to Products & Status in MiM-Business-Overview. They are not listed there yet.
-4. Optional: a cookie-free visit counter (for example GoatCounter). This needs Jonathan's OK and a line on the privacy page.
-5. Email the 3 people in the old "Leads - Free Christmas Savings Tracker" group about the new Christmas planner.
+1. Write the welcome email in Jonathan's voice (one email for all four tools) and build the automation on "joins Leads - Free Tools", left switched off for review. The front door must be live first so it can be tested.
+2. Draft the Christmas payday nudges as manual campaigns to `tool` = `christmas`, one a month until Christmas, for Jonathan to review and send.
+3. In a few weeks (from 15 October 2026), revisit pointing MiMForm.tsx at the front door.
+4. Write launch content: a TikTok media pack for Christmas Without Debt first (it is seasonal), then one for each other tool.
+5. Add the free tools to Products & Status in MiM-Business-Overview. They are not listed there yet.
+6. Optional: a cookie-free visit counter (for example GoatCounter). This needs Jonathan's OK and a line on the privacy page.
+7. Email the 3 people in the old "Leads - Free Christmas Savings Tracker" group about the new Christmas planner.
 
 ## Ideas backlog (not started)
 
@@ -98,13 +104,14 @@ All four tools post to one MailerLite embedded form.
 
 ## Testing
 
-Run these after any change. All four suites passed on 15 October 2026.
+Run these after any change. All five suites passed on 15 October 2026.
 
 ```
 node tests/quiz-logic.test.js                  # 39,207 checks
 node debt-planner/snowball.test.js             # 4,026 checks
 node saving-for-mission/tests/mission.test.js  # 41 checks
 node christmas/tests/christmas.test.js         # 65 checks
+node tests/signup-front-door.test.js           # 19 checks
 python3 -m http.server 8000                    # then open http://localhost:8000/
 ```
 
@@ -113,7 +120,7 @@ Work on a branch and open a pull request. Several cloud sessions editing `assets
 ## Corrections after review (15 October 2026)
 
 The business Claude's first review caught these, and they are fixed above or in the code:
-- M&F Waitlist, not M&F Graduate, is the form to switch off.
+- M&F Waitlist, not M&F Graduate, was the form to switch off. (Superseded later the same day: with the front door no form slot is needed, so M&F Waitlist stays as it is.)
 - The README's house rules still said "10%" for Step 6. Fixed.
 - The `christmas` tool value was missing from the `config.js` comments, and the home page description named only three tools. Both fixed.
-- Still open: the email copy promises more than a single welcome email delivers ("your Step X plan is on its way", payday nudges, encouragement). Either the emails deliver it or the copy changes. Decide this before the form goes live.
+- The email copy promised more than a single welcome email delivers ("your Step X plan is on its way", encouragement, nudges "every so often"). Fixed with the front door: the copy now promises only the welcome email and the Thursday email, plus the monthly payday nudge on the Christmas tool.

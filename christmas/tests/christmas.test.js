@@ -855,13 +855,14 @@ test('the safety net and the quiet line are kind, with no resources list on the 
 test('config: the Christmas email settings, and nothing else changed', function () {
   var own = CONFIG.christmas;
   assert.equal(own.tag, 'christmas');
-  assert.ok(/confirm/.test(own.consentText) && /confirm/.test(own.successMessage), 'mentions the confirmation email (double opt-in)');
+  assert.ok(!/confirm/.test(own.consentText) && !/confirm/.test(own.successMessage), 'single opt-in: no confirm link to promise');
+  assert.ok(/a short payday nudge each month until Christmas/.test(own.consentText) && /payday nudges to follow/.test(own.successMessage), 'promises the payday nudges it sends');
   assert.ok(/Only your email, your first name if you give it, and the name of this tool are sent/.test(own.consentText));
   assert.ok(!/step number|Baby Step/.test(own.consentText));
-  assert.equal(CONFIG.mailerlite.toolField, 'tool');
-  assert.equal(CONFIG.mailerlite.stepField, 'baby_step');
+  assert.equal(CONFIG.signup.toolField, 'tool');
+  assert.equal(CONFIG.signup.stepField, 'baby_step');
   assert.equal(CONFIG.savingForMission.tag, 'saving-for-mission');
-  assert.equal(CONFIG.mailerlite.debtPlanner.toolValue, 'debt-planner');
+  assert.equal(CONFIG.signup.debtPlanner.toolValue, 'debt-planner');
 });
 
 test('the page loads the shared files and its own, and lists its saved data', function () {
@@ -888,7 +889,7 @@ test('privacy: nothing in this tool sends anything anywhere', function () {
   });
   var appJs = fs.readFileSync(path.join(ROOT, 'christmas', 'app.js'), 'utf8');
   assert.equal((appJs.match(/MIM\.emailForm\(/g) || []).length, 1, 'the one form that sends anything');
-  assert.ok(/hidden\[ml\.toolField \|\| 'tool'\] = own\.tag \|\| 'christmas';/.test(appJs), 'its only hidden field is the tool');
+  assert.ok(/hidden\[signup\.toolField \|\| 'tool'\] = own\.tag \|\| 'christmas';/.test(appJs), 'its only hidden field is the tool');
   assert.ok(/localStorage/.test(fs.readFileSync(path.join(ROOT, 'assets', 'site.js'), 'utf8')) && !/localStorage/.test(appJs), 'storage only through MIM.storage (try/catch)');
 });
 

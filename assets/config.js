@@ -54,28 +54,24 @@ window.MIM_CONFIG = {
   ],
 
   /* ---------------------------------------------------------------------
-   * MailerLite email sign-up
+   * Email sign-up
    *
-   * 1. In MailerLite, open Forms > Embedded forms and pick (or create) the
-   *    form for the quiz.
-   * 2. Open its HTML embed code and find the <form ... action="..."> line.
-   * 3. Paste that action address into formAction below. It usually looks like
-   *    https://assets.mailerlite.com/jsonp/123456/forms/123456789/subscribe
-   * 4. In MailerLite, create a text field called baby_step (Subscribers >
-   *    Fields). The quiz fills it with "Step 0", "Step 1" ... "Step 7"
-   *    (including "Step 3b"), so you can send each person the right email.
-   * 5. If your embed code has other hidden inputs, copy their name and value
-   *    into extraFields.
+   * Every tool's sign-up goes to the Money in Motion "front door": a Google
+   * Apps Script web app (apps-script/ in this repo). It records the sign-up
+   * in a private Google Sheet as proof of consent, then adds the person to
+   * the MailerLite group "Leads - Free Tools". Single opt-in: there's no
+   * confirmation email. The MailerLite API key lives in the script's
+   * settings, never in this file.
    * ------------------------------------------------------------------- */
-  // Connected 13 Oct 2026 to the MailerLite embedded form
-  // "Free Tools sign-up (mim-tools)", which adds people to the group
-  // "Leads - Free Tools". Fields used: baby_step (quiz result) and
-  // tool (quiz / debt-planner / saving-for-mission / christmas).
-  // The form uses double opt-in: people must click a confirmation email.
-  mailerlite: {
-    formAction: 'https://assets.mailerlite.com/jsonp/1795296/forms/201243958262629596/subscribe',
+  signup: {
+    // The web app URL from Apps Script (Deploy > Manage deployments), ending
+    // in /exec. Leave it empty until the script is deployed: the form then
+    // says "isn't connected yet" and sends nothing. Redeploying a new version
+    // keeps the same URL, so this only changes if you make a new deployment.
+    endpoint: '',
 
-    // The MailerLite field that receives the quiz result.
+    // The MailerLite field that receives the quiz result: "Step 0" ... "Step 7",
+    // including "Step 3b". Must match the field name in apps-script/Code.gs.
     stepField: 'baby_step',
 
     // The MailerLite field that says which tool someone signed up from:
@@ -85,55 +81,51 @@ window.MIM_CONFIG = {
     // Ask for a first name as well as an email address? (true or false)
     askForName: true,
 
-    // Hidden inputs MailerLite's embed code includes.
-    extraFields: {
-      'ml-submit': '1',
-      'anticsrf': 'true'
-    },
+    // The quiz's wording. Single opt-in: a welcome email, then the Thursday email.
+    // The exact words shown are saved with each sign-up as the consent record.
+    consentText: "We'll send a welcome email, then the weekly Thursday email from Money in Motion. Unsubscribe any time. Only your email, first name and result are sent. We keep a record of this sign-up to show you agreed. Your other answers stay on this device.",
 
-    // Matches what subscribers get: a confirmation email first (double opt-in),
-    // then their plan, then the occasional Money in Motion email.
-    consentText: "We'll send a quick email to confirm it's you, then your plan and the occasional email from Money in Motion. Unsubscribe any time. Only your email, first name and result are sent. Your other answers stay on this device.",
+    // Shown after someone signs up.
+    successMessage: "You're in. Your welcome email is on its way. No email in a few minutes? Have a look in your spam folder.",
 
-    // Shown after someone signs up. {step} becomes their step, e.g. "Step 2".
-    successMessage: "Nearly done. Check your inbox and tap the confirm link, then your {step} plan is on its way. No email in a few minutes? Have a look in your spam folder.",
-
-    // Debt Snowball Planner: "Send me encouragement while I pay this off".
-    // Same form as above; fills the tool field with "debt-planner".
+    // Debt Snowball Planner: "Stay in touch while you pay this off".
+    // Fills the tool field with "debt-planner".
     // No debts, balances or dates are ever sent.
     debtPlanner: {
       toolField: 'tool',
       toolValue: 'debt-planner',
-      consentText: "We'll send a quick email to confirm it's you, then the occasional email to keep you going while you pay this off, plus news from Money in Motion. Unsubscribe any time. Only your email and first name are sent. Your debts stay on this device.",
-      successMessage: "Nearly done. Check your inbox and tap the confirm link. No email in a few minutes? Have a look in your spam folder."
+      consentText: "We'll send a welcome email, then the weekly Thursday email from Money in Motion. Unsubscribe any time. Only your email and first name are sent. We keep a record of this sign-up to show you agreed. Your debts stay on this device.",
+      successMessage: "You're in. Your welcome email is on its way. No email in a few minutes? Have a look in your spam folder."
     }
   },
 
   /* ---------------------------------------------------------------------
    * Saving for Mission Builder
-   * Its email sign-up uses the same MailerLite form as the quiz (formAction
-   * above), but says which tool it came from instead of a Baby Step.
+   * Its email sign-up ("Stay in touch while you save for the trip") goes to
+   * the same front door as the quiz (signup.endpoint above), but says which
+   * tool it came from instead of a Baby Step.
    * ------------------------------------------------------------------- */
   savingForMission: {
-    // Goes into the MailerLite "tool" field (toolField above).
+    // Goes into the MailerLite "tool" field (signup.toolField above).
     tag: 'saving-for-mission',
-    consentText: "We'll send a quick email to confirm it's you, then the occasional email from Money in Motion. Unsubscribe any time. Only your email, your first name if you give it, and the name of this tool are sent. Your figures stay on this device.",
-    successMessage: "Nearly done. Check your inbox and tap the confirm link. No email in a few minutes? Have a look in your spam folder."
+    consentText: "We'll send a welcome email, then the weekly Thursday email from Money in Motion. Unsubscribe any time. Only your email, your first name if you give it, and the name of this tool are sent. We keep a record of this sign-up to show you agreed. Your figures stay on this device.",
+    successMessage: "You're in. Your welcome email is on its way. No email in a few minutes? Have a look in your spam folder."
   },
 
   /* ---------------------------------------------------------------------
    * Christmas Without Debt
    * Its email sign-up ("Want a nudge each payday until Christmas?") uses the
-   * same MailerLite form as the quiz (formAction above), and fills the
+   * same front door as the quiz (signup.endpoint above), and fills the
    * "tool" field with "christmas" instead of a Baby Step. Only the email
    * address, first name (if given) and "christmas" are sent: no budgets,
    * no names from the gift list, no amounts and no paydays.
    * ------------------------------------------------------------------- */
   christmas: {
-    // Goes into the MailerLite "tool" field (toolField above).
+    // Goes into the MailerLite "tool" field (signup.toolField above).
+    // The payday nudges go out as manual MailerLite campaigns to tool = christmas.
     tag: 'christmas',
-    consentText: "We'll send a quick email to confirm it's you, then a short nudge every so often until Christmas, plus the occasional email from Money in Motion. Unsubscribe any time. Only your email, your first name if you give it, and the name of this tool are sent. Your plan and the names on your list stay on this device.",
-    successMessage: "Nearly done. Check your inbox and tap the confirm link, then your nudges start. No email in a few minutes? Have a look in your spam folder."
+    consentText: "We'll send a welcome email, a short payday nudge each month until Christmas, and the weekly Thursday email from Money in Motion. Unsubscribe any time. Only your email, your first name if you give it, and the name of this tool are sent. We keep a record of this sign-up to show you agreed. Your plan and the names on your list stay on this device.",
+    successMessage: "You're in. Your welcome email is on its way, with payday nudges to follow. No email in a few minutes? Have a look in your spam folder."
   },
 
   /* ---------------------------------------------------------------------
