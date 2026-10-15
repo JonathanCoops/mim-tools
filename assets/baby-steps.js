@@ -56,8 +56,8 @@ window.MIM_BABY_STEPS = [
   {
     id: '6',
     title: 'Pay off the mortgage early',
-    summary: 'Use the 10% yearly overpayment allowance, and add lump sums when your fix ends.',
-    short: 'Overpay within the 10% yearly allowance.'
+    summary: 'Overpay within your lender’s yearly allowance (it isn’t always 10%), and add lump sums when your fix ends.',
+    short: 'Overpay within your lender’s yearly allowance.'
   },
   {
     id: '6b',

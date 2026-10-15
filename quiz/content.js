@@ -210,10 +210,10 @@ window.MIM_QUIZ_CONTENT = {
       faith: null
     },
     '6': {
-      meaning: 'Everything else is in place, so now you go after the mortgage. Use your 10% yearly overpayment allowance, and add a lump sum when your fixed rate ends. Every pound you overpay is a pound the bank can’t charge interest on.',
+      meaning: 'Everything else is in place, so now you go after the mortgage. Use the yearly overpayment allowance on your deal (it isn’t always 10%, so check with your lender), and add a lump sum when your fixed rate ends. Every pound you overpay is a pound the bank can’t charge interest on.',
       actions: [
-        'Dig out your mortgage paperwork. Check your overpayment allowance and the date your current deal ends.',
-        'Set up a regular monthly overpayment that keeps you inside the 10% yearly allowance.',
+        'Ask your lender three things: how much you can overpay each year, whether that’s measured on what you owe now or what you first borrowed, and when the year resets. Note the date your current deal ends too.',
+        'Set up a regular monthly overpayment that keeps you inside your lender’s yearly allowance.',
         'Put the end date of your fix in your calendar, and start building a lump sum to pay in when it arrives.'
       ],
       faith: 'Proverbs 22:7 says the borrower is slave to the lender, and a mortgage is still borrowing. Picture the day the house is fully yours.'

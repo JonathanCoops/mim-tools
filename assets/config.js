@@ -151,7 +151,7 @@ window.MIM_CONFIG = {
     '3b': 'https://www.youtube.com/watch?v=5RfUzS8wT2Q',
     '4':  'https://www.youtube.com/watch?v=LYlI2iVICY8',
     '5':  'https://www.youtube.com/watch?v=NdglBuXYlV8',
-    '6':  'https://www.youtube.com/watch?v=Lw9pRAxB9pM',
+    '6':  'https://www.youtube.com/watch?v=ZMwFi4QepPU',
     '6b': 'https://www.youtube.com/watch?v=56IIoIzmKBU',
     '7':  'https://www.youtube.com/watch?v=BjTN6e-XGHI'
   },
