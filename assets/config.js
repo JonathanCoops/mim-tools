@@ -68,7 +68,7 @@ window.MIM_CONFIG = {
     // in /exec. Leave it empty until the script is deployed: the form then
     // says "isn't connected yet" and sends nothing. Redeploying a new version
     // keeps the same URL, so this only changes if you make a new deployment.
-    endpoint: '',
+    endpoint: 'https://script.google.com/macros/s/AKfycbxmHRoFBHQlmnn-pegkyW8SZgPTtWCXI37P0SjRX0Ungjz5VwOPP2CqVsHXJTZZ1jS6/exec',
 
     // The MailerLite field that receives the quiz result: "Step 0" ... "Step 7",
     // including "Step 3b". Must match the field name in apps-script/Code.gs.
