@@ -82,7 +82,6 @@ Build tailored per-step sequences only after an upgrade.
 3. Add a "Free money tools" button to moneyinmotion.org in Framer. Suggested copy: "Free tools to get you started. Find your Baby Step in two minutes, plan your way out of debt, or work out how to pay for a mission trip. Free, and your numbers never leave your phone."
 4. Send the Saving for Mission link to Tim Jones at Neuma.
 5. Click the StepChange, CAP and Citizens Advice links once. The build environment couldn't reach outside sites.
-6. Decide on a custom domain (for example tools.moneyinmotion.org): one DNS record at Porkbun plus the GitHub Pages setting.
 
 **Claude**
 1. Write the welcome email in Jonathan's voice (one email for all four tools) and build the automation on "joins Leads - Free Tools", left switched off for review. The front door must be live first so it can be tested.
