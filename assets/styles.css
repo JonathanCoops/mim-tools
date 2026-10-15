@@ -584,6 +584,8 @@ img, svg { max-width: 100%; height: auto; }
    ===================================================================== */
 
 .field { margin-bottom: 1rem; }
+/* Email form honeypot: off screen, so only bots fill it in. */
+.hp-field { position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden; }
 .field label { display: block; margin-bottom: 0.35rem; font-weight: 600; line-height: 1.35; }
 .optional { font-weight: 400; color: var(--text-muted); }
 input[type="email"], input[type="text"], input[type="date"], select, textarea {

@@ -301,7 +301,7 @@ test('config has a video setting for every step and https links', function () {
   });
   assert.equal(CONFIG.debtHelp.length, 3);
   CONFIG.debtHelp.forEach(function (org) { assert.ok(/^https:\/\//.test(org.url), org.name); });
-  assert.equal(CONFIG.mailerlite.stepField, 'baby_step');
+  assert.equal(CONFIG.signup.stepField, 'baby_step');
 });
 
 // The house rules from the README.

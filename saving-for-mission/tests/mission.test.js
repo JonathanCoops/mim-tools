@@ -372,9 +372,9 @@ test('no step opens with a verse', function () {
 });
 
 test('config: tool tag and MailerLite field', function () {
-  assert.equal(CONFIG.mailerlite.toolField, 'tool');
+  assert.equal(CONFIG.signup.toolField, 'tool');
   assert.equal(CONFIG.savingForMission.tag, 'saving-for-mission');
-  assert.equal(CONFIG.mailerlite.stepField, 'baby_step', 'the quiz setting is untouched');
+  assert.equal(CONFIG.signup.stepField, 'baby_step', 'the quiz setting is untouched');
   assert.ok(!/step number/.test(CONFIG.savingForMission.consentText), 'this tool sends no step number');
   assert.ok(/^https:\/\//.test(CONFIG.links.moneyAndFaith));
 });

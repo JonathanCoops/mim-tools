@@ -470,7 +470,7 @@ test('the brief\'s must-haves are in the copy', function () {
   assert.ok(/PCP/.test(CONTENT.counts.pcp) && /monthly bill/.test(CONTENT.counts.pcp));
   assert.ok(/statement/.test(CONTENT.debts.aprHint));
   assert.equal(CONTENT.pdf.title, 'My Debt-Free Plan');
-  assert.equal(CONTENT.results.email.heading, 'Send me encouragement while I pay this off');
+  assert.equal(CONTENT.results.email.heading, 'Stay in touch while you pay this off');
   assert.ok(/^Track it in the free Money in Motion app/.test(CONTENT.pdf.app));
   ['credit cards', 'loans', 'overdrafts', 'Buy Now Pay Later', 'car HP', 'family'].forEach(function (w) {
     assert.ok(CONTENT.counts.yes.indexOf(w) !== -1, 'counts mentions ' + w);
@@ -481,7 +481,7 @@ test('config: chart library pinned with integrity, email tagged tool=debt-planne
   var lib = CONFIG.libraries.chartjs;
   assert.ok(/^https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/Chart\.js\/\d+\.\d+\.\d+\//.test(lib.src), 'cdnjs, exact version');
   assert.ok(/^sha384-[A-Za-z0-9+/]{64}$/.test(lib.integrity), 'integrity hash');
-  var own = CONFIG.mailerlite.debtPlanner;
+  var own = CONFIG.signup.debtPlanner;
   assert.equal(own.toolField, 'tool');
   assert.equal(own.toolValue, 'debt-planner');
   assert.ok(/Your debts stay on this device/.test(own.consentText));
@@ -516,7 +516,7 @@ test('no banned words, piles of exclamation marks or US spellings', function () 
     var us = text.match(US_SPELLINGS);
     if (us) problems.push(rel + ': US spelling "' + us[0] + '"');
   });
-  var own = CONFIG.mailerlite.debtPlanner;
+  var own = CONFIG.signup.debtPlanner;
   [own.consentText, own.successMessage].forEach(function (t) {
     BANNED.forEach(function (word) { if (t.toLowerCase().replace(/’/g, "'").indexOf(word) !== -1) problems.push('config: "' + word + '"'); });
   });

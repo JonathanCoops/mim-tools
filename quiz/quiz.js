@@ -343,11 +343,11 @@
       buttonLabel: R.email.button,
       hiddenFields: (function () {
         var f = {};
-        f[(config.mailerlite && config.mailerlite.stepField) || 'baby_step'] = label;
-        f.tool = 'quiz';
+        var signup = config.signup || {};
+        f[signup.stepField || 'baby_step'] = label;
+        f[signup.toolField || 'tool'] = 'quiz';
         return f;
-      })(),
-      stepLabel: label
+      })()
     }));
 
     nodes.push(h('section', { className: 'card', 'aria-labelledby': 'ladder-heading' },

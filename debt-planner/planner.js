@@ -1042,31 +1042,15 @@
 
   function emailCard() {
     var E = R.email;
-    var ml = config.mailerlite || {};
-    var own = ml.debtPlanner || {};
+    var signup = config.signup || {};
+    var own = signup.debtPlanner || {};
     var hidden = {};
     hidden[own.toolField || 'tool'] = own.toolValue || 'debt-planner';
-    var section = MIM.emailForm({ heading: E.heading, intro: E.intro, buttonLabel: E.button, hiddenFields: hidden });
-
-    // The shared form's wording is written for the quiz, so swap in this tool's
-    // consent line and thank-you message (both set in config.js).
-    var form = section.querySelector('form');
-    var consent = form && form.querySelector('p.small.muted');
-    if (consent && own.consentText) {
-      if (consent.firstChild && consent.firstChild.nodeType === 3) consent.firstChild.nodeValue = own.consentText;
-      else consent.insertBefore(document.createTextNode(own.consentText), consent.firstChild);
-    }
-    if (form && own.successMessage) {
-      // The shared form resets itself just before it shows its thank-you,
-      // so we follow straight after with ours.
-      form.addEventListener('reset', function () {
-        Promise.resolve().then(function () {
-          var status = form.querySelector('.form-status');
-          if (status && !status.classList.contains('is-error')) status.textContent = own.successMessage;
-        });
-      });
-    }
-    return section;
+    // This tool's own consent line and thank-you message (config.js > signup.debtPlanner).
+    return MIM.emailForm({
+      heading: E.heading, intro: E.intro, buttonLabel: E.button, hiddenFields: hidden,
+      consentText: own.consentText, successMessage: own.successMessage
+    });
   }
 
   /* ---------------- Clearing ---------------- */

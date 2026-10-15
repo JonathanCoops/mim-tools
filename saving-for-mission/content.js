@@ -267,8 +267,8 @@ window.MIM_MISSION_CONTENT = {
   },
 
   email: {
-    heading: 'Want some help sticking with it?',
-    intro: 'Months of saving takes staying power. Pop your email in for the occasional email from Money in Motion. Your plan and PDFs work either way.',
+    heading: 'Stay in touch while you save for the trip',
+    intro: 'Months of saving takes staying power. Pop your email in and we’ll send a short welcome, then the Thursday email from Money in Motion each week. Your plan and PDFs work either way.',
     button: 'Sign me up'
   },
 

@@ -807,20 +807,19 @@
   }
 
   function emailSection() {
-    var ml = config.mailerlite || {};
+    var signup = config.signup || {};
     var own = config.savingForMission || {};
     // This page's sign-up has its own wording (config.js > savingForMission),
     // because it sends the tool's name rather than a Baby Step.
-    if (own.consentText) ml.consentText = own.consentText;
-    if (own.successMessage) ml.successMessage = own.successMessage;
     var hidden = {};
-    hidden[ml.toolField || 'tool'] = own.tag || 'saving-for-mission';
+    hidden[signup.toolField || 'tool'] = own.tag || 'saving-for-mission';
     return MIM.emailForm({
       heading: C.email.heading,
       intro: C.email.intro,
       buttonLabel: C.email.button,
       hiddenFields: hidden,
-      stepLabel: C.intro.title
+      consentText: own.consentText,
+      successMessage: own.successMessage
     });
   }
 

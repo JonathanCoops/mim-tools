@@ -188,8 +188,8 @@ window.MIM_DEBT_CONTENT = {
     },
 
     email: {
-      heading: 'Send me encouragement while I pay this off',
-      intro: 'The occasional email to keep you going. Your plan stays right here either way.',
+      heading: 'Stay in touch while you pay this off',
+      intro: 'Pop your email in and we’ll send a short welcome, then the Thursday email from Money in Motion each week. Your plan stays right here either way.',
       button: 'Sign me up'
     },
 

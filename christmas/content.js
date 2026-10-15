@@ -371,7 +371,7 @@ window.MIM_CHRISTMAS_CONTENT = {
 
   email: {
     heading: 'Want a nudge each payday until Christmas?',
-    intro: 'A short email to keep you on track while you save. Your plan works either way, and it never leaves this device.',
+    intro: 'A short payday email each month until Christmas to keep you on track, plus the Thursday email from Money in Motion each week. Your plan works either way, and it never leaves this device.',
     button: 'Nudge me'
   },
 

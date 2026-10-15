@@ -1,6 +1,6 @@
 # Money in Motion Free Tools
 
-Free web tools for [Money in Motion](https://moneyinmotion.org/). **New to this repo? Read [HANDOVER.md](HANDOVER.md) first** for why the tools exist, the decisions made and what's still to do. Plain HTML, CSS and JavaScript, hosted on GitHub Pages. There's no build step, no framework and no backend: what's in this folder is exactly what goes live.
+Free web tools for [Money in Motion](https://moneyinmotion.org/). **New to this repo? Read [HANDOVER.md](HANDOVER.md) first** for why the tools exist, the decisions made and what's still to do. Plain HTML, CSS and JavaScript, hosted on GitHub Pages. There's no build step and no framework: what's in this folder is exactly what goes live. The one piece that runs elsewhere is the email sign-up's "front door", a small Google Apps Script in `apps-script/`.
 
 | Tool | Folder | Status |
 |---|---|---|
@@ -53,7 +53,13 @@ christmas/
   pdfs.js               The two PDFs: My Debt-Free Christmas Plan, Christmas shopping list
   christmas.css         Styles for this tool only, set to Brand Guide 2.0
   tests/christmas.test.js Tests the dates, paydays, sums and the copy
+apps-script/
+  Code.gs               The sign-up front door: checks each sign-up, adds it to
+                        MailerLite and logs it in a private Google Sheet
+  appsscript.json       Its Apps Script project settings
+  README.md             How to deploy it, and redeploy without changing the URL
 tests/quiz-logic.test.js        Tests every path through the quiz
+tests/signup-front-door.test.js Tests the sign-up front door
 ```
 
 All links between pages are relative (`quiz/`, `../assets/...`), so the site works both at `https://<user>.github.io/mim-tools/` and on a custom domain.
@@ -65,11 +71,11 @@ Open the file, change the text between the quote marks, save. Keep the quote mar
 | Setting | What to put there |
 |---|---|
 | `links.privacyPolicy` | Your website's privacy page. Shown next to the email form. |
-| `mailerlite.formAction` | The `action="..."` address from your MailerLite embedded form's HTML code (Forms > Embedded forms > your form > HTML). Looks like `https://assets.mailerlite.com/jsonp/123456/forms/123456789/subscribe`. |
-| MailerLite fields | In MailerLite, create two text fields. `baby_step`: the quiz fills it with `Step 0`, `Step 1`, `Step 2`, `Step 3`, `Step 3b`, `Step 4`, `Step 5`, `Step 6` or `Step 7`, so an automation can send each person the right email. `tool` (`mailerlite.toolField`): every tool fills it with where the sign-up came from, `quiz`, `debt-planner` or `saving-for-mission`. |
-| `mailerlite.extraFields` | Any other hidden inputs in your embed code (name and value). `ml-submit` and `anticsrf` are already there. |
-| `mailerlite.consentText` / `successMessage` | Check these match what subscribers actually receive (e.g. mention the confirmation email if you use double opt-in). |
-| `mailerlite.debtPlanner` / `savingForMission` | The same two messages for the Debt Snowball Planner and the Saving for Mission Builder, which send the tool's name instead of a Baby Step. |
+| `signup.endpoint` | The web app URL of the sign-up front door (ends in `/exec`). See `apps-script/README.md` for how to deploy it. Leave it empty and the form says it "isn't connected yet" and sends nothing. |
+| MailerLite fields | Two text fields in MailerLite, filled in by the front door. `baby_step` (`signup.stepField`): the quiz fills it with `Step 0`, `Step 1`, `Step 2`, `Step 3`, `Step 3b`, `Step 4`, `Step 5`, `Step 6` or `Step 7`. `tool` (`signup.toolField`): every tool fills it with where the sign-up came from, `quiz`, `debt-planner`, `saving-for-mission` or `christmas`. |
+| `signup.askForName` | `true` to ask for a first name (optional for the person) as well as the email address. |
+| `signup.consentText` / `successMessage` | The quiz's consent line and thank-you message. Only promise what is actually sent: today that's a welcome email and the Thursday email. The exact consent wording is saved with each sign-up as the record that the person agreed. |
+| `signup.debtPlanner` / `savingForMission` / `christmas` | The same two messages for the other three tools, which send the tool's name instead of a Baby Step. |
 | `videos` | A full link to Jonathan's video for each step (`0` to `7`, plus `3b` and `6b`). Videos open in a new tab; they aren't embedded, so no video site sets cookies here. |
 | `debtHelp` | The three free debt charities shown when someone's answers suggest real pressure. |
 | `links` | Website, Money & Faith course and the app links (App Store, Google Play, web). |
@@ -93,6 +99,7 @@ node tests/quiz-logic.test.js
 node debt-planner/snowball.test.js
 node saving-for-mission/tests/mission.test.js
 node christmas/tests/christmas.test.js
+node tests/signup-front-door.test.js
 ```
 
 No installs needed, just Node. Run the one for a tool after changing its sums or its `content.js`.
@@ -100,13 +107,15 @@ No installs needed, just Node. Run the one for a tool after changing its sums or
 - **Quiz:** walks all 39,168 possible ways through the quiz and checks each result against a separate copy of the rules, then checks the copy (three actions per step, approved verses only, no banned words, UK spelling).
 - **Debt Snowball Planner:** checks the snowball sums, including thousands of random plans against a separate copy of the maths, and the copy.
 - **Saving for Mission Builder:** checks the worked example comes out at A £2,400 to G £560 from any start date, the sums and edge cases, and the copy.
+- **Christmas Without Debt:** checks the dates, paydays and sums against a day-by-day count, and the copy.
+- **Sign-up front door:** runs `apps-script/Code.gs` against pretend Google services and checks the spam rules, field rules, rate limits, what goes to MailerLite (never `status` or `resubscribe`) and what's logged.
 
 ## Notes for adding a tool
 
 - **Page shell:** copy the header, `<main>`, `<footer data-mim-footer>` and the scripts from any tool's `index.html`. The footer (disclaimer, app and website links) fills itself in from `config.js`.
 - **Saved answers:** use `MIM.storage.get/set/remove` (never throws). Give the tool its own key, e.g. `mim.debt.v1`, and list it on the body: `<body data-mim-storage="mim.debt.v1">`. The footer then shows "Clear my answers" and fires a `mim:cleared` event on `document` so the tool can reset.
 - **PDF:** load `assets/pdf.js` and call `MIMPdf.download({ filename, eyebrow, title, subtitle, content, onePage })`. The Money in Motion logo goes in the header band for you; pass `logo: false` to type the name out instead. Build `content` with `MIM.h()` and the `pdf-*` classes in `styles.css`. Header and footer are added for you. Set `onePage: false` if the content can run to several pages. If the PDF library can't load, it opens the print window instead.
-- **Email:** `MIM.emailForm({ heading, intro, buttonLabel, hiddenFields: { field: value } })` returns a ready-made MailerLite form section.
+- **Email:** `MIM.emailForm({ heading, intro, buttonLabel, hiddenFields: { tool: 'my-tool' }, consentText, successMessage })` returns a ready-made sign-up section that posts to the front door. Add the new tool's name to `TOOLS` in `apps-script/Code.gs` (and redeploy it), or its sign-ups are rejected as invalid.
 - **Sharing:** `MIM.shareRow({ heading, message, url })` gives Copy link and WhatsApp buttons.
 - **Links:** add new ones to `config.js` and read them from `MIM.links`. In static HTML, `<a data-mim-link="appWeb" href="...">` takes its address from config.
 - **Libraries:** only from cdnjs or jsDelivr, pinned to an exact version with an `integrity` hash, and loaded only when needed.
@@ -149,6 +158,7 @@ Footer on every page: "Educational tools, not financial advice. Your numbers sta
 
 How this site keeps to it:
 
-- The only data that ever leaves the device is what someone types into the email form (name, email and their step number), sent straight to MailerLite with no cookies.
+- The only data that ever leaves the device is the optional email sign-up: the email address, first name (if given), the tool's name, the quiz result (quiz only), the consent wording shown and the page's path. It goes, with no cookies, to Money in Motion's sign-up script, which does two things with it and nothing else: keeps a row in a private Money in Motion Google Sheet as the record that the person agreed, and adds them to MailerLite.
+- Nothing else is stored or sent: no answers, figures, debts, plans or gift lists. There are still no cookies and no analytics.
 - The PDF library is fetched from jsDelivr only when someone taps "Download", with no referrer. Nothing about the person is sent with that request, and the PDF is made on their device.
 - Videos and other sites are linked, never embedded.
