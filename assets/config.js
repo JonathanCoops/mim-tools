@@ -70,7 +70,7 @@ window.MIM_CONFIG = {
   // Connected 13 Oct 2026 to the MailerLite embedded form
   // "Free Tools sign-up (mim-tools)", which adds people to the group
   // "Leads - Free Tools". Fields used: baby_step (quiz result) and
-  // tool (quiz / debt-planner / saving-for-mission).
+  // tool (quiz / debt-planner / saving-for-mission / christmas).
   // The form uses double opt-in: people must click a confirmation email.
   mailerlite: {
     formAction: 'https://assets.mailerlite.com/jsonp/1795296/forms/201243958262629596/subscribe',
@@ -79,7 +79,7 @@ window.MIM_CONFIG = {
     stepField: 'baby_step',
 
     // The MailerLite field that says which tool someone signed up from:
-    // "quiz", "debt-planner" or "saving-for-mission".
+    // "quiz", "debt-planner", "saving-for-mission" or "christmas".
     toolField: 'tool',
 
     // Ask for a first name as well as an email address? (true or false)

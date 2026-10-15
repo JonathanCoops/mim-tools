@@ -55,8 +55,8 @@ All four tools post to one MailerLite embedded form.
 - 2,500 emails a month.
 
 **Plan agreed:**
-- Turn off the dead "M&F Graduate" form to free a form slot.
-- Free one automation slot. Pausing Speaking Enquiry is one option; it is Jonathan's call.
+- Turn off the "M&F Waitlist" form to free a form slot (the course is live, and its last sign-up was 10 August). Do NOT turn off "M&F Graduate": it has no sign-ups because the graduate QR opt-in hasn't launched yet, and it feeds the Graduate Holding Sequence, which is a retention priority. Check in the MailerLite dashboard which three forms count as active, because the API doesn't show it.
+- Free one automation slot. Pausing Speaking Enquiry is the only realistic option, and only if Jonathan has another way to hear about enquiries. Automation slots are the real constraint, not subscribers: three things are queuing (the free-tools welcome, the Graduate Holding Sequence and the one-question welcome). Don't pause or edit the 9-step Budget Tool and App Signup flows; they exceed the current 5-step cap and may not switch back on.
 - Write one welcome email covering all four tools.
 - Build tailored per-step sequences only after an upgrade.
 
@@ -109,3 +109,11 @@ python3 -m http.server 8000                    # then open http://localhost:8000
 ```
 
 Work on a branch and open a pull request. Several cloud sessions editing `assets/config.js` at once caused merge conflicts during the build, so keep tool-specific settings in their own block in that file.
+
+## Corrections after review (15 October 2026)
+
+The business Claude's first review caught these, and they are fixed above or in the code:
+- M&F Waitlist, not M&F Graduate, is the form to switch off.
+- The README's house rules still said "10%" for Step 6. Fixed.
+- The `christmas` tool value was missing from the `config.js` comments, and the home page description named only three tools. Both fixed.
+- Still open: the email copy promises more than a single welcome email delivers ("your Step X plan is on its way", payday nudges, encouragement). Either the emails deliver it or the copy changes. Decide this before the form goes live.

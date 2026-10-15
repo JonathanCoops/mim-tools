@@ -135,7 +135,7 @@ The framework (Jonathan's UK adaptation of Dave Ramsey's Baby Steps; use exactly
 - Step 3b (optional UK extra): Save a house deposit, aim for 10%. Lifetime ISA if you qualify.
 - Step 4: Invest around 15% of income for retirement. Workplace pension first and take the full employer match, then a SIPP, LISA or Stocks & Shares ISA.
 - Step 5: Kids' launch fund (not a college fund): uni, house deposit, first car, whatever launches them into adult life. A Junior ISA does the job.
-- Step 6: Pay off the mortgage early. Use the 10% yearly overpayment allowance; add lump sums when the fix ends.
+- Step 6: Pay off the mortgage early. Overpay within your lender's yearly allowance (it isn't always 10%: the amount, what it's measured on and when the year resets vary by lender); add lump sums when the fix ends.
 - Step 6b (UK extra): Student loans behave like a graduate tax; most people won't clear them before they're written off. Don't overpay unless you're sure you'll clear it in full.
 - Step 7: Build wealth and give generously. Generosity isn't a Step 7 reward; it's a habit from Step 1 that grows with you. Use Gift Aid.
 
