@@ -1,5 +1,5 @@
 /*
- * The Baby Steps: Jonathan's UK adaptation of Dave Ramsey's Baby Steps.
+ * The Money in Motion Baby Steps: inspired by the principles of Dave Ramsey's Baby Steps, built for UK life.
  * Shared by every tool. Edit the wording here and it changes everywhere.
  *
  *   id      used in code and in config.js (videos)
@@ -74,4 +74,4 @@ window.MIM_BABY_STEPS = [
   }
 ];
 
-window.MIM_BABY_STEPS_NOTE = "The steps work in order, one at a time. This is Jonathan Cooper's UK version of Dave Ramsey's Baby Steps.";
+window.MIM_BABY_STEPS_NOTE = "The steps work in order, one at a time. These are the Money in Motion Baby Steps, inspired by the principles of Dave Ramsey's Baby Steps and built for UK life.";

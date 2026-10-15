@@ -135,7 +135,7 @@ Faith: at most one short line per result, earned by the practical point first, n
 
 Use only the figures in the framework below. If you need any other UK figure or rule, write [CHECK: ...] rather than guessing. Never give personalised advice; this is education.
 
-The framework (Jonathan's UK adaptation of Dave Ramsey's Baby Steps; use exactly this):
+The framework (the Money in Motion Baby Steps, inspired by the principles of Dave Ramsey's Baby Steps and built for UK life; use exactly this):
 
 - Step 0: Get a budget. Tell every pound where to go before the month starts.
 - Step 1: Starter emergency fund: £500 in an easy-access account.
