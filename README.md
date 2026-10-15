@@ -1,6 +1,6 @@
 # Money in Motion Free Tools
 
-Free web tools for [Money in Motion](https://moneyinmotion.org/). Plain HTML, CSS and JavaScript, hosted on GitHub Pages. There's no build step, no framework and no backend: what's in this folder is exactly what goes live.
+Free web tools for [Money in Motion](https://moneyinmotion.org/). **New to this repo? Read [HANDOVER.md](HANDOVER.md) first** for why the tools exist, the decisions made and what's still to do. Plain HTML, CSS and JavaScript, hosted on GitHub Pages. There's no build step, no framework and no backend: what's in this folder is exactly what goes live.
 
 | Tool | Folder | Status |
 |---|---|---|
