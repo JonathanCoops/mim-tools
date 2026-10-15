@@ -10,7 +10,7 @@ They were built in October 2026 with one-off Claude cloud-session credit, in thi
 
 ## What is live
 
-- Site: https://jonathancoops.github.io/mim-tools/ (GitHub Pages, deployed from `main`)
+- Site: https://tools.moneyinmotion.org/ (GitHub Pages custom domain, deployed from `main`; the old github.io address redirects)
 - Repo: https://github.com/JonathanCoops/mim-tools (public; nothing private belongs in it)
 
 | Tool | What it does | Email tag (`tool` field) |
