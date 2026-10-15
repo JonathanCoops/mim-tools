@@ -63,7 +63,7 @@ window.MIM_DEBT_CONTENT = {
 
   extra: {
     label: 'Extra I can put towards debt each month',
-    hint: 'On top of the minimums. £0 is fine: the snowball still works by rolling each cleared payment onto the next debt.',
+    hint: 'On top of the minimums. Even a small amount builds momentum and brings your debt-free date closer.',
     invalid: 'That doesn’t look right. Use a number like 50, or 0.'
   },
 
