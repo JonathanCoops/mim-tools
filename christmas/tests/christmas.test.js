@@ -706,6 +706,51 @@ test('boost: lines are cleaned up, removed and cleared for a new Christmas', fun
   assert.deepEqual(p.boosts, [], 'last year’s extra money doesn’t carry over');
 });
 
+test('where you are now: still to find goes down as paydays and extra money are ticked', function () {
+  // Case 1 with £40 of extra money planned: cost £590, plan says £40 each payday.
+  var boosts = [boost('b6', 'Sell on Vinted', 25), boost('b7', 'An extra shift', 15)];
+  var r = L.compute(familyPlan({ boosts: boosts }), TODAY);
+  assert.equal(r.inPot, 150, 'only what’s already saved, to start with');
+  assert.equal(r.stillToFind, 440);
+  assert.equal(r.received, 0);
+
+  // The bike sells: tick the Vinted line.
+  boosts[0].received = true;
+  var sold = L.compute(familyPlan({ boosts: boosts }), TODAY);
+  assert.equal(sold.received, 25);
+  assert.equal(sold.inPot, 175);
+  assert.equal(sold.stillToFind, 415);
+  assert.equal(sold.headline.amount, r.headline.amount, 'ticking doesn’t move the payday amount');
+  assert.equal(sold.cost, r.cost);
+  assert.equal(sold.available, r.available, 'or the plan');
+
+  // Two paydays put aside as well: 175 + 2 × 40 = 255.
+  var two = L.compute(familyPlan({ boosts: boosts, putAside: ['2026-10-16', '2026-10-23', '2027-01-01'] }), TODAY);
+  assert.equal(two.putAsideSoFar, 80, 'a tick for a date not in the tracker doesn’t count');
+  assert.equal(two.inPot, 255);
+  assert.equal(two.stillToFind, 335);
+
+  // Everything ticked: nothing left to find.
+  boosts[1].received = true;
+  var all = L.compute(familyPlan({ boosts: boosts, putAside: r.tracker.map(function (t) { return t.key; }) }), TODAY);
+  assert.equal(all.inPot, 590);
+  assert.equal(all.stillToFind, 0);
+});
+
+test('where you are now: money that turns up unplanned, and never below £0', function () {
+  // A £60 refund added on the plan page and ticked straight away.
+  var r = L.compute(familyPlan({ boosts: [{ id: 'b6', label: 'Refund', amount: '60', received: true }] }), TODAY);
+  assert.equal(r.extra, 60, 'it counts in the plan too');
+  assert.equal(r.spare, 20);
+  assert.equal(r.inPot, 210);
+  assert.equal(r.stillToFind, 380);
+  var lots = L.compute(familyPlan({ boosts: [{ id: 'b6', label: 'Bonus', amount: '1000', received: true }] }), TODAY);
+  assert.equal(lots.stillToFind, 0);
+  assert.equal(lots.headline.kind, 'already');
+  var tidy = L.sanitize({ boosts: [{ id: 'b1', label: 'x', amount: '5', received: 'yes' }, { id: 'b2', label: 'y', amount: '5', received: true }] });
+  assert.deepEqual(tidy.boosts.map(function (b) { return b.received; }), [false, true], 'only true counts');
+});
+
 test('boost: the ideas list has the brief’s examples and ends with “Something else”', function () {
   var B = CONTENT.afford.boost;
   var labels = B.chips.map(function (c) { return c.label; });
@@ -812,7 +857,7 @@ test('saved plans are cleaned up safely', function () {
 test('a saved plan survives being stored and loaded', function () {
   var p = familyPlan({ ways: { cap: true, lowered: { p1: '90' } }, bought: ['p2'], putAside: ['2026-10-16'], screen: '5', forYear: 2026, nextId: 6 });
   p.ownExtras = [{ id: 'x6', label: 'Panto', amount: '45' }];
-  p.boosts = [{ id: 'b7', label: 'Sell on Vinted', amount: '30' }];
+  p.boosts = [{ id: 'b7', label: 'Sell on Vinted', amount: '30', received: true }];
   p.nextId = 8;
   assert.deepEqual(L.sanitize(JSON.parse(JSON.stringify(p))), p);
 });

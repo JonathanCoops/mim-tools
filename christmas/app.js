@@ -876,7 +876,7 @@
     function add(chip) {
       if (state.boosts.length >= L.LIMITS.boosts) return;
       var id = L.newId(state, 'b');
-      state.boosts.push({ id: id, label: chip.other ? '' : chip.label, amount: '' });
+      state.boosts.push({ id: id, label: chip.other ? '' : chip.label, amount: '', received: false });
       edited();
       rerender(chip.other ? 'boost-' + id + '-label' : 'boost-' + id + '-amount');
     }
@@ -1078,7 +1078,7 @@
       input.checked = state.putAside.indexOf(t.key) !== -1;
       input.addEventListener('change', function () {
         state.putAside = toggleIn(state.putAside, t.key, input.checked).filter(function (d, i, all) { return all.indexOf(d) === i; });
-        save();
+        edited();
       });
       return h('li', { className: 'xm-payday' + (t.covers ? ' is-covers' : '') },
         h('label', { for: 'pay-' + t.key },
@@ -1098,17 +1098,14 @@
       }),
       h('div', { className: 'xm-sum-row is-result' }, h('dt', null, P.total), h('dd', null, money(r.extras)))) : h('p', { className: 'muted' }, P.extrasNone);
 
-    // Extra money coming in
-    var boostLines = r.boosts.filter(function (b) { return b.amount > 0; });
-    var boosts = boostLines.length ? h('dl', { className: 'xm-sum' },
-      boostLines.map(function (b) {
-        return h('div', { className: 'xm-sum-row' }, h('dt', null, b.label.trim() || P.boostUnnamed), h('dd', null, money(b.amount)));
-      }),
-      h('div', { className: 'xm-sum-row is-result' }, h('dt', null, P.total), h('dd', null, money(r.extra)))) : null;
+    // Where you are now, and the extra money coming in
+    var now = r.cost > 0 ? whereNow() : null;
+    var boosts = r.cost > 0 ? boostTicks() : null;
 
     return [
       title(P.title),
       head,
+      now,
       r.worried ? h('p', { className: 'xm-help-line' }, C.pdf.plan.help + ' ',
         (config.debtHelp || []).map(function (org, i) { return [i ? ' · ' : '', MIM.extLink(org.url, org.name)]; })) : null,
       h('h2', { className: 'xm-sub' }, P.giftsHeading),
@@ -1120,10 +1117,87 @@
       tracker,
       h('h2', { className: 'xm-sub' }, P.extrasHeading),
       extras,
-      boosts ? h('h2', { className: 'xm-sub' }, P.boostHeading) : null,
-      boosts ? h('p', { className: 'xm-hint' }, P.boostHint) : null,
       boosts
     ];
+  }
+
+  // The plan page's running balance: what's really in the pot so far, from the
+  // ticks below, and what's still to find.
+  function whereNow() {
+    var P = C.plan;
+    var inPot = h('dd');
+    var still = h('dd');
+    var done = h('p', { className: 'xm-now-done', role: 'status' });
+    updaters.push(function (x) {
+      inPot.textContent = money(x.inPot);
+      still.textContent = money(x.stillToFind);
+      done.textContent = x.stillToFind <= 0 ? P.nowDone : '';
+      done.hidden = !done.textContent;
+    });
+    return h('section', { className: 'xm-now', 'aria-labelledby': 'now-heading' },
+      h('h2', { className: 'xm-sub', id: 'now-heading' }, P.nowHeading),
+      h('dl', { className: 'xm-sum' },
+        h('div', { className: 'xm-sum-row' }, h('dt', null, P.inPot), inPot),
+        h('div', { className: 'xm-sum-row is-result' }, h('dt', null, P.stillToFind), still)),
+      done,
+      h('p', { className: 'xm-hint' }, P.nowHint));
+  }
+
+  // Extra money on the plan page: tick it when it comes in, fix the amount if
+  // it sold for more or less, or add money that turned up unplanned.
+  function boostTicks() {
+    var P = C.plan;
+    var full = state.boosts.length >= L.LIMITS.boosts;
+    var total = h('dd');
+    updaters.push(function (x) { total.textContent = money(x.extra); });
+
+    // A new amount changes the plan (the headline and the tracker), which are
+    // drawn once, so redraw when someone leaves the box, keeping their place.
+    function redrawAfter(input) {
+      input.addEventListener('change', function () {
+        setTimeout(function () {
+          var next = document.activeElement && document.activeElement.id;
+          rerender(next || input.id);
+        }, 0);
+      });
+    }
+
+    var rows = h('ul', { className: 'xm-rows xm-boost-rows', role: 'list' }, state.boosts.map(function (row, i) {
+      var name = row.label.trim() || P.boostUnnamed + ' ' + (i + 1);
+      var label = h('input', {
+        id: 'got-' + row.id + '-label', type: 'text', className: 'xm-row-label', maxlength: String(L.MAX.label),
+        placeholder: P.boostPlaceholder, autocomplete: 'off', 'aria-label': fill(C.afford.boost.rowLabel, { n: i + 1 })
+      });
+      label.value = row.label;
+      label.addEventListener('input', function () { row.label = label.value; save(); });
+      var amount = moneyBox('got-' + row.id + '-amount', function () { return row.amount; }, function (v) { row.amount = v; },
+        { ariaLabel: fill(P.boostAmountLabel, { what: name }), className: 'xm-row-amount' });
+      redrawAfter(amount.querySelector('input'));
+      var tick = h('input', { type: 'checkbox', id: 'got-' + row.id });
+      tick.checked = row.received === true;
+      tick.addEventListener('change', function () { row.received = tick.checked; edited(); });
+      return h('li', { className: 'xm-row' }, label, amount,
+        h('label', { className: 'xm-tick xm-got', for: 'got-' + row.id }, tick,
+          h('span', null, P.moneyIn, h('span', { className: 'visually-hidden' }, ': ' + name))));
+    }));
+
+    return h('section', { className: 'xm-boost-block', 'aria-labelledby': 'got-heading' },
+      h('h2', { className: 'xm-sub', id: 'got-heading', tabindex: '-1' }, P.boostHeading),
+      h('p', { className: 'xm-hint' }, state.boosts.length ? P.boostHint : P.boostNone),
+      state.boosts.length ? rows : null,
+      h('p', { className: 'xm-add-row' },
+        h('button', {
+          type: 'button', className: 'xm-add-line', id: 'got-add', disabled: full, onClick: function () {
+            if (state.boosts.length >= L.LIMITS.boosts) return;
+            var id = L.newId(state, 'b');
+            state.boosts.push({ id: id, label: '', amount: '', received: true });
+            edited();
+            rerender('got-' + id + '-label');
+          }
+        }, P.addCame),
+        full ? h('span', { className: 'small muted' }, ' ' + P.boostFull) : null),
+      state.boosts.length ? h('dl', { className: 'xm-sum' },
+        h('div', { className: 'xm-sum-row is-result' }, h('dt', null, P.total), total)) : null);
   }
 
   // Under the Step 5 card: PDFs, the family message, links, email, start again.

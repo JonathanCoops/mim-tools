@@ -526,6 +526,12 @@ p.xm-hint { margin: 0.25rem 0 0.75rem; }
   .xm-boost-block .xm-row { grid-template-columns: minmax(0, 1fr) 9.5rem 3rem; margin-bottom: 0.6rem; }
   .xm-boost-block .xm-row-label { grid-column: auto; }
 }
+/* On the plan page the last column is the "Money in" tick, not a remove button. */
+.xm-boost-rows .xm-row { grid-template-columns: minmax(0, 1fr) auto; }
+.xm-got { align-self: center; white-space: nowrap; }
+@media (min-width: 36rem) { .xm-boost-rows .xm-row { grid-template-columns: minmax(0, 1fr) 9.5rem auto; } }
+.xm-now .xm-sum { margin-bottom: 0.5rem; }
+.xm-now-done { margin: 0.5rem 0; font-weight: 600; color: var(--primary); }
 .xm-ways { margin: 1rem 0 0; padding: 0; list-style: none; }
 .xm-way {
   margin-bottom: 0.75rem;

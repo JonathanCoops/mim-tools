@@ -20,6 +20,12 @@
  * Extra money is counted like money already saved: the payday tracker starts
  * from saved + extra. It can only ever add to the pot.
  *
+ * Where you are now (the plan page), from what's really happened so far:
+ *   In the pot       already saved + paydays ticked as put aside + extra
+ *                    money ticked as "Money in"
+ *   Still to find    cost − in the pot, never below £0
+ * Ticking doesn't change the plan: the amount each payday stays put.
+ *
  * The ways to close the gap are applied in this order. Each one can only
  * ever lower the cost, so switching one on never makes Christmas dearer:
  *   1. lower         someone's budget, typed in (only ever down)
@@ -364,8 +370,11 @@
     var n = pay.dates.length;
 
     var saved = toPence(plan.saved);
-    var boosts = (plan.boosts || []).map(function (b) { return { id: b.id, label: b.label, amount: toPence(b.amount) }; });
+    var boosts = (plan.boosts || []).map(function (b) {
+      return { id: b.id, label: b.label, amount: toPence(b.amount), received: b.received === true };
+    });
     var extra = boosts.reduce(function (t, b) { return t + b.amount; }, 0);
+    var received = boosts.reduce(function (t, b) { return t + (b.received ? b.amount : 0); }, 0);
     var per = toPence(plan.perPayday);
     var inHand = saved + extra; // counted as already in the pot
     var available = inHand + per * n;
@@ -417,6 +426,12 @@
 
     var gap = cost - available;
     var gapWithoutExtra = gap + extra;
+
+    // Where you are now: only what's really been put aside or come in.
+    var ticked = plan.putAside || [];
+    var putAsideSoFar = n && head.amount > 0
+      ? tracker.filter(function (t) { return ticked.indexOf(t.key) !== -1; }).length * head.amount : 0;
+    var inPot = saved + putAsideSoFar + received;
     return {
       christmas: christmas,
       cutoff: cutoff,
@@ -433,6 +448,10 @@
       // How much of the gap the extra money covers, if there's a gap without it.
       gapWithoutExtra: pounds(gapWithoutExtra),
       extraCovers: pounds(Math.max(0, Math.min(extra, gapWithoutExtra))),
+      received: pounds(received),
+      putAsideSoFar: pounds(putAsideSoFar),
+      inPot: pounds(inPot),
+      stillToFind: pounds(Math.max(0, cost - inPot)),
       available: pounds(available),
       giftsBefore: pounds(before.gifts),
       extrasBefore: pounds(before.extras),
@@ -555,7 +574,7 @@
     });
 
     plan.boosts = uniqueRows(raw.boosts, 'b', LIMITS.boosts).map(function (r) {
-      return { id: r.id, label: str(r.label, MAX.label), amount: str(r.amount, MAX.money) };
+      return { id: r.id, label: str(r.label, MAX.label), amount: str(r.amount, MAX.money), received: r.received === true };
     });
 
     var personIds = plan.people.map(function (p) { return p.id; });
