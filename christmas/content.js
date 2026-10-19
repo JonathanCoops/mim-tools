@@ -108,7 +108,8 @@ window.MIM_CHRISTMAS_CONTENT = {
       hint: 'From now until Christmas. £0 is fine for now, and you can come back to it.'
     },
     sumLabel: 'By {cutoff} you’ll have',
-    sumBreakdown: '{saved} saved + {amount} × {count}'
+    sumBreakdown: '{saved} saved + {amount} × {count}',
+    sumBreakdownExtra: '{saved} saved + {extra} extra + {amount} × {count}'
   },
 
   /* Step 2 */
@@ -210,7 +211,9 @@ window.MIM_CHRISTMAS_CONTENT = {
     costBreakdown: 'Gifts {gifts} + everything else {extras}',
     have: 'You’ll have by {cutoff}',
     haveBreakdown: '{saved} saved + {amount} × {count}',
+    haveBreakdownExtra: '{saved} saved + {extra} extra + {amount} × {count}',
     haveSaved: '{saved} already saved',
+    haveSavedExtra: '{saved} saved + {extra} extra',
     short: 'You’re {amount} short',
     spare: 'You’ve {amount} to spare',
     even: 'It balances to the penny',
@@ -270,6 +273,32 @@ window.MIM_CHRISTMAS_CONTENT = {
         amount: 'New amount'
       }
     },
+    // Ways to boost the pot: extra money coming in, rather than costs going down.
+    boost: {
+      heading: 'Ways to boost the pot',
+      intro: 'You can also close the gap from the other side, by bringing a bit more in before Christmas. Tap anything you could do and put a rough figure on it. £20 here and £30 there soon adds up.',
+      chipsLabel: 'Ideas',
+      chips: [
+        { label: 'An extra shift' },
+        { label: 'Overtime' },
+        { label: 'Christmas temp work' },
+        { label: 'Sell on Vinted' },
+        { label: 'Sell on Facebook Marketplace or eBay' },
+        { label: 'Babysitting or pet-sitting' },
+        { label: 'Odd jobs for friends or neighbours' },
+        { label: 'Gift cards and vouchers you haven’t used' },
+        { label: 'Loyalty points or cashback' },
+        { label: 'Something else', other: true }
+      ],
+      placeholder: 'How will you do it?',
+      rowLabel: 'Extra money idea {n}',
+      amountLabel: 'How much {what} could bring in',
+      full: 'That’s the most this list holds.',
+      benefits: 'On Universal Credit or other benefits? Extra earnings can change what you get, so check before you count on them.',
+      total: 'Extra into the pot',
+      covers: 'That covers {amount} of the {gap} gap.',
+      closes: 'That closes the gap.'
+    },
     celebrate: {
       heading: 'That’s Christmas covered',
       body: 'It adds up, with nothing borrowed. Your plan is ready on the next step.'
@@ -305,6 +334,9 @@ window.MIM_CHRISTMAS_CONTENT = {
     trackerNone: 'No paydays left to track before Christmas.',
     extrasHeading: 'Everything else',
     extrasNone: 'Nothing added yet.',
+    boostHeading: 'Extra money coming in',
+    boostHint: 'Already counted in your plan. When it comes in, put it straight in the Christmas pot.',
+    boostUnnamed: 'Extra money',
     total: 'Total',
     edit: 'Change something',
     hardYear: 'And if Christmas feels heavy this year for reasons that have nothing to do with money, be kind to yourself. A quieter Christmas still counts.',
@@ -385,6 +417,7 @@ window.MIM_CHRISTMAS_CONTENT = {
       paidBy: 'Christmas is paid for by {date}',
       costs: 'Christmas costs {amount}',
       saved: '{amount} already saved',
+      extra: '{amount} extra coming in',
       paydays: '{count} before Christmas',
       gifts: 'Gifts',
       idea: 'Idea',

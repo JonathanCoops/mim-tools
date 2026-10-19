@@ -490,7 +490,9 @@
     });
 
     var sumNote = function (x) {
-      return x.paydays ? fill(W.sumBreakdown, { saved: money(x.saved), amount: money(x.perPayday), count: paydaysText(x.paydays) }) : '';
+      if (!x.paydays) return '';
+      return fill(x.extra > 0 ? W.sumBreakdownExtra : W.sumBreakdown,
+        { saved: money(x.saved), extra: money(x.extra), amount: money(x.perPayday), count: paydaysText(x.paydays) });
     };
 
     return [
@@ -865,6 +867,67 @@
       on && !disabled ? h('div', { className: 'xm-way-body' }, wayControls(id, r)) : null);
   }
 
+  // Ways to boost the pot: extra money coming in. Tapping an idea adds a line
+  // with its name filled in; "Something else" adds a blank one.
+  function boostSection() {
+    var B = C.afford.boost;
+    var full = state.boosts.length >= L.LIMITS.boosts;
+
+    function add(chip) {
+      if (state.boosts.length >= L.LIMITS.boosts) return;
+      var id = L.newId(state, 'b');
+      state.boosts.push({ id: id, label: chip.other ? '' : chip.label, amount: '' });
+      edited();
+      rerender(chip.other ? 'boost-' + id + '-label' : 'boost-' + id + '-amount');
+    }
+
+    var chips = h('div', { className: 'xm-chips-block' },
+      h('p', { className: 'xm-chips-label', id: 'boost-chips-label' }, B.chipsLabel),
+      h('ul', { className: 'xm-chips', role: 'list', 'aria-labelledby': 'boost-chips-label' }, B.chips.map(function (chip) {
+        return h('li', null, h('button', { type: 'button', className: 'xm-chip', disabled: full, onClick: function () { add(chip); } },
+          h('span', { 'aria-hidden': 'true' }, '+ '), chip.label));
+      })),
+      full ? h('p', { className: 'xm-hint' }, B.full) : null);
+
+    var rows = h('ul', { className: 'xm-rows', role: 'list' }, state.boosts.map(function (row, i) {
+      var name = fill(B.rowLabel, { n: i + 1 });
+      var label = h('input', {
+        id: 'boost-' + row.id + '-label', type: 'text', className: 'xm-row-label', maxlength: String(L.MAX.label),
+        placeholder: B.placeholder, autocomplete: 'off', 'aria-label': name
+      });
+      label.value = row.label;
+      var amount = moneyBox('boost-' + row.id + '-amount', function () { return row.amount; }, function (v) { row.amount = v; },
+        { ariaLabel: fill(B.amountLabel, { what: row.label || name }), className: 'xm-row-amount' });
+      var remove = h('button', { type: 'button', className: 'xm-remove', 'aria-label': fill(C.ui.remove, { what: row.label || name }) },
+        h('span', { 'aria-hidden': 'true' }, '×'));
+      label.addEventListener('input', function () {
+        row.label = label.value;
+        var what = label.value.trim() || name;
+        remove.setAttribute('aria-label', fill(C.ui.remove, { what: what }));
+        amount.querySelector('input').setAttribute('aria-label', fill(B.amountLabel, { what: what }));
+        edited();
+      });
+      remove.addEventListener('click', function () {
+        L.removeBoost(state, row.id);
+        edited();
+        var left = state.boosts;
+        rerender(left.length ? 'boost-' + left[Math.min(i, left.length - 1)].id + '-label' : 'boost-heading');
+      });
+      return h('li', { className: 'xm-row' }, label, amount, remove);
+    }));
+
+    return h('section', { className: 'xm-ways-block xm-boost-block', 'aria-labelledby': 'boost-heading' },
+      h('h2', { className: 'xm-sub', id: 'boost-heading', tabindex: '-1' }, B.heading),
+      h('p', null, B.intro),
+      chips,
+      state.boosts.length ? rows : null,
+      state.boosts.length ? totalBox(B.total, function (x) { return money(x.extra); }, function (x) {
+        if (!(x.extra > 0) || !(x.gapWithoutExtra > 0)) return '';
+        return x.extra >= x.gapWithoutExtra ? B.closes : fill(B.covers, { amount: money(x.extraCovers), gap: money(x.gapWithoutExtra) });
+      }) : null,
+      h('p', { className: 'xm-hint' }, B.benefits));
+  }
+
   function stepAfford() {
     var A = C.afford;
     var r = figures();
@@ -902,9 +965,10 @@
       costValue.textContent = money(x.cost);
       costNote.textContent = fill(A.costBreakdown, { gifts: money(x.gifts), extras: money(x.extras) });
       haveValue.textContent = money(x.available);
+      var parts = { saved: money(x.saved), extra: money(x.extra), amount: money(x.perPayday), count: paydaysText(x.paydays) };
       haveNote.textContent = x.paydays
-        ? fill(A.haveBreakdown, { saved: money(x.saved), amount: money(x.perPayday), count: paydaysText(x.paydays) })
-        : fill(A.haveSaved, { saved: money(x.saved) });
+        ? fill(x.extra > 0 ? A.haveBreakdownExtra : A.haveBreakdown, parts)
+        : fill(x.extra > 0 ? A.haveSavedExtra : A.haveSaved, parts);
       verdict.textContent = verdictText(x);
       verdict.className = 'xm-verdict ' + (x.short > 0 ? 'is-short' : 'is-covered');
       need.textContent = needText(x);
@@ -931,6 +995,7 @@
         h('p', null, A.waysIntro),
         h('p', { className: 'xm-hint' }, A.familyNote),
         h('ul', { className: 'xm-ways', role: 'list' }, L.WAYS.map(function (id) { return wayItem(id, r); }))),
+      boostSection(),
       messagePanel('m4')
     );
     return nodes;
@@ -1033,6 +1098,14 @@
       }),
       h('div', { className: 'xm-sum-row is-result' }, h('dt', null, P.total), h('dd', null, money(r.extras)))) : h('p', { className: 'muted' }, P.extrasNone);
 
+    // Extra money coming in
+    var boostLines = r.boosts.filter(function (b) { return b.amount > 0; });
+    var boosts = boostLines.length ? h('dl', { className: 'xm-sum' },
+      boostLines.map(function (b) {
+        return h('div', { className: 'xm-sum-row' }, h('dt', null, b.label.trim() || P.boostUnnamed), h('dd', null, money(b.amount)));
+      }),
+      h('div', { className: 'xm-sum-row is-result' }, h('dt', null, P.total), h('dd', null, money(r.extra)))) : null;
+
     return [
       title(P.title),
       head,
@@ -1046,7 +1119,10 @@
       r.tracker.length ? h('p', { className: 'xm-hint' }, P.trackerHint) : null,
       tracker,
       h('h2', { className: 'xm-sub' }, P.extrasHeading),
-      extras
+      extras,
+      boosts ? h('h2', { className: 'xm-sub' }, P.boostHeading) : null,
+      boosts ? h('p', { className: 'xm-hint' }, P.boostHint) : null,
+      boosts
     ];
   }
 

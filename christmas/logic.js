@@ -10,9 +10,15 @@
  *   Paydays          from the next payday, every week, 2 weeks, 4 weeks or
  *                    month, up to and including 20 December (CUTOFF_DAY), so
  *                    the money is there in time
- *   Available        already saved + (each payday × paydays left)
+ *   Extra            the "ways to boost the pot" (an extra shift, selling
+ *                    something...), added up
+ *   Available        already saved + extra + (each payday × paydays left)
  *   Cost             gifts + everything else, after any "ways to close the gap"
- *   Need per payday  (cost − already saved) ÷ paydays left, rounded up to the pound
+ *   Need per payday  (cost − already saved − extra) ÷ paydays left, rounded up
+ *                    to the pound
+ *
+ * Extra money is counted like money already saved: the payday tracker starts
+ * from saved + extra. It can only ever add to the pot.
  *
  * The ways to close the gap are applied in this order. Each one can only
  * ever lower the cost, so switching one on never makes Christmas dearer:
@@ -55,7 +61,7 @@
   var SCREENS = ['intro', '1', '2', '3', '4', '5'];
   var SANTA_ID = 'santa'; // the family Secret Santa present on the gift list
 
-  var LIMITS = { people: 30, ownExtras: 8, paydays: 60 };
+  var LIMITS = { people: 30, ownExtras: 8, boosts: 10, paydays: 60 };
   var MAX = { money: 12, name: 40, idea: 80, label: 50, message: 1500 };
   // Pre-filled amounts. A blank Secret Santa or cap amount means these;
   // blank materials means £0 (a gift of time).
@@ -358,8 +364,11 @@
     var n = pay.dates.length;
 
     var saved = toPence(plan.saved);
+    var boosts = (plan.boosts || []).map(function (b) { return { id: b.id, label: b.label, amount: toPence(b.amount) }; });
+    var extra = boosts.reduce(function (t, b) { return t + b.amount; }, 0);
     var per = toPence(plan.perPayday);
-    var available = saved + per * n;
+    var inHand = saved + extra; // counted as already in the pot
+    var available = inHand + per * n;
 
     var ways = plan.ways || {};
     var before = applyWays(plan, {});
@@ -385,18 +394,18 @@
     // The headline and the payday tracker
     var head;
     if (before.cost === 0) head = { kind: 'empty' };
-    else if (saved >= cost) head = { kind: 'already', amount: per };
+    else if (inHand >= cost) head = { kind: 'already', amount: per };
     else if (pay.status === 'none') head = { kind: 'needPayday' };
     else if (n === 0) head = { kind: 'noPaydays' };
     else {
-      var need = Math.ceil((cost - saved) / n / 100) * 100;
-      var enough = per * n >= cost - saved;
+      var need = Math.ceil((cost - inHand) / n / 100) * 100;
+      var enough = per * n >= cost - inHand;
       head = { kind: enough ? 'covered' : 'need', amount: enough ? per : need, need: need, more: Math.max(0, need - per) };
     }
 
     var tracker = [];
     if (n && head.amount > 0) {
-      var running = saved;
+      var running = inHand;
       var coveredAt = -1;
       pay.dates.forEach(function (date, i) {
         running += head.amount;
@@ -407,6 +416,7 @@
     }
 
     var gap = cost - available;
+    var gapWithoutExtra = gap + extra;
     return {
       christmas: christmas,
       cutoff: cutoff,
@@ -418,6 +428,11 @@
       saved: pounds(saved),
       perPayday: pounds(per),
       fromPaydays: pounds(per * n),
+      extra: pounds(extra),
+      boosts: boosts.map(function (b) { return Object.assign({}, b, { amount: pounds(b.amount) }); }),
+      // How much of the gap the extra money covers, if there's a gap without it.
+      gapWithoutExtra: pounds(gapWithoutExtra),
+      extraCovers: pounds(Math.max(0, Math.min(extra, gapWithoutExtra))),
       available: pounds(available),
       giftsBefore: pounds(before.gifts),
       extrasBefore: pounds(before.extras),
@@ -469,6 +484,7 @@
       people: [],
       extras: {},
       ownExtras: [],
+      boosts: [],
       ways: {
         lower: false, secretSanta: false, cap: false, childrenOnly: false, homemade: false, cutBack: false,
         lowered: {},
@@ -538,6 +554,10 @@
       return { id: r.id, label: str(r.label, MAX.label), amount: str(r.amount, MAX.money) };
     });
 
+    plan.boosts = uniqueRows(raw.boosts, 'b', LIMITS.boosts).map(function (r) {
+      return { id: r.id, label: str(r.label, MAX.label), amount: str(r.amount, MAX.money) };
+    });
+
     var personIds = plan.people.map(function (p) { return p.id; });
     var lineIds = EXTRAS.concat(plan.ownExtras.map(function (r) { return r.id; }));
     var w = isObj(raw.ways) ? raw.ways : {};
@@ -566,7 +586,7 @@
     plan.forYear = typeof raw.forYear === 'number' && raw.forYear >= 2000 && raw.forYear <= 3000 ? Math.floor(raw.forYear) : 0;
     plan.screen = SCREENS.indexOf(raw.screen) !== -1 ? raw.screen : 'intro';
 
-    var highest = plan.people.concat(plan.ownExtras).reduce(function (top, r) { return Math.max(top, idNumber(r.id)); }, 0);
+    var highest = plan.people.concat(plan.ownExtras, plan.boosts).reduce(function (top, r) { return Math.max(top, idNumber(r.id)); }, 0);
     var next = typeof raw.nextId === 'number' && isFinite(raw.nextId) ? Math.floor(raw.nextId) : 1;
     plan.nextId = Math.min(999999, Math.max(next, highest + 1));
     return plan;
@@ -581,11 +601,13 @@
       (plan.people || []).length > 0 ||
       Object.keys(extras).some(function (k) { return filled(extras[k]); }) ||
       (plan.ownExtras || []).some(function (r) { return filled(r.label) || filled(r.amount); }) ||
+      (plan.boosts || []).some(function (r) { return filled(r.amount); }) ||
       plan.worried === true ||
       ['bought', 'wrapped', 'putAside'].some(function (k) { return (plan[k] || []).length > 0; });
   }
 
-  // A new id for a person ('p') or an "everything else" line ('x').
+  // A new id for a person ('p'), an "everything else" line ('x') or a way
+  // to boost the pot ('b').
   function newId(plan, prefix) {
     var id = prefix + plan.nextId;
     plan.nextId += 1;
@@ -605,8 +627,14 @@
     if (plan.ways.cutLine === id) { plan.ways.cutLine = ''; plan.ways.cutAmount = ''; }
   }
 
-  // Last year's ticks don't belong on this year's list.
+  function removeBoost(plan, id) {
+    plan.boosts = plan.boosts.filter(function (r) { return r.id !== id; });
+  }
+
+  // Last year's ticks, and last year's extra money, don't belong in this
+  // year's plan.
   function newYear(plan, year) {
+    plan.boosts = [];
     plan.bought = [];
     plan.wrapped = [];
     plan.putAside = [];
@@ -654,6 +682,7 @@
     newId: newId,
     removePerson: removePerson,
     removeOwnExtra: removeOwnExtra,
+    removeBoost: removeBoost,
     newYear: newYear
   };
 });

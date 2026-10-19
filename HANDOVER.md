@@ -18,7 +18,7 @@ They were built in October 2026 with one-off Claude cloud-session credit, in thi
 | Which Baby Step am I on? | 10-question quiz. Places people on the first Money in Motion Baby Step they haven't completed (0, 1, 2, 3, 3b, 4, 5, 6, 7), with 6b and giving notes, three actions for the week, Jonathan's YouTube video for that step, and a one-page PDF. | `quiz`, plus `baby_step` (for example `Step 3b`) |
 | Debt Snowball Planner | Smallest-balance-first plan with a debt-free date, a chart, "what if I found £50 more" and a fridge PDF. | `debt-planner` |
 | Saving for Mission Builder | Jonathan's six-step Mission Cost Plan (A to G) as a live builder, with a worked example, a full plan PDF and a "Partner with me" PDF for supporters. | `saving-for-mission` |
-| Christmas Without Debt | Plans Christmas around paydays so it is paid in cash: gift list, the costs people forget, ways to close the gap, a message suggesting a cheaper Christmas to the family, and two PDFs. | `christmas` |
+| Christmas Without Debt | Plans Christmas around paydays so it is paid in cash: gift list, the costs people forget, ways to cut the cost and ways to boost the pot (extra shifts, selling things and so on), a message suggesting a cheaper Christmas to the family, and two PDFs. | `christmas` |
 
 ## Source material
 

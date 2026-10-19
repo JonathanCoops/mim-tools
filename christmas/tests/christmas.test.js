@@ -11,6 +11,7 @@
  *   2. the sums: zero savings, a gap, a surplus, the headline and tracker,
  *      including two cases worked out by hand;
  *   3. every "way to close the gap", on its own and together;
+ *   3b. the ways to boost the pot (extra money coming in);
  *   4. the family message: the light-hearted and short ones never mention
  *      money troubles;
  *   5. saved plans are cleaned up safely;
@@ -623,6 +624,102 @@ test('ways: which ones can work with the list', function () {
 });
 
 /* ------------------------------------------------------------------
+ * 3b. Ways to boost the pot (extra money coming in)
+ * ------------------------------------------------------------------ */
+
+function boost(id, label, amount) { return { id: id, label: label, amount: String(amount) }; }
+
+test('boost: extra money closes the £40 gap in hand-worked case 1', function () {
+  // £150 saved + £25 from Vinted + £15 from an extra shift + £40 × 10 paydays = £590, the whole cost.
+  var r = L.compute(familyPlan({ boosts: [boost('b6', 'Sell on Vinted', 25), boost('b7', 'An extra shift', 15)] }), TODAY);
+  assert.equal(r.extra, 40);
+  assert.equal(r.available, 590);
+  assert.equal(r.cost, 590, 'extra money never changes the cost');
+  assert.equal(r.short, 0);
+  assert.equal(r.balanced, true);
+  assert.equal(r.gapWithoutExtra, 40);
+  assert.equal(r.extraCovers, 40);
+  assert.equal(r.headline.kind, 'covered');
+  assert.equal(r.headline.amount, 40);
+  assert.equal(r.tracker[0].running, 230, 'the tracker starts from saved + extra: 150 + 40 + 40');
+  assert.deepEqual(r.boosts.map(function (b) { return [b.label, b.amount]; }), [['Sell on Vinted', 25], ['An extra shift', 15]]);
+});
+
+test('boost: a little extra chips away at the gap and lowers the payday amount', function () {
+  // (590 − 150 − 25) ÷ 10 = £41.50, rounded up to £42: £2 more than now instead of £4.
+  var r = L.compute(familyPlan({ boosts: [boost('b6', 'Overtime', 25)] }), TODAY);
+  assert.equal(r.short, 15);
+  assert.equal(r.extraCovers, 25);
+  assert.equal(r.gapWithoutExtra, 40);
+  assert.equal(r.headline.kind, 'need');
+  assert.equal(r.headline.amount, 42);
+  assert.equal(r.headline.more, 2);
+});
+
+test('boost: more than enough leaves some to spare, and can pay for Christmas outright', function () {
+  var spare = L.compute(familyPlan({ boosts: [boost('b6', 'Christmas temp work', 100)] }), TODAY);
+  assert.equal(spare.spare, 60);
+  assert.equal(spare.extraCovers, 40, 'covers the gap, not more');
+  var outright = L.compute(familyPlan({ perPayday: '0', boosts: [boost('b6', 'Christmas temp work', 440)] }), TODAY);
+  assert.equal(outright.headline.kind, 'already', '150 saved + 440 extra = 590');
+});
+
+test('boost: with no paydays left, extra money is what closes the gap', function () {
+  var r = L.compute(familyPlan({ pay: { frequency: 'weekly', next: '2026-12-25' }, boosts: [boost('b6', 'Sell on Facebook Marketplace or eBay', 200)] }), TODAY);
+  assert.equal(r.paydays, 0);
+  assert.equal(r.available, 350);
+  assert.equal(r.short, 240);
+  assert.equal(r.headline.kind, 'noPaydays');
+});
+
+test('boost: blank, minus or nonsense amounts add nothing, and adding one never shrinks the pot', function () {
+  var r = L.compute(familyPlan({ boosts: [boost('b6', 'Overtime', ''), boost('b7', 'Odd jobs', '-50'), boost('b8', 'Babysitting', 'lots')] }), TODAY);
+  assert.equal(r.extra, 0);
+  assert.equal(r.available, 550);
+  for (var i = 0; i < 500; i++) {
+    var amounts = [0, 1, 2].map(function () { return String(Math.floor(Math.random() * 30000) / 100); });
+    var before = L.compute(familyPlan({ boosts: amounts.slice(0, 2).map(function (a, j) { return boost('b' + (j + 6), 'x', a); }) }), TODAY);
+    var after = L.compute(familyPlan({ boosts: amounts.map(function (a, j) { return boost('b' + (j + 6), 'x', a); }) }), TODAY);
+    assert.ok(after.available >= before.available && after.short <= before.short, amounts.join(', '));
+    assert.equal(after.cost, before.cost);
+  }
+});
+
+test('boost: lines are cleaned up, removed and cleared for a new Christmas', function () {
+  var messy = L.sanitize({
+    boosts: [boost('b1', 'x'.repeat(200), 20), boost('b1', 'Duplicate', 5), boost('p2', 'Wrong prefix', 5), 'nonsense']
+      .concat(new Array(20).fill(0).map(function (_, i) { return boost('b' + (i + 3), 'Extra', 1); })),
+    nextId: 2
+  });
+  assert.equal(messy.boosts.length, L.LIMITS.boosts);
+  assert.equal(messy.boosts[0].label.length, L.MAX.label);
+  assert.ok(messy.boosts.every(function (b) { return /^b\d+$/.test(b.id); }));
+  assert.equal(messy.nextId, 12, 'new ids never clash with kept lines (b1, b3 to b11)');
+
+  var p = familyPlan({ boosts: [boost('b6', 'Overtime', 50), boost('b7', 'Sell on Vinted', 20)] });
+  assert.equal(L.hasData(plan({ boosts: [boost('b1', 'Overtime', '')] })), false, 'an idea tapped but no amount');
+  assert.equal(L.hasData(plan({ boosts: [boost('b1', 'Overtime', '50')] })), true);
+  L.removeBoost(p, 'b6');
+  assert.deepEqual(p.boosts.map(function (b) { return b.id; }), ['b7']);
+  assert.equal(L.newId(L.sanitize(p), 'b'), 'b8');
+  L.newYear(p, 2027);
+  assert.deepEqual(p.boosts, [], 'last year’s extra money doesn’t carry over');
+});
+
+test('boost: the ideas list has the brief’s examples and ends with “Something else”', function () {
+  var B = CONTENT.afford.boost;
+  var labels = B.chips.map(function (c) { return c.label; });
+  ['An extra shift', 'Overtime', 'Sell on Vinted', 'Sell on Facebook Marketplace or eBay', 'Something else'].forEach(function (l) {
+    assert.ok(labels.indexOf(l) !== -1, 'missing: ' + l);
+  });
+  assert.deepEqual(B.chips.map(function (c) { return !!c.other; }), labels.map(function (_, i) { return i === labels.length - 1; }), 'only the last is “other”');
+  assert.ok(labels.every(function (l) { return l.length <= L.MAX.label; }), 'every idea fits a line');
+  assert.ok(B.chips.length <= L.LIMITS.boosts);
+  assert.ok(/Universal Credit/.test(B.benefits));
+  assert.ok(!/borrow|loan|credit card|bet|gambl|scratch/i.test(labels.join(' ')), 'no borrowing or gambling ideas');
+});
+
+/* ------------------------------------------------------------------
  * 4. The family message
  * ------------------------------------------------------------------ */
 
@@ -715,7 +812,8 @@ test('saved plans are cleaned up safely', function () {
 test('a saved plan survives being stored and loaded', function () {
   var p = familyPlan({ ways: { cap: true, lowered: { p1: '90' } }, bought: ['p2'], putAside: ['2026-10-16'], screen: '5', forYear: 2026, nextId: 6 });
   p.ownExtras = [{ id: 'x6', label: 'Panto', amount: '45' }];
-  p.nextId = 7;
+  p.boosts = [{ id: 'b7', label: 'Sell on Vinted', amount: '30' }];
+  p.nextId = 8;
   assert.deepEqual(L.sanitize(JSON.parse(JSON.stringify(p))), p);
 });
 

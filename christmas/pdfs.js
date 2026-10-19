@@ -107,6 +107,7 @@ window.MIMChristmasPdfs = (function () {
     var stats = [];
     if (r.cost > 0) stats.push(fill(P.costs, { amount: money(r.cost) }));
     if (r.saved > 0) stats.push(fill(P.saved, { amount: money(r.saved) }));
+    if (r.extra > 0) stats.push(fill(P.extra, { amount: money(r.extra) }));
     if (r.pay.status === 'ok') stats.push(fill(P.paydays, { count: r.paydays + ' ' + (r.paydays === 1 ? C.ui.payday : C.ui.paydays) }));
     var long = main.length > 40;
     return h('div', { className: 'xm-pdf-hero' },
