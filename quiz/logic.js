@@ -9,6 +9,8 @@
  *   debt        'yes' | 'no'                 any consumer debt
  *   debtSigns   array of 'minimums' | 'notFalling' | 'creditMonth' | 'yearIncome'
  *               (only asked when debt is 'yes')
+ *   extraSavings 'yes' | 'no'               more than £500 in savings
+ *               (only asked when starter and debt are both 'yes')
  *   fullFund    'yes' | 'no'                 3–6 months saved
  *   house       'yes' | 'no'                 buying soon and still building the deposit
  *   invest      'yes' | 'less' | 'unsure'    around 15% into pensions/investments
@@ -28,13 +30,13 @@
 
   // Every possible question, in the order they're asked.
   var QUESTION_ORDER = [
-    'budget', 'starter', 'debt', 'debtSigns', 'fullFund', 'house',
+    'budget', 'starter', 'debt', 'debtSigns', 'extraSavings', 'fullFund', 'house',
     'invest', 'children', 'launchFund', 'mortgage', 'studentLoan', 'giving'
   ];
 
   // Follow-up questions share their parent's number ("Question 3 of 10").
   var QUESTION_NUMBER = {
-    budget: 1, starter: 2, debt: 3, debtSigns: 3, fullFund: 4, house: 5,
+    budget: 1, starter: 2, debt: 3, debtSigns: 3, extraSavings: 3, fullFund: 4, house: 5,
     invest: 6, children: 7, launchFund: 7, mortgage: 8, studentLoan: 9, giving: 10
   };
   var TOTAL_QUESTIONS = 10;
@@ -44,6 +46,7 @@
     starter: ['yes', 'no'],
     debt: ['yes', 'no'],
     debtSigns: ['minimums', 'notFalling', 'creditMonth', 'yearIncome'],
+    extraSavings: ['yes', 'no'],
     fullFund: ['yes', 'no'],
     house: ['yes', 'no'],
     invest: ['yes', 'less', 'unsure'],
@@ -64,6 +67,7 @@
 
   function isAsked(id, answers) {
     if (id === 'debtSigns') return answers.debt === 'yes';
+    if (id === 'extraSavings') return answers.starter === 'yes' && answers.debt === 'yes';
     if (id === 'launchFund') return answers.children === 'yes';
     return true;
   }
@@ -162,6 +166,8 @@
       headingFor: step === '0' ? firstTodo(a, 1) : null,
       // Any "tick if true" box ticked: talk to a debt charity first.
       needsDebtHelp: a.debt === 'yes' && Array.isArray(a.debtSigns) && a.debtSigns.length > 0,
+      // Savings above the £500 starter fund while in debt: that money can go at the debt now.
+      moveSavings: a.extraSavings === 'yes',
       studentLoanNote: a.studentLoan === 'yes',
       giving: a.giving === 'yes' ? 'yes' : (a.giving === 'no' ? 'no' : null),
       ladder: ladder,

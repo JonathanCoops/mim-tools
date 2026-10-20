@@ -71,6 +71,14 @@ window.MIM_QUIZ_CONTENT = {
         { value: 'yearIncome', label: 'I owe close to, or more than, a year’s income' }
       ]
     },
+    extraSavings: {
+      text: 'Do you have more than £500 in savings?',
+      help: ['Count everything you could get at easily, including the £500 for emergencies.'],
+      options: [
+        { value: 'yes', label: 'Yes' },
+        { value: 'no', label: 'No' }
+      ]
+    },
     fullFund: {
       text: 'Do you have 3–6 months of essential expenses saved?',
       help: ['Essentials are the bills you’d still have to pay if your income stopped. Count savings you can get at easily.'],
@@ -144,6 +152,8 @@ window.MIM_QUIZ_CONTENT = {
    *   meaning  2–3 sentences
    *   actions  exactly three things to do this week
    *   faith    at most one short line, or null. Never the opening line.
+   * Step 2 also has moveSavingsAction: it replaces the third action for
+   * anyone with more than £500 saved while still in debt.
    */
   steps: {
     '0': {
@@ -171,6 +181,7 @@ window.MIM_QUIZ_CONTENT = {
         'Stop adding to them. Cut up the card, or take it off your phone and your favourite shopping sites.',
         'Find one extra amount this month, however small, and pay it off the smallest debt. The debt snowball tool in the free app shows when each one will be gone.'
       ],
+      moveSavingsAction: 'Keep £500 for emergencies. Move everything above it onto the smallest debt this week, then roll on to the next.',
       faith: 'Proverbs 22:7 puts it bluntly: the borrower is slave to the lender. Each debt you clear hands a bit of that freedom back.'
     },
     '3': {
