@@ -1,6 +1,6 @@
 # Handover: Money in Motion Free Tools
 
-Written 15 October 2026, at the end of the build session that created this repo. Read this, then `README.md`, before doing any work here. The README covers how the code is laid out and the House rules for copy. This file covers why the tools exist, what was decided along the way, and what is still to do.
+Written 15 October 2026, at the end of the build session that created this repo. Last updated 20 October 2026 (see "Changes since launch"). Read this, then `README.md`, before doing any work here. The README covers how the code is laid out and the House rules for copy. This file covers why the tools exist, what was decided along the way, and what is still to do.
 
 ## Why these tools exist
 
@@ -18,7 +18,7 @@ They were built in October 2026 with one-off Claude cloud-session credit, in thi
 | Which Baby Step am I on? | 10-question quiz. Places people on the first Money in Motion Baby Step they haven't completed (0, 1, 2, 3, 3b, 4, 5, 6, 7), with 6b and giving notes, three actions for the week, Jonathan's YouTube video for that step, and a one-page PDF. | `quiz`, plus `baby_step` (for example `Step 3b`) |
 | Debt Snowball Planner | Smallest-balance-first plan with a debt-free date, a chart, "what if I found £50 more" and a fridge PDF. | `debt-planner` |
 | Saving for Mission Builder | Jonathan's six-step Mission Cost Plan (A to G) as a live builder, with a worked example, a full plan PDF and a "Partner with me" PDF for supporters. | `saving-for-mission` |
-| Christmas Without Debt | Plans Christmas around paydays so it is paid in cash: gift list, the costs people forget, ways to cut the cost and ways to boost the pot (extra shifts, selling things and so on), a message suggesting a cheaper Christmas to the family, and two PDFs. | `christmas` |
+| Christmas Without Debt | Plans Christmas around paydays so it is paid in cash: gift list, the costs people forget, ways to cut the cost and ways to boost the pot (extra shifts, selling things and so on), a message suggesting a cheaper Christmas to the family, and two PDFs. The plan page tracks real progress: tick off each payday and each bit of extra money as it comes in, and "Still to find" goes down. | `christmas` |
 
 ## Source material
 
@@ -58,7 +58,7 @@ MailerLite details:
 **Free plan limits** (MailerLite free plan, checked 15 October 2026):
 - 250 active subscribers; there were 142 active, 183 in total.
 - 3 active forms. The front door doesn't use one.
-- 3 active automations of up to 5 steps. With Speaking Enquiry paused, the free-tools welcome takes that slot. Don't pause or edit the 9-step Budget Tool and App Signup flows; they exceed the current 5-step cap and may not switch back on. The Graduate Holding Sequence and the one-question welcome are still queuing for a slot.
+- 3 active automations of up to 5 steps. With Speaking Enquiry paused, the free-tools welcome takes that slot. Don't pause or edit the 9-step Budget Tool and App Signup flows; they exceed the current 5-step cap and may not switch back on. The Graduate Holding Sequence and the one-question welcome are still queuing for a slot. Checked 20 October 2026: all three active slots are in use (Budget Tool – Delivery & Nurture, App Signup – Welcome Flow, Free Tools – Welcome), and Speaking Enquiry no longer appears in MailerLite's automation list.
 - 2,500 emails a month. The Thursday email to every active subscriber counts towards this.
 
 Build tailored per-step sequences only after an upgrade.
@@ -77,20 +77,18 @@ Build tailored per-step sequences only after an upgrade.
 ## To do
 
 **Jonathan**
-1. Deploy the front door (steps in `apps-script/README.md`): create the Sheet "Free Tools — Sign-up Log", paste in the script, add the two Script Properties, run `setupSheet`, deploy as a web app (Execute as: Me, access: Anyone), then paste the URL into `signup.endpoint` in `assets/config.js` (or send it to Claude). Then do one test sign-up from each tool and check the Sheet row, the MailerLite subscriber (Active, with `tool` filled in) and the welcome email.
+1. The front door is deployed and connected (15 October 2026). If not done yet, do one test sign-up from each tool and check the Sheet row, the MailerLite subscriber (Active, with `tool` filled in) and the welcome email.
 2. Delete or leave unpublished the unused MailerLite form "Free Tools sign-up (mim-tools)".
 3. Add a "Free money tools" button to moneyinmotion.org in Framer. Suggested copy: "Free tools to get you started. Find your Baby Step in two minutes, plan your way out of debt, or work out how to pay for a mission trip. Free, and your numbers never leave your phone."
 4. Send the Saving for Mission link to Tim Jones at Neuma.
 5. Click the StepChange, CAP and Citizens Advice links once. The build environment couldn't reach outside sites.
 
 **Claude**
-1. Write the welcome email in Jonathan's voice (one email for all four tools) and build the automation on "joins Leads - Free Tools", left switched off for review. The front door must be live first so it can be tested.
-2. Draft the Christmas payday nudges as manual campaigns to `tool` = `christmas`, one a month until Christmas, for Jonathan to review and send.
-3. In a few weeks (from 15 October 2026), revisit pointing MiMForm.tsx at the front door.
-4. Write launch content: a TikTok media pack for Christmas Without Debt first (it is seasonal), then one for each other tool.
-5. Add the free tools to Products & Status in MiM-Business-Overview. They are not listed there yet.
-6. Optional: a cookie-free visit counter (for example GoatCounter). This needs Jonathan's OK and a line on the privacy page.
-7. Email the 3 people in the old "Leads - Free Christmas Savings Tracker" group about the new Christmas planner.
+1. Draft the Christmas payday nudges as manual campaigns to `tool` = `christmas`, one a month until Christmas, for Jonathan to review and send.
+2. In a few weeks (from 15 October 2026), revisit pointing MiMForm.tsx at the front door.
+3. Write launch content: a TikTok media pack for each tool. Christmas Without Debt is under way (first media pack drafted 19 October 2026, in Drive).
+4. Optional: a cookie-free visit counter (for example GoatCounter). This needs Jonathan's OK and a line on the privacy page.
+5. Email the 3 people in the old "Leads - Free Christmas Savings Tracker" group about the new Christmas planner.
 
 ## Ideas backlog (not started)
 
@@ -103,18 +101,28 @@ Build tailored per-step sequences only after an upgrade.
 
 ## Testing
 
-Run these after any change. All five suites passed on 15 October 2026.
+Run these after any change. All five suites passed on 20 October 2026.
 
 ```
 node tests/quiz-logic.test.js                  # 39,207 checks
 node debt-planner/snowball.test.js             # 4,026 checks
 node saving-for-mission/tests/mission.test.js  # 41 checks
-node christmas/tests/christmas.test.js         # 65 checks
+node christmas/tests/christmas.test.js         # 74 checks
 node tests/signup-front-door.test.js           # 19 checks
 python3 -m http.server 8000                    # then open http://localhost:8000/
 ```
 
 Work on a branch and open a pull request. Several cloud sessions editing `assets/config.js` at once caused merge conflicts during the build, so keep tool-specific settings in their own block in that file.
+
+## Changes since launch
+
+Newest first. Each one went through a pull request on this repo unless it says otherwise.
+
+- **19 to 20 October 2026: Christmas Without Debt, extra money** (JonathanCoops/mim-tools#12). "Ways to boost the pot" in step 4: idea chips (an extra shift, overtime, Christmas temp work, Vinted, Facebook Marketplace or eBay, babysitting or pet-sitting, odd jobs, unused gift cards, loyalty points or cashback, something else), each with a rough amount that goes into the pot. A line asks people on Universal Credit or other benefits to check first. On the plan page, "Where you are now" shows In the pot so far and Still to find. Each extra-money line has a "Money in" tick, and "+ Add money that's come in" covers unplanned money. Ticking never moves the payday amount; changing an amount does, because it's then the real figure.
+- **15 to 16 October 2026: custom domain** (JonathanCoops/mim-tools#10, #11, and the `CNAME` file). The site moved to tools.moneyinmotion.org. The old github.io address redirects.
+- **15 October 2026: Baby Steps credit and a debt planner hint** (JonathanCoops/mim-tools#9). The steps are now described as "the Money in Motion Baby Steps, inspired by the principles of Dave Ramsey's Baby Steps and built for UK life". The debt planner's extra-payment hint now encourages any amount.
+- **15 October 2026: privacy page on moneyinmotion.org** (Framer, done by Jonathan in a local session, not in this repo). Section 4 became "Website Forms, Free Tools & Email" and covers the sign-up record kept in a private spreadsheet. Section 7 gained how long details are kept (free-tool sign-up records for up to 12 months after unsubscribing), section 8 the right to withdraw consent and to complain to the ICO, and section 9 a line on providers outside the UK. If the tools ever store or send anything new, that page needs updating too.
+- **15 October 2026: sign-up front door** (JonathanCoops/mim-tools#8). Replaced the MailerLite embedded form with the Apps Script described above. Single opt-in. The "Free Tools – Welcome" automation (one email) was active on 20 October 2026.
 
 ## Corrections after review (15 October 2026)
 
