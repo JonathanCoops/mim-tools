@@ -37,6 +37,15 @@
   }
   function stepLabel(id) { return 'Step ' + id; }
 
+  // This week's three actions. On Step 2 with savings above the £500
+  // starter fund, the third one says to move that money onto the debt.
+  function actionsFor(r) {
+    var copy = C.steps[r.step];
+    var actions = copy.actions.slice();
+    if (r.step === '2' && r.moveSavings && copy.moveSavingsAction) actions[2] = copy.moveSavingsAction;
+    return actions;
+  }
+
   /* ---------------- Saving ---------------- */
 
   function save() {
@@ -305,7 +314,7 @@
       h('p', null, copy.meaning),
       r.headingFor ? h('p', { className: 'heading-for' }, headingForText(r.headingFor)) : null,
       h('h2', { className: 'h3' }, R.thisWeek),
-      h('ol', { className: 'actions-list', role: 'list' }, copy.actions.map(function (a) { return h('li', null, a); })),
+      h('ol', { className: 'actions-list', role: 'list' }, actionsFor(r).map(function (a) { return h('li', null, a); })),
       video,
       copy.faith ? h('p', { className: 'faith-line' }, copy.faith) : null
     ));
@@ -460,7 +469,7 @@
 
     var left = h('div', null,
       h('p', { className: 'pdf-h2' }, P.thisWeek),
-      h('ul', { className: 'pdf-checklist pdf-section' }, copy.actions.map(function (a) {
+      h('ul', { className: 'pdf-checklist pdf-section' }, actionsFor(r).map(function (a) {
         return h('li', null, h('span', { className: 'pdf-box' }), h('span', null, a));
       })),
       r.studentLoanNote ? h('div', { className: 'pdf-section' },

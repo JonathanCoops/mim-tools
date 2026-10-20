@@ -104,7 +104,7 @@ node tests/signup-front-door.test.js
 
 No installs needed, just Node. Run the one for a tool after changing its sums or its `content.js`.
 
-- **Quiz:** walks all 39,168 possible ways through the quiz and checks each result against a separate copy of the rules, then checks the copy (three actions per step, approved verses only, no banned words, UK spelling).
+- **Quiz:** walks all 57,600 possible ways through the quiz and checks each result against a separate copy of the rules, then checks the copy (three actions per step, approved verses only, no banned words, UK spelling).
 - **Debt Snowball Planner:** checks the snowball sums, including thousands of random plans against a separate copy of the maths, and the copy.
 - **Saving for Mission Builder:** checks the worked example comes out at A £2,400 to G £560 from any start date, the sums and edge cases, and the copy.
 - **Christmas Without Debt:** checks the dates, paydays and sums against a day-by-day count, and the copy.

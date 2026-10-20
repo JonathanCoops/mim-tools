@@ -44,6 +44,8 @@ function test(name, fn) {
  * the result is the FIRST unmet step in the order
  * 0, 1, 2, 3, 3b (only if Q5 yes), 4, 5 (only with children), 6 (only with
  * a mortgage), 7. "Sort of" on the budget counts as not done.
+ * Savings over £500 while in debt never change the step; they swap in
+ * the "move it onto the debt" action.
  * ------------------------------------------------------------------ */
 function reference(a) {
   var ladder = [];
@@ -62,6 +64,7 @@ function reference(a) {
     step: unmet[0],
     headingFor: unmet[0] === '0' ? unmet[1] : null,
     needsDebtHelp: a.debt === 'yes' && a.debtSigns.length > 0,
+    moveSavings: a.starter === 'yes' && a.debt === 'yes' && a.extraSavings === 'yes',
     studentLoanNote: a.studentLoan === 'yes',
     giving: a.giving
   };
@@ -101,8 +104,9 @@ var tally = {};
 var headingTally = {};
 
 test('there are lots of paths to walk', function () {
-  // 3 budget x 2 x (1 + 16 debt) x 2 x 2 x 3 invest x (1 + 3 children) x 2 x 2 x 2
-  assert.equal(paths.length, 3 * 2 * 17 * 2 * 2 * 3 * 4 * 2 * 2 * 2);
+  // 3 budget x [starter yes: (1 + 16 debt x 2 savings) + starter no: (1 + 16 debt)]
+  //   x 2 x 2 x 3 invest x (1 + 3 children) x 2 x 2 x 2
+  assert.equal(paths.length, 3 * (33 + 17) * 2 * 2 * 3 * 4 * 2 * 2 * 2);
 });
 
 paths.forEach(function (p, index) {
@@ -115,12 +119,14 @@ paths.forEach(function (p, index) {
     assert.equal(got.step, want.step, 'step');
     assert.equal(got.headingFor, want.headingFor, 'heading for');
     assert.equal(got.needsDebtHelp, want.needsDebtHelp, 'debt help box');
+    assert.equal(got.moveSavings, want.moveSavings, 'move savings action');
     assert.equal(got.studentLoanNote, want.studentLoanNote, 'student loan note');
     assert.equal(got.giving, want.giving, 'giving note');
     assert.equal(got.complete, true, 'complete');
 
     // The follow-up questions only appear when they should.
     assert.equal(p.asked.indexOf('debtSigns') !== -1, a.debt === 'yes', 'debt follow-up asked');
+    assert.equal(p.asked.indexOf('extraSavings') !== -1, a.starter === 'yes' && a.debt === 'yes', 'savings follow-up asked');
     assert.equal(p.asked.indexOf('launchFund') !== -1, a.children === 'yes', 'children follow-up asked');
     assert.deepEqual(L.sequence(a), p.asked, 'question sequence');
     assert.equal(L.firstUnanswered(a), null, 'nothing left unanswered');
@@ -173,7 +179,8 @@ var cases = [
   ['no budget, in debt, no starter fund', { budget: 'no', starter: 'no', debt: 'yes', debtSigns: [] }, '0', '1'],
   ['no budget, debt but has £500', { budget: 'no', debt: 'yes', debtSigns: [] }, '0', '2'],
   ['budget but no £500', { starter: 'no' }, '1', null],
-  ['£500 but consumer debt', { debt: 'yes', debtSigns: [] }, '2', null],
+  ['£500 but consumer debt', { debt: 'yes', debtSigns: [], extraSavings: 'no' }, '2', null],
+  ['£5,000 saved and a credit card is still Step 2', { debt: 'yes', debtSigns: [], extraSavings: 'yes' }, '2', null],
   ['debt-free, no full fund', { fullFund: 'no' }, '3', null],
   ['full fund, buying a house', { house: 'yes' }, '3b', null],
   ['not buying a house skips 3b', { house: 'no', invest: 'less' }, '4', null],
@@ -202,6 +209,36 @@ test('any ticked debt box shows the "talk to someone" box', function () {
   });
   assert.equal(place({ debt: 'yes', debtSigns: [] }).needsDebtHelp, false, 'none ticked');
   assert.equal(place({ debt: 'no' }).needsDebtHelp, false, 'no debt');
+});
+
+test('savings over £500 while in debt: asked only after £500 yes and debt yes', function () {
+  assert.equal(L.isAsked('extraSavings', { starter: 'yes', debt: 'yes' }), true);
+  assert.equal(L.isAsked('extraSavings', { starter: 'yes', debt: 'no' }), false);
+  assert.equal(L.isAsked('extraSavings', { starter: 'no', debt: 'yes' }), false);
+  assert.equal(L.isAsked('extraSavings', { starter: 'no', debt: 'no' }), false);
+  assert.equal(L.isAsked('extraSavings', {}), false);
+});
+
+test('savings over £500 while in debt sets moveSavings, and only then', function () {
+  var r = place({ debt: 'yes', debtSigns: [], extraSavings: 'yes' });
+  assert.equal(r.step, '2');
+  assert.equal(r.moveSavings, true);
+  assert.equal(r.needsDebtHelp, false);
+  assert.equal(place({ debt: 'yes', debtSigns: [], extraSavings: 'no' }).moveSavings, false, 'no extra savings');
+  assert.equal(place({ debt: 'yes', debtSigns: ['minimums'], extraSavings: 'yes' }).needsDebtHelp, true, 'debt help still shows');
+  assert.equal(place({ debt: 'yes', debtSigns: ['minimums'], extraSavings: 'yes' }).moveSavings, true, 'alongside debt help');
+  assert.equal(place({}).moveSavings, false, 'debt-free');
+});
+
+test('an old savings answer is dropped if they change their £500 or debt answer', function () {
+  assert.equal(L.sanitize({ starter: 'no', debt: 'yes', debtSigns: [], extraSavings: 'yes' }).extraSavings, undefined, '£500 changed to no');
+  assert.equal(L.sanitize({ starter: 'yes', debt: 'no', extraSavings: 'yes' }).extraSavings, undefined, 'debt changed to no');
+  assert.equal(L.sanitize({ starter: 'yes', debt: 'yes', extraSavings: 'maybe' }).extraSavings, undefined, 'invalid value');
+  assert.equal(L.sanitize({ starter: 'yes', debt: 'yes', extraSavings: 'yes' }).extraSavings, 'yes', 'kept when it applies');
+  var r = L.evaluate(person({ starter: 'no', debt: 'yes', debtSigns: [], extraSavings: 'yes' }));
+  assert.equal(r.step, '1');
+  assert.equal(r.moveSavings, false);
+  assert.equal(L.evaluate(person({ debt: 'no', extraSavings: 'yes' })).moveSavings, false);
 });
 
 test('old ticks are ignored if they change their debt answer to no', function () {
@@ -245,7 +282,11 @@ test('partly answered quizzes know what to ask next', function () {
   assert.equal(L.firstUnanswered(person({ children: 'yes' })), 'launchFund');
   assert.equal(L.isComplete(person({ children: 'yes' })), false);
   assert.equal(L.isComplete(person({ debt: 'yes' })), false, 'debt yes needs the tick question (even if nothing is ticked)');
-  assert.equal(L.isComplete(person({ debt: 'yes', debtSigns: [] })), true);
+  assert.equal(L.firstUnanswered({ budget: 'yes', starter: 'yes', debt: 'yes', debtSigns: [] }), 'extraSavings');
+  assert.equal(L.firstUnanswered({ budget: 'yes', starter: 'no', debt: 'yes', debtSigns: [] }), 'fullFund');
+  assert.equal(L.isComplete(person({ debt: 'yes', debtSigns: [] })), false, 'debt yes with £500 needs the savings question');
+  assert.equal(L.isComplete(person({ debt: 'yes', debtSigns: [], extraSavings: 'no' })), true);
+  assert.equal(L.isComplete(person({ starter: 'no', debt: 'yes', debtSigns: [] })), true);
 });
 
 test('saved answers are cleaned up safely', function () {
@@ -258,8 +299,9 @@ test('saved answers are cleaned up safely', function () {
 test('question numbers run 1 to 10, with follow-ups sharing their parent number', function () {
   assert.equal(L.TOTAL_QUESTIONS, 10);
   assert.equal(L.QUESTION_NUMBER.debtSigns, L.QUESTION_NUMBER.debt);
+  assert.equal(L.QUESTION_NUMBER.extraSavings, L.QUESTION_NUMBER.debt);
   assert.equal(L.QUESTION_NUMBER.launchFund, L.QUESTION_NUMBER.children);
-  var mains = L.QUESTION_ORDER.filter(function (id) { return id !== 'debtSigns' && id !== 'launchFund'; });
+  var mains = L.QUESTION_ORDER.filter(function (id) { return ['debtSigns', 'extraSavings', 'launchFund'].indexOf(id) === -1; });
   assert.deepEqual(mains.map(function (id) { return L.QUESTION_NUMBER[id]; }), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 });
 
@@ -287,6 +329,13 @@ test('every possible result has a meaning, three actions and a valid faith line'
       assert.ok(!/^\s*(Luke|Proverbs|Matthew|2 Corinthians)/.test(s.meaning), 'step ' + id + ' does not open with a verse');
     }
   });
+});
+
+test('Step 2 has a "move your savings" action to swap in', function () {
+  var text = CONTENT.steps['2'].moveSavingsAction;
+  assert.ok(text && /£500/.test(text), 'mentions the £500 starter fund');
+  assert.ok(text.indexOf('—') === -1, 'no em dash');
+  assert.ok(!/['"]/.test(text), 'curly quotes only');
 });
 
 test('the framework ladder has every step, including the UK extras', function () {
