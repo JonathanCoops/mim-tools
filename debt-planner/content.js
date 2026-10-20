@@ -16,9 +16,8 @@ window.MIM_DEBT_CONTENT = {
 
   counts: {
     heading: 'What counts',
-    yes: 'Put in credit cards, loans, overdrafts, Buy Now Pay Later, car HP and money you owe to family.',
-    no: 'Leave out your mortgage and student loans. Student loans behave more like a graduate tax than a normal debt.',
-    pcp: 'Got PCP car finance? Treat it as a monthly bill in your budget, not snowball debt.'
+    yes: 'Put in credit cards, loans, overdrafts, Buy Now Pay Later, car finance and money you owe to family.',
+    no: 'Leave out your mortgage and student loans. Student loans behave more like a graduate tax than a normal debt.'
   },
 
   debts: {

@@ -104,7 +104,7 @@ Build tailored per-step sequences only after an upgrade.
 Run these after any change. All five suites passed on 20 October 2026.
 
 ```
-node tests/quiz-logic.test.js                  # 57,644 checks
+node tests/quiz-logic.test.js                  # 57,645 checks
 node debt-planner/snowball.test.js             # 4,026 checks
 node saving-for-mission/tests/mission.test.js  # 41 checks
 node christmas/tests/christmas.test.js         # 74 checks
@@ -119,6 +119,7 @@ Work on a branch and open a pull request. Several cloud sessions editing `assets
 Newest first. Each one went through a pull request on this repo unless it says otherwise.
 
 - **20 October 2026: quiz, savings over £500 while in debt.** Jonathan's 20 October video "Which Baby Step are you on?" teaches that if you have savings and a credit card balance, anything over the £500 starter fund should go at the debt, and it sends people to this quiz. The quiz placed them on Step 2 correctly but never said so. A follow-up question, `extraSavings` ("Do you have more than £500 in savings?"), now shows only when someone says yes to both the £500 question and the debt question, and shares question number 3 with the debt question. A yes sets `moveSavings` on the result, and on Step 2 the third action becomes "Keep £500 for emergencies. Move everything above it onto the smallest debt this week, then roll on to the next." (on screen and in the PDF). The debt-help box still comes first when it applies. Placement is unchanged: the answer never moves anyone to a different step.
+- **20 October 2026: car finance counts as consumer debt** (same pull request). Jonathan's call: all car finance goes in the Step 2 snowball, the same as HP, and PCP isn't named anywhere. The lists of debts that count now say "car finance" (quiz, Baby Steps summary, debt planner, README), the "doesn't count" lists are just the mortgage and student loans, and every line calling PCP a budget line or monthly bill is gone, including the debt planner's PCP note. A quiz test fails if "PCP" comes back into the copy.
 - **19 to 20 October 2026: Christmas Without Debt, extra money** (JonathanCoops/mim-tools#12). "Ways to boost the pot" in step 4: idea chips (an extra shift, overtime, Christmas temp work, Vinted, Facebook Marketplace or eBay, babysitting or pet-sitting, odd jobs, unused gift cards, loyalty points or cashback, something else), each with a rough amount that goes into the pot. A line asks people on Universal Credit or other benefits to check first. On the plan page, "Where you are now" shows In the pot so far and Still to find. Each extra-money line has a "Money in" tick, and "+ Add money that's come in" covers unplanned money. Ticking never moves the payday amount; changing an amount does, because it's then the real figure.
 - **15 to 16 October 2026: custom domain** (JonathanCoops/mim-tools#10, #11, and the `CNAME` file). The site moved to tools.moneyinmotion.org. The old github.io address redirects.
 - **15 October 2026: Baby Steps credit and a debt planner hint** (JonathanCoops/mim-tools#9). The steps are now described as "the Money in Motion Baby Steps, inspired by the principles of Dave Ramsey's Baby Steps and built for UK life". The debt planner's extra-payment hint now encourages any amount.

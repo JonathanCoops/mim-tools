@@ -52,8 +52,8 @@ window.MIM_QUIZ_CONTENT = {
     debt: {
       text: 'Do you have any consumer debt?',
       help: [
-        'This counts: credit cards, personal loans, overdrafts, Buy Now Pay Later, car HP and money you owe to family.',
-        'This doesn’t: your mortgage, student loans or PCP car finance. PCP is treated as a monthly bill in your budget.'
+        'This counts: credit cards, personal loans, overdrafts, Buy Now Pay Later, car finance and money you owe to family.',
+        'This doesn’t: your mortgage or student loans.'
       ],
       options: [
         { value: 'yes', label: 'Yes' },
@@ -175,7 +175,7 @@ window.MIM_QUIZ_CONTENT = {
       faith: 'Proverbs 21:20 says the wise store up choice food and olive oil. This £500 is the start of your store.'
     },
     '2': {
-      meaning: 'Now you clear every consumer debt using the snowball. Pay the minimum on everything, then throw every spare pound at the smallest balance, and when that one’s gone, roll its payment onto the next. The mortgage and student loans wait, and PCP car finance stays in your budget as a monthly bill.',
+      meaning: 'Now you clear every consumer debt using the snowball. Pay the minimum on everything, then throw every spare pound at the smallest balance, and when that one’s gone, roll its payment onto the next. The mortgage and student loans wait.',
       actions: [
         'List every debt with its balance and minimum payment, then sort them from smallest balance to largest.',
         'Stop adding to them. Cut up the card, or take it off your phone and your favourite shopping sites.',

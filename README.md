@@ -139,7 +139,7 @@ The framework (the Money in Motion Baby Steps, inspired by the principles of Dav
 
 - Step 0: Get a budget. Tell every pound where to go before the month starts.
 - Step 1: Starter emergency fund: £500 in an easy-access account.
-- Step 2: Pay off all consumer debt using the snowball (smallest balance first): credit cards, personal loans, overdrafts, Buy Now Pay Later, car HP, money owed to family. Not the mortgage, not student loans. PCP car finance is a budget line, not snowball debt.
+- Step 2: Pay off all consumer debt using the snowball (smallest balance first): credit cards, personal loans, overdrafts, Buy Now Pay Later, car finance, money owed to family. Not the mortgage, not student loans.
 - Step 3: Full emergency fund: 3–6 months of essential expenses, easy access (e.g. a Cash ISA).
 - Step 3b (optional UK extra): Save a house deposit, aim for 10%. Lifetime ISA if you qualify.
 - Step 4: Invest around 15% of income for retirement. Workplace pension first and take the full employer match, then a SIPP, LISA or Stocks & Shares ISA.

@@ -25,7 +25,7 @@ window.MIM_BABY_STEPS = [
   {
     id: '2',
     title: 'Pay off all consumer debt',
-    summary: 'Use the snowball: smallest balance first. Credit cards, personal loans, overdrafts, Buy Now Pay Later, car HP and money owed to family. Not the mortgage, not student loans. PCP car finance is a budget line, not snowball debt.',
+    summary: 'Use the snowball: smallest balance first. Credit cards, personal loans, overdrafts, Buy Now Pay Later, car finance and money owed to family. Not the mortgage, not student loans.',
     short: 'Clear consumer debt with the snowball, smallest balance first.'
   },
   {
