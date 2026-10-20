@@ -389,6 +389,17 @@ test('no banned words, piles of exclamation marks or US spellings in the copy', 
   assert.deepEqual(problems, []);
 });
 
+test('car finance counts as consumer debt, and PCP is never singled out', function () {
+  assert.ok(/car finance/.test(CONTENT.questions.debt.help[0]), 'car finance is in the "this counts" list');
+  assert.ok(!/car/.test(CONTENT.questions.debt.help[1]), 'the "this doesn’t" list is mortgage and student loans only');
+  assert.ok(/car finance/.test(STEPS[2].summary), 'Step 2 summary lists car finance');
+  var problems = [];
+  COPY_FILES.concat(['debt-planner/content.js', 'christmas/content.js', 'saving-for-mission/content.js']).forEach(function (rel) {
+    if (/\bPCP\b/i.test(readableText(rel))) problems.push(rel);
+  });
+  assert.deepEqual(problems, []);
+});
+
 test('em-dashes stay rare in the quiz copy', function () {
   var count = (readableText('quiz/content.js').match(/—/g) || []).length;
   assert.ok(count <= 3, count + ' em-dashes in quiz/content.js');

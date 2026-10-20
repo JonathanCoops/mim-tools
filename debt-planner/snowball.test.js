@@ -467,12 +467,12 @@ test('the brief\'s must-haves are in the copy', function () {
   assert.ok(/behaviour beats maths/.test(CONTENT.results.order.why));
   assert.ok(/whatever the interest rate/.test(CONTENT.results.order.why));
   assert.ok(/graduate tax/.test(CONTENT.counts.no));
-  assert.ok(/PCP/.test(CONTENT.counts.pcp) && /monthly bill/.test(CONTENT.counts.pcp));
+  assert.equal(CONTENT.counts.pcp, undefined, 'car finance counts as debt, with no separate PCP line');
   assert.ok(/statement/.test(CONTENT.debts.aprHint));
   assert.equal(CONTENT.pdf.title, 'My Debt-Free Plan');
   assert.equal(CONTENT.results.email.heading, 'Stay in touch while you pay this off');
   assert.ok(/^Track it in the free Money in Motion app/.test(CONTENT.pdf.app));
-  ['credit cards', 'loans', 'overdrafts', 'Buy Now Pay Later', 'car HP', 'family'].forEach(function (w) {
+  ['credit cards', 'loans', 'overdrafts', 'Buy Now Pay Later', 'car finance', 'family'].forEach(function (w) {
     assert.ok(CONTENT.counts.yes.indexOf(w) !== -1, 'counts mentions ' + w);
   });
 });

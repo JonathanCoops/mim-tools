@@ -121,8 +121,7 @@
     var counts = h('section', { className: 'card card-quiet dp-counts', 'aria-labelledby': 'dp-counts-heading' },
       h('h2', { className: 'h3', id: 'dp-counts-heading' }, C.counts.heading),
       h('p', null, C.counts.yes),
-      h('p', null, C.counts.no),
-      h('p', null, C.counts.pcp)
+      h('p', null, C.counts.no)
     );
 
     // The list and the add form
