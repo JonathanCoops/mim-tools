@@ -345,7 +345,7 @@ test('the framework ladder has every step, including the UK extras', function ()
 
 test('config has a video setting for every step and https links', function () {
   L.LADDER_ORDER.forEach(function (id) { assert.ok(id in CONFIG.videos, 'video for step ' + id); });
-  ['website', 'moneyAndFaith', 'appIos', 'appAndroid', 'appWeb'].forEach(function (k) {
+  ['website', 'moneyAndFaith', 'appPage', 'appIos', 'appAndroid', 'appWeb'].forEach(function (k) {
     assert.ok(/^https:\/\//.test(CONFIG.links[k]), k + ' is an https link');
   });
   assert.equal(CONFIG.debtHelp.length, 3);
