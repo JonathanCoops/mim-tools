@@ -26,4 +26,7 @@ Nothing about payments is built in this repo. The tools are free and take no mon
 - Every link and setting lives in `assets/config.js`. Each tool's words live in its own `content.js`.
 - Nothing a person types leaves their device except the optional email sign-up. No analytics and no cookies unless Jonathan agrees and the privacy page says so.
 - When something is built, changed or decided, record it in `HANDOVER.md` in the same pull request, so the next session knows.
-- The main website, moneyinmotion.org (including its /privacy page), is a Framer project, not this repo. Edit it only through the Framer agent in a local Claude Code session on Jonathan's Mac, as the Business Overview describes.
+- The main website, moneyinmotion.org (including /start, /app and /privacy), is a Framer project, not this repo. Edit it through the Framer connector, which works in cloud and web sessions too (it replaced the local `npx @framer/agent` route on 3 November 2026). Edits land unpublished on the project's `main`, with no branch, so:
+  - **Never publish.** Jonathan checks every change in Framer and publishes it himself.
+  - **Small text changes** can go on the live "Money In Motion" project.
+  - **Big changes or new pages:** first ask Jonathan to duplicate the live project in Framer (the connector can't), work on that fresh copy, and only repeat the change on the live project once he's happy. Don't use an old "(copy)" project: they go stale.
