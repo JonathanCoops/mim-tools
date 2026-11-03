@@ -600,7 +600,7 @@
       compare.classList.toggle('is-good', r.shortfall === 0);
     });
 
-    var appLink = MIM.extLink(links.appWeb, F.margin.appLink);
+    var appLink = MIM.extLink(links.appPage, F.margin.appLink);
     var marginHint = h('span', { className: 'sfm-hint', id: 'margin-hint' }, F.margin.hint + ' ' + F.margin.app + ' ', appLink, '.');
 
     return [
@@ -755,7 +755,7 @@
         });
         return h('label', { className: 'check' }, input,
           h('span', null, PDFS.checkText(item, r),
-            item.link ? [' ', MIM.extLink(links.appWeb, item.link)] : null));
+            item.link ? [' ', MIM.extLink(links.appPage, item.link)] : null));
       }));
 
     return [

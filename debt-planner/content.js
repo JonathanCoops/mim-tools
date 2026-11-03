@@ -180,10 +180,8 @@ window.MIM_DEBT_CONTENT = {
 
     app: {
       heading: 'Track it in the free Money in Motion app',
-      body: 'It has a budget builder and a debt snowball tool, so your plan can go everywhere you do.',
-      ios: 'App Store',
-      android: 'Google Play',
-      web: 'Use it in your browser'
+      body: 'It has a budget builder and a debt snowball tool, so your plan can go everywhere you do. It’s on iPhone, Android and the web.',
+      button: 'Get the app'
     },
 
     email: {

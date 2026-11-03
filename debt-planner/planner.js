@@ -1015,10 +1015,7 @@
       h('p', { className: 'pdf-quote' }, P.faith),
       h('div', { className: 'pdf-app' },
         h('p', null, h('strong', null, P.app), '  ',
-          h('a', { href: links.appWeb }, prettyUrl(links.appWeb))),
-        h('p', { className: 'pdf-small' },
-          h('a', { href: links.appIos }, 'App Store'), '  ·  ',
-          h('a', { href: links.appAndroid }, 'Google Play'))
+          h('a', { href: links.appPage }, prettyUrl(links.appPage)))
       )
     ));
     return nodes;
@@ -1032,9 +1029,7 @@
       h('h2', { className: 'h3', id: 'dp-app-heading' }, A.heading),
       h('p', null, A.body),
       h('div', { className: 'button-row' },
-        MIM.extLink(links.appIos, A.ios, 'btn btn-primary'),
-        MIM.extLink(links.appAndroid, A.android, 'btn btn-primary'),
-        MIM.extLink(links.appWeb, A.web, 'btn btn-secondary')
+        MIM.extLink(links.appPage, A.button, 'btn btn-primary')
       )
     );
   }

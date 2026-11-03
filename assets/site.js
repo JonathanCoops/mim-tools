@@ -274,10 +274,7 @@ window.MIM = (function () {
     var keys = (document.body.getAttribute('data-mim-storage') || '').split(/\s+/).filter(Boolean);
 
     var appLinks = h('p', { className: 'footer-links' },
-      h('span', { className: 'footer-label' }, 'Get the free Money in Motion app: '),
-      extLink(links.appIos, 'App Store'), ' · ',
-      extLink(links.appAndroid, 'Google Play'), ' · ',
-      extLink(links.appWeb, 'Web')
+      extLink(links.appPage, 'Get the free Money in Motion app')
     );
     var siteLink = h('p', { className: 'footer-links' },
       extLink(links.website, 'moneyinmotion.org')
@@ -307,7 +304,7 @@ window.MIM = (function () {
     footer.appendChild(inner);
   }
 
-  // Any <a data-mim-link="appWeb"> gets its address from config.js.
+  // Any <a data-mim-link="appPage"> gets its address from config.js.
   // (Keep a sensible href in the HTML too, for anyone without JavaScript.)
   function applyLinks() {
     Array.prototype.forEach.call(document.querySelectorAll('[data-mim-link]'), function (a) {

@@ -78,7 +78,7 @@ Open the file, change the text between the quote marks, save. Keep the quote mar
 | `signup.debtPlanner` / `savingForMission` / `christmas` | The same two messages for the other three tools, which send the tool's name instead of a Baby Step. |
 | `videos` | A full link to Jonathan's video for each step (`0` to `7`, plus `3b` and `6b`). Videos open in a new tab; they aren't embedded, so no video site sets cookies here. |
 | `debtHelp` | The three free debt charities shown when someone's answers suggest real pressure. |
-| `links` | Website, Money & Faith course and the app links (App Store, Google Play, web). |
+| `links` | Website, Money & Faith course, and the app: `appPage` is moneyinmotion.org/app, which has the App Store, Google Play and web links. Every app link in the tools goes there. |
 
 To change the **wording** of a tool, edit its `content.js` (`quiz/`, `debt-planner/` or `saving-for-mission/`). To change the wording of the **steps themselves**, edit `assets/baby-steps.js`. To change **colours or fonts**, edit the first `:root` block in `assets/styles.css` (each colour has a light and a dark value).
 
@@ -117,7 +117,7 @@ No installs needed, just Node. Run the one for a tool after changing its sums or
 - **PDF:** load `assets/pdf.js` and call `MIMPdf.download({ filename, eyebrow, title, subtitle, content, onePage })`. The Money in Motion logo goes in the header band for you; pass `logo: false` to type the name out instead. Build `content` with `MIM.h()` and the `pdf-*` classes in `styles.css`. Header and footer are added for you. Set `onePage: false` if the content can run to several pages. If the PDF library can't load, it opens the print window instead.
 - **Email:** `MIM.emailForm({ heading, intro, buttonLabel, hiddenFields: { tool: 'my-tool' }, consentText, successMessage })` returns a ready-made sign-up section that posts to the front door. Add the new tool's name to `TOOLS` in `apps-script/Code.gs` (and redeploy it), or its sign-ups are rejected as invalid.
 - **Sharing:** `MIM.shareRow({ heading, message, url })` gives Copy link and WhatsApp buttons.
-- **Links:** add new ones to `config.js` and read them from `MIM.links`. In static HTML, `<a data-mim-link="appWeb" href="...">` takes its address from config.
+- **Links:** add new ones to `config.js` and read them from `MIM.links`. In static HTML, `<a data-mim-link="appPage" href="...">` takes its address from config.
 - **Libraries:** only from cdnjs or jsDelivr, pinned to an exact version with an `integrity` hash, and loaded only when needed.
 - **Design:** use the CSS variables, never raw colours, so dark mode and rebranding keep working. The building blocks are in `styles.css`: `band` (a Forest block in light mode, Lime in dark) and `band-alt` (the reverse) for intros and headline results, `display` for a big title, `eyebrow` for the small label above it, `card`, and the pill buttons. Keep to the brand guide: Motion Orange at most once per screen and never as text on a light background, and the logo files used as they are, never retyped, at 110px wide or more.
 

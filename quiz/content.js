@@ -248,10 +248,8 @@ window.MIM_QUIZ_CONTENT = {
     videoComingSoon: 'Jonathan’s video on this step is coming soon.',
     app: {
       heading: 'The free Money in Motion app',
-      body: 'It has a budget builder and a debt snowball tool, so you can put this week’s actions straight into practice.',
-      ios: 'App Store',
-      android: 'Google Play',
-      web: 'Use it in your browser'
+      body: 'It has a budget builder and a debt snowball tool, so you can put this week’s actions straight into practice. It’s on iPhone, Android and the web.',
+      button: 'Get the app'
     },
     keep: {
       heading: 'Keep your plan',

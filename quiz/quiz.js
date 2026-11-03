@@ -338,9 +338,7 @@
       h('h2', { className: 'h3', id: 'app-heading' }, R.app.heading),
       h('p', null, R.app.body),
       h('div', { className: 'button-row' },
-        MIM.extLink(links.appIos, R.app.ios, 'btn btn-primary'),
-        MIM.extLink(links.appAndroid, R.app.android, 'btn btn-primary'),
-        MIM.extLink(links.appWeb, R.app.web, 'btn btn-secondary')
+        MIM.extLink(links.appPage, R.app.button, 'btn btn-primary')
       )
     ));
 
@@ -503,9 +501,7 @@
     nodes.push(h('div', { className: 'pdf-app' },
       h('p', null, h('strong', null, P.app)),
       h('p', { className: 'pdf-small' },
-        h('a', { href: links.appIos }, 'App Store'), '  ·  ',
-        h('a', { href: links.appAndroid }, 'Google Play'), '  ·  ',
-        h('a', { href: links.appWeb }, prettyUrl(links.appWeb))
+        h('a', { href: links.appPage }, prettyUrl(links.appPage))
       )
     ));
     return nodes;

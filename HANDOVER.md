@@ -77,18 +77,17 @@ Build tailored per-step sequences only after an upgrade.
 ## To do
 
 **Jonathan**
-1. The front door is deployed and connected (15 October 2026). If not done yet, do one test sign-up from each tool and check the Sheet row, the MailerLite subscriber (Active, with `tool` filled in) and the welcome email.
-2. Delete or leave unpublished the unused MailerLite form "Free Tools sign-up (mim-tools)".
-3. Add a "Free money tools" button to moneyinmotion.org in Framer. Suggested copy: "Free tools to get you started. Find your Baby Step in two minutes, plan your way out of debt, or work out how to pay for a mission trip. Free, and your numbers never leave your phone."
-4. Send the Saving for Mission link to Tim Jones at Neuma.
-5. Click the StepChange, CAP and Citizens Advice links once. The build environment couldn't reach outside sites.
+1. Review and schedule the two Christmas nudge drafts in MailerLite. Suggested send dates: Friday 27 November and Friday 11 December 2026.
+2. Send the Saving for Mission link (tools.moneyinmotion.org/saving-for-mission/) to Tim Jones at Neuma by WhatsApp, as planned on 3 November 2026. He may pass it to Rebecca, who runs his online course.
+3. Delete the merged branches on GitHub (Code > Branches). Cloud sessions aren't allowed to delete branches. Turning on "Automatically delete head branches" in the repo settings stops them building up.
+
+Done by 3 November 2026: test sign-ups from every tool, the homepage link to the tools, and a check of the StepChange, CAP and Citizens Advice links.
 
 **Claude**
-1. Draft the Christmas payday nudges as manual campaigns to `tool` = `christmas`, one a month until Christmas, for Jonathan to review and send.
-2. In a few weeks (from 15 October 2026), revisit pointing MiMForm.tsx at the front door.
-3. Write launch content: a TikTok media pack for each tool. Christmas Without Debt is under way (first media pack drafted 19 October 2026, in Drive).
-4. Optional: a cookie-free visit counter (for example GoatCounter). This needs Jonathan's OK and a line on the privacy page.
-5. Email the 3 people in the old "Leads - Free Christmas Savings Tracker" group about the new Christmas planner.
+1. Revisit pointing MiMForm.tsx at the front door (parked on 15 October 2026 for a few weeks, so due now).
+2. Write launch content: a TikTok media pack for each tool. Christmas Without Debt is under way (first media pack drafted 19 October 2026, in Drive).
+3. Optional: a cookie-free visit counter (for example GoatCounter). This needs Jonathan's OK and a line on the privacy page.
+4. Email the 3 people in the old "Leads - Free Christmas Savings Tracker" group about the new Christmas planner.
 
 ## Ideas backlog (not started)
 
@@ -101,7 +100,7 @@ Build tailored per-step sequences only after an upgrade.
 
 ## Testing
 
-Run these after any change. All five suites passed on 20 October 2026.
+Run these after any change. All five suites passed on 3 November 2026.
 
 ```
 node tests/quiz-logic.test.js                  # 57,645 checks
@@ -118,7 +117,9 @@ Work on a branch and open a pull request. Several cloud sessions editing `assets
 
 Newest first. Each one went through a pull request on this repo unless it says otherwise.
 
-- **3 November 2026: "Get the app" on the home page.** The "Want to go further?" button said "Open the app" and opened the web app. It now says "Get the app" and goes to moneyinmotion.org/app, which offers all three formats (`links.appPage` in `assets/config.js`). The tools' own app buttons and PDF links still point at the web app.
+- **3 November 2026: MailerLite tidy and the Christmas nudges** (in MailerLite, not this repo, apart from the image). Deleted the unused forms "Free Tools sign-up (mim-tools)" (never used) and "No Purchase Subscribers" (last sign-up November 2025), and the two switched-off 2025 automations "Welcome Email - Free Emergency Fund Tracker" and "Welcome Email - Free Christmas Savings Tracker". Kept "Thursday Email — website" (live) and "M&F Graduate — website" (feeds the Graduate Holding Sequence). Added the segment "Free Tools – Christmas Without Debt" (`tool` = `christmas`; 0 subscribers on 3 November) and two unsent campaigns aimed at it, "Christmas Without Debt – November payday nudge" and "– December payday nudge". Their header image is `assets/email/christmas-nudge.png` on this site: don't move or rename it, or the emails lose their picture.
+
+- **3 November 2026: "Get the app" on the home page.** The "Want to go further?" button said "Open the app" and opened the web app. It now says "Get the app" and goes to moneyinmotion.org/app, which offers all three formats (`links.appPage` in `assets/config.js`). Later the same day every other app link followed: the footer, the quiz and debt planner app cards (one "Get the app" button instead of three), the Saving for Mission and Christmas links, and all four PDFs. The App Store, Google Play and web links now live only on the website's /app page, so `appIos`, `appAndroid` and `appWeb` are gone from `config.js`.
 
 - **20 October 2026: quiz, savings over £500 while in debt.** Jonathan's 20 October video "Which Baby Step are you on?" teaches that if you have savings and a credit card balance, anything over the £500 starter fund should go at the debt, and it sends people to this quiz. The quiz placed them on Step 2 correctly but never said so. A follow-up question, `extraSavings` ("Do you have more than £500 in savings?"), now shows only when someone says yes to both the £500 question and the debt question, and shares question number 3 with the debt question. A yes sets `moveSavings` on the result, and on Step 2 the third action becomes "Keep £500 for emergencies. Move everything above it onto the smallest debt this week, then roll on to the next." (on screen and in the PDF). The debt-help box still comes first when it applies. Placement is unchanged: the answer never moves anyone to a different step.
 - **20 October 2026: car finance counts as consumer debt** (same pull request). Jonathan's call: all car finance goes in the Step 2 snowball, the same as HP, and PCP isn't named anywhere. The lists of debts that count now say "car finance" (quiz, Baby Steps summary, debt planner, README), the "doesn't count" lists are just the mortgage and student loans, and every line calling PCP a budget line or monthly bill is gone, including the debt planner's PCP note. A quiz test fails if "PCP" comes back into the copy.
