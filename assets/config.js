@@ -21,12 +21,9 @@ window.MIM_CONFIG = {
     website: 'https://moneyinmotion.org/',
     moneyAndFaith: 'https://moneyinmotion.org/money-and-faith',
 
-    // The free app. appPage is the website's get-the-app page, with all three
-    // formats on it: use it whenever the ask is simply "get the app".
+    // The free app. Every app link in the tools goes to the website's
+    // get-the-app page, which has the App Store, Google Play and web links.
     appPage: 'https://moneyinmotion.org/app',
-    appIos: 'https://apps.apple.com/us/app/money-in-motion/id6760107760',
-    appAndroid: 'https://play.google.com/store/apps/details?id=com.moneyinmotion.app',
-    appWeb: 'https://app.moneyinmotion.org/',
 
     // Your website's privacy page. Shown next to the email form.
     privacyPolicy: 'https://moneyinmotion.org/privacy'

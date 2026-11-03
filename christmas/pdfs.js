@@ -204,7 +204,7 @@ window.MIMChristmasPdfs = (function () {
         help,
         h('p', { className: 'pdf-quote xm-pdf-verse' }, '“' + C.plan.verse.text + '”  ' + C.plan.verse.ref),
         h('div', { className: 'pdf-app' },
-          h('p', null, h('strong', null, P.app), '  ', h('a', { href: links.appWeb }, window.MIMPdf.prettyUrl(links.appWeb)))))
+          h('p', null, h('strong', null, P.app), '  ', h('a', { href: links.appPage }, window.MIMPdf.prettyUrl(links.appPage)))))
     ];
   }
 

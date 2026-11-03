@@ -382,7 +382,7 @@ test('config: tool tag and MailerLite field', function () {
 test('the page links the Money & Faith course and the app', function () {
   var html = fs.readFileSync(path.join(ROOT, 'saving-for-mission', 'index.html'), 'utf8');
   assert.ok(/href="https:\/\/moneyinmotion\.org\/money-and-faith"[^>]*>The Money &amp; Faith course<\/a> takes you through budgeting, debt, saving and generosity over four weeks\./.test(html));
-  assert.ok(/data-mim-link="appWeb"/.test(html));
+  assert.ok(/data-mim-link="appPage"/.test(html));
   ['logic.js', 'content.js', 'pdfs.js', 'builder.js', '../assets/pdf.js', '../assets/site.js', '../assets/config.js'].forEach(function (src) {
     assert.ok(html.indexOf('src="' + src + '"') !== -1, src + ' is loaded');
   });

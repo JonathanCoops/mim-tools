@@ -133,7 +133,7 @@ window.MIMMissionPdfs = (function () {
       h('p', { className: 'sfm-pdf-closing' }, C.setup.closing),
       h('div', { className: 'pdf-app sfm-pdf-app' },
         h('p', { className: 'pdf-small' }, P.app + ' ',
-          h('a', { href: MIM.links.appWeb }, window.MIMPdf.prettyUrl(MIM.links.appWeb))))
+          h('a', { href: MIM.links.appPage }, window.MIMPdf.prettyUrl(MIM.links.appPage))))
     ];
 
     return {

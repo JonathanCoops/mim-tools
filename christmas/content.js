@@ -406,7 +406,7 @@ window.MIM_CHRISTMAS_CONTENT = {
   more: {
     heading: 'Keep going',
     app: 'Track your Christmas savings pot in the free Money in Motion app.',
-    appLink: 'Open the app',
+    appLink: 'Get the app',
     debt: 'Still paying off last Christmas? The Debt Snowball Planner shows the month you’ll be clear.',
     debtLink: 'Plan my snowball',
     quiz: 'Not sure where to start with the rest of your money?',

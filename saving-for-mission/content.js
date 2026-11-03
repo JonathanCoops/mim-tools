@@ -169,7 +169,7 @@ window.MIM_MISSION_CONTENT = {
       label: 'My monthly margin today',
       hint: 'What’s left each month after everything else is paid.',
       app: 'Not sure? The free Money in Motion app will help you find it.',
-      appLink: 'Open the app',
+      appLink: 'Get the app',
       negative: 'If more is going out than coming in, put 0 for now. The free app will help you see where it’s going.'
     },
     rsHeading: 'Widen it with the three Rs',
@@ -247,7 +247,7 @@ window.MIM_MISSION_CONTENT = {
     items: [
       { id: 'pot', text: 'Open a separate savings pot just for the mission.' },
       { id: 'standing', text: 'Set up a standing order for {E} on payday.', noFigure: 'Set up a standing order for your new monthly margin on payday.' },
-      { id: 'app', text: 'Put your income and spending into the Money in Motion app.', link: 'Open the app' },
+      { id: 'app', text: 'Put your income and spending into the Money in Motion app.', link: 'Get the app' },
       { id: 'pray', text: 'Write your gap down ({G}) and start praying over it.', noFigure: 'Write your gap down and start praying over it.' },
       { id: 'friend', text: 'Ask a trusted friend to check in with you monthly.' }
     ],

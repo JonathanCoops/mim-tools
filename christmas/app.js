@@ -1217,7 +1217,7 @@
     var more = h('section', { className: 'card card-quiet xm-more', 'aria-labelledby': 'more-heading' },
       h('h2', { className: 'h3', id: 'more-heading' }, M.heading),
       h('ul', { className: 'xm-more-list', role: 'list' },
-        h('li', null, M.app + ' ', MIM.extLink(links.appWeb, M.appLink)),
+        h('li', null, M.app + ' ', MIM.extLink(links.appPage, M.appLink)),
         h('li', null, M.debt + ' ', h('a', { href: '../debt-planner/' }, M.debtLink)),
         h('li', null, M.quiz + ' ', h('a', { href: '../quiz/' }, M.quizLink))));
 
