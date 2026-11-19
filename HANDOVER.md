@@ -92,20 +92,36 @@ Build tailored per-step sequences only after an upgrade.
 |---|---|---|
 | Wage | Last 12 months after tax and costs ÷ 15, rounded down to £10 | Jonathan's "pay yourself a quiet month" (carousel, slide 5) |
 | Leanest stretch | The run of months that fell furthest behind the wage, checked round the calendar | New. It's the person's own figure for "how lumpy am I?" |
-| Full pot | Leanest stretch + 3 months of wages, rounded up to £50 | The carousel says three months, or six for big lumps. This gives about 3 for steady work, 5 to 6 for lumpy work, and 7 or 8 for a long off-season |
-| Low | 2 months of wages | Carousel, slide 8 |
-| Good-year money | Anything over the full pot + 3 more months of wages | Carousel, slide 9 (over six months for steady work) |
+| Full pot | Leanest stretch + 2 months of wages, rounded up to £50 | Sized with Jonathan on 19 November 2026 (see "How big a cushion" below). It gives about 2 months for steady work, 4 for seasonal or late-paid work, and 7 for a long off-season |
+| Low | 1 month of wages | A month under the cushion, so a year like the last one never trips a cut |
+| Good-year money | Anything over the full pot + 3 more months of wages | Carousel, slide 9 (which says over six months; this is about five for steady work) |
 | Pay review | January, April, July, October. Cut if the pot is under Low; rise if the last 12 months support 10% more and the pot would still be full; otherwise hold | Carousel, slide 8, with the sizes below |
 
 **Three things the testing changed** (run `node steady-wage/tests/simulate.js` to see the tables). The simulation makes up thousands of five-year stretches of income, runs the planner's own sums with a review every three months, and counts the paydays that come up short. It's a guide, not proof.
 
-1. **The pot is sized to the person, not flat.** With a flat three months, a "seven months on, five off" worker had no short payday in only 45% of five-year runs. Sized to their own leanest stretch, it was 95%.
-2. **The cut is "10%, or down to what the last 12 months support if that's lower".** With a flat 10% cut, when income really fell the wage couldn't catch up. For work every month with big swings, the share of runs with no short payday went from 78% to 96% with the sharper cut.
+1. **The pot is sized to the person, not flat.** With a flat three months for everyone, a "seven months on, five off" worker had no short payday in only 31% of five-year runs. Sized to their own leanest stretch, it was 88%.
+2. **The cut is "10%, or down to what the last 12 months support if that's lower".** With a flat 10% cut, when income really fell the wage couldn't catch up. For work every month with big swings, short paydays more than doubled (0.47 a year against 0.20).
 3. **A rise is capped at 10% and needs a full pot at the new wage.** Without the cap, one good year ratcheted the wage up and the next ordinary year drained the pot.
 
-With those rules, starting from a full pot: steady, seasonal and late-paid work had no short payday in 95 to 100% of five-year runs, and the wage changed less than once a year. The same people with no pot fall short of that wage four or five months every year. Starting from an empty pot, it filled in about 8 to 12 months.
+**How big a cushion (decided 19 November 2026).** The first build held the leanest stretch + 3 months of wages, with the cut line at 2. Jonathan's challenge: carrying two full months in hand after the leanest stretch is over the top, and people will struggle to leave that much sitting there. Tested three sizes, each starting with a full pot:
 
-**Where it's weaker, and says so:** very lumpy income (a third of months empty) still had the odd short payday in about a third of runs, and "three or four big payments a year" in over half. One year of figures isn't enough to pin down a wage for those people. The planner shows a note when money landed in four months or fewer, and the pay review does the rest: short paydays still fall from 8 a year to about one every two years.
+| Full pot | For steady work that's | Normal year's low point | A short payday, in ordinary years |
+|---|---|---|---|
+| Leanest stretch + 3 months (first build) | 3.3 months of wages | 2 months in hand | Almost never: about one a century |
+| **Leanest stretch + 2 months (now)** | 2.3 months | 1 month in hand | Steady, seasonal, on/off: one every 12 to 17 years. Late-paid work: one in 9. Big swings: one in 5 |
+| Leanest stretch + 1 month | 1.3 months | Nothing in hand | One every 5 to 12 years; big swings one in 3 |
+
+With no pot at all, the same people fall short of that wage four or five months every year. When a payday does come up short, it's usually by a fifth to a third of the wage for steady and seasonal work.
+
+Why + 2 and not + 1: at + 1, a year exactly like the last one ends its leanest stretch with the pot empty straight after payday. There's nothing between a normal low point and a missed payday, so the pay review has no line to warn on (a cut line at one month would be tripped every ordinary winter). At + 2 the low point is a month of wages, which is where the cut line now sits.
+
+What it costs: the smaller pot gives about a quarter's less warning when income really falls and stays down. In the "income drops 40%" test, short paydays in the five years after went from under one to about three. The planner's heads-up covers this: when the last 12 months support less than the wage, it says so and suggests cutting now if work has really dropped off.
+
+The tool now sits a notch below the carousel's rules of thumb (three months to start, cut under two, extra over six). The carousel is the simple version and the tool is the worked-out one, so they don't have to match, but it's worth knowing.
+
+With these rules, starting from a full pot: steady, seasonal and late-paid work had no short payday in 76 to 88% of five-year runs, and the wage changed less than once a year. Starting from an empty pot, it filled in about 7 to 11 months.
+
+**Where it's weaker, and says so:** very lumpy income (a third of months empty) had a short payday about every two years, and "three or four big payments a year" nearly one a year (against six to eight a year with no pot). One year of figures isn't enough to pin down a wage for those people. The planner shows a note when money landed in four months or fewer, and the pay review does the rest.
 
 **Decisions (keep these):**
 - **The wage is always last year ÷ 15,** so the tool agrees with the carousel and the videos. The pot size is where it adapts.
@@ -130,9 +146,9 @@ On the form, the "wage you pay yourself now" box is hidden behind "I already pay
 **Answered by Jonathan on 19 November 2026:**
 - **Name:** "Pay Yourself a Steady Wage". The folder, address and email tag stay `steady-wage`, and the PDF is still "My Steady Wage Plan".
 - **"Monthly income"** is the right wording for the app.
-- **No pay-review emails for now.** It's another thing to set up and he isn't ready for it. Nothing in the tool promises one, and a test fails if the sign-up copy ever does. The pay review inside the tool stays, because it needs nothing from him.
-
-**Still open:** the made-up example sets aside 25% for tax and costs. Jonathan kept a percentage off the carousel on purpose, so the example could switch to "tax already off" if he'd rather it didn't show one.
+- **No pay-review emails for now.** It's another thing to set up and he isn't ready for it. Nothing in the tool promises one, and a test fails if the sign-up copy ever does.
+- **The pay review stays in the tool.**
+- **The made-up example keeps 25% set aside for tax and costs.**
 
 ## To do
 
@@ -170,7 +186,7 @@ node tests/quiz-logic.test.js                  # 57,645 checks
 node debt-planner/snowball.test.js             # 4,026 checks
 node saving-for-mission/tests/mission.test.js  # 41 checks
 node christmas/tests/christmas.test.js         # 74 checks
-node steady-wage/tests/wage.test.js            # 52 checks
+node steady-wage/tests/wage.test.js            # 54 checks
 node tests/signup-front-door.test.js           # 19 checks
 python3 -m http.server 8000                    # then open http://localhost:8000/
 ```
@@ -181,7 +197,7 @@ Work on a branch and open a pull request. Several cloud sessions editing `assets
 
 Newest first. Each one went through a pull request on this repo unless it says otherwise.
 
-- **19 November 2026: Pay Yourself a Steady Wage** (new tool, `steady-wage/`). For income that goes up and down: a steady wage from the last 12 months, a holding pot sized to the person's own leanest stretch, a quarterly pay review and a PDF. It follows Jonathan's self-employed videos and the 18 November carousel, and the rules were tested on made-up years of income first. It was first built as "Steady Wage Planner" and renamed the same day, when the results were also reordered and the tips added after Jonathan's first look. The home page has a fifth card, `config.js` has a `steadyWage` block and `links.hmrcTaxEstimate`, and the front door's `TOOLS` list has `steady-wage` (it needs redeploying: see To do). The full write-up is under "Pay Yourself a Steady Wage" above.
+- **19 November 2026: Pay Yourself a Steady Wage** (new tool, `steady-wage/`). For income that goes up and down: a steady wage from the last 12 months, a holding pot sized to the person's own leanest stretch, a quarterly pay review and a PDF. It follows Jonathan's self-employed videos and the 18 November carousel, and the rules were tested on made-up years of income first. It was first built as "Steady Wage Planner" and renamed the same day, when the results were also reordered and the tips added after Jonathan's first look. The pot's cushion was then trimmed from the leanest stretch + 3 months to + 2. The home page has a fifth card, `config.js` has a `steadyWage` block and `links.hmrcTaxEstimate`, and the front door's `TOOLS` list has `steady-wage` (it needs redeploying: see To do). The full write-up is under "Pay Yourself a Steady Wage" above.
 
 - **3 November 2026: Framer connector** (not this repo). Claude can now edit moneyinmotion.org through the Framer connector from cloud and web sessions, not only from a local session on Jonathan's Mac. Tested on the 15 October "Money In Motion (copy)" project. Edits land unpublished on `main` with no branch, Claude never publishes, and big changes or new pages start with Jonathan duplicating the live project. The rules are in `CLAUDE.md` and the Business Overview.
 

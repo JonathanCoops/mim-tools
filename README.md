@@ -167,7 +167,7 @@ Pay Yourself a Steady Wage follows Jonathan's own method from the self-employed 
 - It is part of Step 0. The wage is someone's regular income, the number their budget is built on. It's set so they can meet their needs and obligations even in their leanest month. What they do with it is up to them.
 - Everything earned lands in a holding account. Tax and costs come out first. The same wage goes to the current account on the same day every month.
 - The wage is a quiet month: the last 12 months, after tax and costs, divided by 15.
-- Pay reviews are in January, April, July and October. Under two months of wages in the pot means a cut.
+- A full pot is the person's leanest stretch plus two months of wages. Pay reviews are in January, April, July and October. Under one month of wages in the pot means a cut.
 - More money than the wage: if it keeps coming it's regular income, so take a rise and budget for it in the app. If it's a good year they're not ready to count on, the wage stays put and the extra goes on things that can flex (a nicer holiday, an extra present for the kids at Christmas, a boost to a Junior ISA or pension).
 - The share to set aside for tax and costs is always the person's own figure. The tools never suggest a tax rate.
 

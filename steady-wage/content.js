@@ -115,15 +115,15 @@ window.MIM_WAGE_CONTENT = {
     cut: {
       eyebrow: 'Your pay review',
       headline: 'Take a cut now: {wage} a month',
-      body: 'Down from {previous}. Your pot holds less than two months of wages, and a small cut now saves a bigger one later.',
-      bodyDeep: 'Down from {previous}. Your pot holds less than two months of wages, and {wage} is what your last 12 months support. It’s a hard one to take, but it keeps payday coming.'
+      body: 'Down from {previous}. Your pot holds less than a month of wages, and a small cut now saves a bigger one later.',
+      bodyDeep: 'Down from {previous}. Your pot holds less than a month of wages, and {wage} is what your last 12 months support. It’s a hard one to take, but it keeps payday coming.'
     },
     afterTax: ' after tax and costs',
 
     notes: {
       partYear: 'This is built on {n} months, so treat it as a first guess. Seasonal dips only show up over a full year, and the figure gets sharper each time you come back.',
       fewPayments: 'Money landed in only {n} of your 12 months. With so few payments, one year isn’t much to go on, so check the pot every time one lands.',
-      drift: 'A heads-up: your last 12 months would support {quiet}, which is less than you’re paying yourself. The pot can carry the difference for now. If it keeps draining, expect a cut at your next review.'
+      drift: 'A heads-up: your last 12 months would support {quiet}, which is less than you’re paying yourself. The pot can carry the difference for now. If work has really dropped off, cut to {quiet} now rather than waiting for the pot to run down.'
     },
 
     /* Where the number comes from, and the gap the pot has to cover. */
@@ -152,8 +152,8 @@ window.MIM_WAGE_CONTENT = {
     pot: {
       heading: 'The pot that keeps it steady',
       full: 'Full at',
-      fullBody: 'That’s about {months} months of wages: enough to keep paying yourself through a stretch like your leanest one and still have two months of wages in hand.',
-      fullBodyFlat: 'That’s three months of wages. Every month covered your wage, so it’s all the cushion you need.',
+      fullBody: 'That’s about {months} months of wages: enough to keep paying yourself through a stretch like your leanest one, and for another month if it runs long.',
+      fullBodyFlat: 'That’s two months of wages. Every month covered your wage, so it’s all the cushion you need.',
       today: 'In the pot today',
       meter: 'Your pot holds {pot} of the {full} that makes it full.',
       toGo: '{amount} to go.',
@@ -231,7 +231,7 @@ window.MIM_WAGE_CONTENT = {
       ],
       rulesHeading: 'How the planner decides',
       rules: [
-        'Under {low} in the pot (two months of wages): take a cut now, before it has to be a big one.',
+        'Under {low} in the pot (one month of wages): take a cut now, before it has to be a big one.',
         'Your last 12 months support 10% more, and the pot would still be full: take a rise.',
         'Anything else: hold. One good month doesn’t change anything.',
         'Over {top} in the pot: the extra is good-year money.'

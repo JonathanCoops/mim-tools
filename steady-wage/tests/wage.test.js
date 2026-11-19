@@ -161,9 +161,9 @@ test('the example: May and June are the leanest stretch, £3,200 short', functio
   assert.equal(r.shortMonths, 5);
   assert.deepEqual(r.rows.filter(function (row) { return row.lean; }).map(function (row) { return row.key; }), ['2026-05', '2026-06']);
   // The pot lines that follow from it.
-  assert.equal(r.low, 3800, 'two months of wages');
-  assert.equal(r.full, 8900, '£3,200 + three months of wages');
-  assert.equal(r.top, 14600, 'full + three more months of wages');
+  assert.equal(r.low, 1900, 'one month of wages');
+  assert.equal(r.full, 7000, '£3,200 + two months of wages');
+  assert.equal(r.top, 12700, 'full + three more months of wages');
 });
 
 test('a stretch that runs over the new year counts as one', function () {
@@ -182,30 +182,46 @@ test('a part year is only checked as far as it goes', function () {
   assert.equal(lean.shortfall, 130000);
 });
 
-test('steady work needs three months of wages and no more', function () {
+test('steady work needs two months of wages and no more', function () {
   var r = L.compute(plan(flat(2500)), TODAY);
   assert.equal(r.lean, null);
   assert.equal(r.shortMonths, 0);
-  assert.equal(r.full, 6000);
-  assert.equal(r.fullMonths, 3);
-  assert.equal(r.low, 4000);
-  assert.equal(r.top, 12000);
+  assert.equal(r.full, 4000);
+  assert.equal(r.fullMonths, 2);
+  assert.equal(r.low, 2000);
+  assert.equal(r.top, 10000);
+});
+
+test('the pot sizes: leanest stretch + 2 months, cut under 1, good-year money 3 past full', function () {
+  // Decided with Jonathan on 19 November 2026 (HANDOVER.md has the testing behind it).
+  assert.equal(L.CUSHION_MONTHS, 2);
+  assert.equal(L.LOW_MONTHS, 1);
+  assert.equal(L.HEADROOM_MONTHS, 3);
+  // The low line sits a month under the cushion, so a year like the last one
+  // never trips a cut, whenever in the month the pot is checked.
+  assert.equal(L.LOW_MONTHS, L.CUSHION_MONTHS - 1);
+  // Other sizes can be passed in, which is how tests/simulate.js compares them.
+  var net = pence([500, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000]);
+  var first = L.potLines(net, 200000, { low: 2, cushion: 3, headroom: 3 });
+  assert.deepEqual([first.low, first.full, first.top], [400000, 750000, 1350000]);
+  assert.deepEqual(L.review(200000, 399900, 200000, net, { low: 2, cushion: 3, headroom: 3 }), { verdict: 'cut', wage: 180000 });
+  assert.deepEqual(L.review(200000, 399900, 200000, net), { verdict: 'hold', wage: 200000 });
 });
 
 test('pot lines round up to £50, so the pot is never a few pounds short', function () {
-  // One thin month, £1,500 short of a £2,000 wage: £1,500 + 3 × £2,000 = £7,500 exactly.
+  // One thin month, £1,500 short of a £2,000 wage: £1,500 + 2 × £2,000 = £5,500 exactly.
   var exact = L.potLines(pence([500, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000]), 200000);
   assert.equal(exact.lean.shortfall, 150000);
-  assert.equal(exact.full, 750000);
-  assert.equal(exact.low, 400000);
-  assert.equal(exact.top, 1350000);
-  // £10 less short: £7,490 rounds up to £7,500.
+  assert.equal(exact.full, 550000);
+  assert.equal(exact.low, 200000);
+  assert.equal(exact.top, 1150000);
+  // £10 less short: £5,490 rounds up to £5,500.
   var odd = L.potLines(pence([510, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000]), 200000);
   assert.equal(odd.lean.shortfall, 149000);
-  assert.equal(odd.full, 750000);
-  // £10 more short: £7,510 rounds up to £7,550.
+  assert.equal(odd.full, 550000);
+  // £10 more short: £5,510 rounds up to £5,550.
   var over = L.potLines(pence([490, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000]), 200000);
-  assert.equal(over.full, 755000);
+  assert.equal(over.full, 555000);
 });
 
 // A plain version of the leanest stretch, to check the real one against.
@@ -236,8 +252,10 @@ test(RANDOM_YEARS + ' random years: the leanest stretch matches a plain count, a
     var lean = L.leanestStretch(net, wage);
     assert.equal(lean.shortfall, leanBruteForce(net, wage), 'year ' + i);
     var lines = L.potLines(net, wage);
-    assert.ok(lines.full >= lean.shortfall + 3 * wage && lines.full < lean.shortfall + 3 * wage + L.POT_ROUND);
-    assert.equal(lines.top, lines.full + 3 * wage);
+    var target = lean.shortfall + L.CUSHION_MONTHS * wage;
+    assert.ok(lines.full >= target && lines.full < target + L.POT_ROUND);
+    assert.equal(lines.low, L.LOW_MONTHS * wage);
+    assert.equal(lines.top, lines.full + L.HEADROOM_MONTHS * wage);
     // Start any month of that year with a full pot, pay the wage on the 1st for
     // a year, and the pot never drops under the low line.
     for (var start = 0; start < 12; start++) {
@@ -253,37 +271,37 @@ test(RANDOM_YEARS + ' random years: the leanest stretch matches a plain count, a
 
 test('the replay starts full and pays the wage before the month lands', function () {
   var r = L.compute(examplePlan(), TODAY);
-  assert.equal(r.replay.start, 8900);
-  assert.equal(r.replay.afterPayday[0], 7000);
-  assert.equal(r.replay.end[0], 9400);
+  assert.equal(r.replay.start, 7000);
+  assert.equal(r.replay.afterPayday[0], 5100);
+  assert.equal(r.replay.end[0], 7500);
   assert.equal(r.replay.afterPayday[11], r.replay.end[10] - 1900);
   assert.ok(Math.min.apply(null, r.replay.afterPayday) >= r.low);
   // Over a full year the pot gains three months of wages: 12 go out, 15 come in.
-  assert.equal(r.replay.end[11], 8900 + 28500 - 12 * 1900);
+  assert.equal(r.replay.end[11], 7000 + 28500 - 12 * 1900);
 });
 
 /* ---------------- 4. The pay review ---------------- */
 
-var STEADY = pence(flat(2500));   // supports a £2,000 wage; full pot £6,000
+var STEADY = pence(flat(2500));   // supports a £2,000 wage; full pot £4,000
 
-test('under two months of wages: a 10% cut', function () {
-  assert.deepEqual(L.review(200000, 399900, 200000, STEADY), { verdict: 'cut', wage: 180000 });
-  assert.deepEqual(L.review(200000, 400000, 200000, STEADY), { verdict: 'hold', wage: 200000 }, 'two months exactly is fine');
+test('under one month of wages: a 10% cut', function () {
+  assert.deepEqual(L.review(200000, 199900, 200000, STEADY), { verdict: 'cut', wage: 180000 });
+  assert.deepEqual(L.review(200000, 200000, 200000, STEADY), { verdict: 'hold', wage: 200000 }, 'one month exactly is fine');
   assert.deepEqual(L.review(200000, 0, 200000, STEADY), { verdict: 'cut', wage: 180000 });
 });
 
 test('if the last 12 months support less than that, the cut goes there', function () {
   // Income has halved: the months now support £1,000, so 10% off £2,000 isn't enough.
   var thin = pence(flat(1250));
-  assert.deepEqual(L.review(200000, 300000, 100000, thin), { verdict: 'cut', wage: 100000 });
+  assert.deepEqual(L.review(200000, 150000, 100000, thin), { verdict: 'cut', wage: 100000 });
   // But a cut is never a rise: a healthy year with a thin pot still drops 10%.
-  assert.deepEqual(L.review(200000, 300000, 260000, pence(flat(3250))), { verdict: 'cut', wage: 180000 });
+  assert.deepEqual(L.review(200000, 150000, 260000, pence(flat(3250))), { verdict: 'cut', wage: 180000 });
 });
 
 test('a rise needs 10% more supported and a pot that is still full afterwards', function () {
-  var good = pence(flat(2750));   // supports £2,200
-  assert.deepEqual(L.review(200000, 660000, 220000, good), { verdict: 'rise', wage: 220000 });
-  assert.deepEqual(L.review(200000, 659900, 220000, good), { verdict: 'hold', wage: 200000 }, 'the pot would not be full at £2,200');
+  var good = pence(flat(2750));   // supports £2,200, where a full pot is £4,400
+  assert.deepEqual(L.review(200000, 440000, 220000, good), { verdict: 'rise', wage: 220000 });
+  assert.deepEqual(L.review(200000, 439900, 220000, good), { verdict: 'hold', wage: 200000 }, 'the pot would not be full at £2,200');
   assert.deepEqual(L.review(200000, 900000, 219000, pence(flat(2740))), { verdict: 'hold', wage: 200000 }, 'under 10% more');
 });
 
@@ -297,16 +315,16 @@ test('a good pot on its own changes nothing', function () {
 });
 
 test('with a wage typed in, the plan is a pay review', function () {
-  var hold = L.compute(plan(flat(2500), { wage: '2000', pot: '5000' }), TODAY);
+  var hold = L.compute(plan(flat(2500), { wage: '2000', pot: '3000' }), TODAY);
   assert.equal(hold.mode, 'review');
   assert.equal(hold.verdict, 'hold');
   assert.equal(hold.wage, 2000);
   assert.equal(hold.previousWage, 2000);
 
-  var cut = L.compute(plan(flat(2500), { wage: '2000', pot: '3000' }), TODAY);
+  var cut = L.compute(plan(flat(2500), { wage: '2000', pot: '1500' }), TODAY);
   assert.equal(cut.verdict, 'cut');
   assert.equal(cut.wage, 1800);
-  assert.equal(cut.low, 3600, 'the lines move to the new wage');
+  assert.equal(cut.low, 1800, 'the lines move to the new wage');
 
   var rise = L.compute(plan(flat(2750), { wage: '2000', pot: '7000' }), TODAY);
   assert.equal(rise.verdict, 'rise');
@@ -373,7 +391,7 @@ test('a blank month is never quietly counted as £0', function () {
   assert.equal(winter.counted, 12);
   assert.equal(winter.wage, 1600);
   assert.equal(winter.lean.length, 4);
-  assert.equal(winter.full, 4 * 1600 + 3 * 1600);
+  assert.equal(winter.full, 4 * 1600 + 2 * 1600);
 });
 
 test('a part year still needs every month after the first, and at least three', function () {
@@ -411,12 +429,12 @@ test('all zeros, or next to nothing, is not enough to set a wage', function () {
 
 /* ---------------- 6. Filling the pot ---------------- */
 
-test('the example: £2,500 in the pot fills by December 2027, with no short paydays', function () {
+test('the example: £2,500 in the pot fills by October 2027, with no short paydays', function () {
   var r = L.compute(examplePlan(), TODAY);
   assert.equal(r.stage, 'building');
-  assert.equal(r.toFull, 6400);
-  assert.equal(r.forecast.months, 13);
-  assert.deepEqual(r.forecast.month, { y: 2027, m: 12 });
+  assert.equal(r.toFull, 4500);
+  assert.equal(r.forecast.months, 11);
+  assert.deepEqual(r.forecast.month, { y: 2027, m: 10 });
   assert.equal(r.forecast.short, 0);
 });
 
@@ -426,28 +444,28 @@ test('an empty pot comes up short on the way, and says so', function () {
   // December's payday finds an empty pot. December's money covers January and
   // February, but nothing landed in January, so March's payday is £150 short.
   assert.equal(r.forecast.short, 2);
-  assert.deepEqual(r.forecast.month, { y: 2027, m: 12 }, 'full after next December, a good month');
+  assert.deepEqual(r.forecast.month, { y: 2027, m: 10 }, 'full the same month as starting with £2,500: the short paydays kept the difference in the pot');
 });
 
 test('a full pot, and good-year money over the top line', function () {
-  var full = L.compute(examplePlan({ pot: '8900' }), TODAY);
+  var full = L.compute(examplePlan({ pot: '7000' }), TODAY);
   assert.equal(full.stage, 'steady');
   assert.equal(full.toFull, 0);
   assert.equal(full.goodYear, 0);
   assert.equal(full.forecast.months, 0);
-  var atTop = L.compute(examplePlan({ pot: '14600' }), TODAY);
+  var atTop = L.compute(examplePlan({ pot: '12700' }), TODAY);
   assert.equal(atTop.stage, 'steady');
-  var over = L.compute(examplePlan({ pot: '16000' }), TODAY);
+  var over = L.compute(examplePlan({ pot: '14000' }), TODAY);
   assert.equal(over.stage, 'over');
-  assert.equal(over.goodYear, 1400);
+  assert.equal(over.goodYear, 1300);
 });
 
 test('a part year goes on the average month', function () {
   var six = [null, null, null, null, null, null, 2500, 2500, 2500, 2500, 2500, 2500];
   var r = L.compute(plan(six, { partYear: true, pot: '1000' }), TODAY);
-  // full £6,000, £5,000 to go, £500 spare in an average month: 10 months
-  assert.equal(r.forecast.months, 10);
-  assert.deepEqual(r.forecast.month, { y: 2027, m: 9 });
+  // full £4,000, £3,000 to go, £500 spare in an average month: 6 months
+  assert.equal(r.forecast.months, 6);
+  assert.deepEqual(r.forecast.month, { y: 2027, m: 5 });
   assert.equal(r.forecast.short, null);
 });
 
@@ -503,15 +521,27 @@ test('a saved plan rolls forward: next quarter asks for the new months', functio
 
 // A smaller run of tests/simulate.js: made-up five-year stretches, reviewed
 // every three months with the planner's own sums.
-test('on made-up steady and seasonal income, payday almost never comes up short', function () {
+test('on made-up steady and seasonal income, a short payday is rare', function () {
   var opts = { yearSpread: 0.15, runs: 400 };
   ['steady work, some variation', 'seasonal, thin winter', 'seven months on, five off', 'steady work, paid in lumps'].forEach(function (name) {
     var row = SIM.run(name, opts);
-    assert.ok(parseFloat(row['runs with no short payday']) >= 90, name + ': ' + row['runs with no short payday'] + ' of runs had no short payday');
-    assert.ok(parseFloat(row['short paydays a year, with plan']) <= 0.05, name);
-    assert.ok(parseFloat(row['short paydays a year, no plan']) >= 3, name + ': without a plan it is short several times a year');
+    var withPlan = parseFloat(row['short paydays a year, with plan']);
+    var noPlan = parseFloat(row['short paydays a year, no plan']);
+    assert.ok(parseFloat(row['runs with no short payday']) >= 70, name + ': ' + row['runs with no short payday'] + ' of five-year runs had no short payday');
+    assert.ok(withPlan <= 0.15, name + ': ' + withPlan + ' short paydays a year, so fewer than one every six years');
+    assert.ok(noPlan >= 3, name + ': without a plan it is short several times a year');
+    assert.ok(withPlan * 20 < noPlan, name + ': at least 20 times fewer than with no plan');
     assert.ok(parseFloat(row['wage changes a year']) <= 1, name + ': the wage changes at most about once a year');
   });
+});
+
+test('a bigger cushion is safer and a smaller one is not: the choice is a trade', function () {
+  var opts = function (sizes) { return { yearSpread: 0.15, runs: 400, sizes: sizes }; };
+  var name = 'steady work, some variation';
+  var bigger = parseFloat(SIM.run(name, opts({ low: 2, cushion: 3, headroom: 3 }))['short paydays a year, with plan']);
+  var chosen = parseFloat(SIM.run(name, opts(undefined))['short paydays a year, with plan']);
+  var smaller = parseFloat(SIM.run(name, opts({ low: 1, cushion: 1, headroom: 3 }))['short paydays a year, with plan']);
+  assert.ok(bigger <= chosen && chosen < smaller, bigger + ' <= ' + chosen + ' < ' + smaller);
 });
 
 test('very lumpy income still comes up short far less often than with no plan', function () {
@@ -528,7 +558,7 @@ test('the example on the page builds the plan the docs describe', function () {
   assert.equal(EXAMPLE.months.length, 12);
   var r = L.compute(examplePlan(), TODAY);
   assert.equal(r.wage, 1900);
-  assert.equal(r.full, 8900);
+  assert.equal(r.full, 7000);
   assert.equal(r.stage, 'building');
 });
 
@@ -548,10 +578,10 @@ test('the words quote the method the sums use', function () {
   var R = CONTENT.results;
   assert.ok(/divided by 15/.test(R.chart.caption));
   assert.ok(/four-fifths/.test(R.chart.captionPart));
-  assert.ok(/two months of wages/.test(R.tips.rules[0]) && L.LOW_MONTHS === 2);
-  assert.ok(/less than two months of wages/.test(R.cut.body));
-  assert.ok(/still have two months of wages in hand/.test(R.pot.fullBody), 'a full pot never drops under the low line');
-  assert.ok(/three months of wages/.test(R.pot.fullBodyFlat) && L.CUSHION_MONTHS === 3);
+  assert.ok(/one month of wages/.test(R.tips.rules[0]) && L.LOW_MONTHS === 1);
+  assert.ok(/less than a month of wages/.test(R.cut.body) && /less than a month of wages/.test(R.cut.bodyDeep));
+  assert.ok(/for another month if it runs long/.test(R.pot.fullBody), 'full covers the leanest stretch and a month more');
+  assert.ok(/two months of wages/.test(R.pot.fullBodyFlat) && L.CUSHION_MONTHS === 2);
   assert.ok(/10% more/.test(R.tips.rules[1]) && L.STEP_PERCENT === 10);
   assert.ok(/January, April, July and October/.test(R.tips.items[4].body));
   assert.deepEqual(L.REVIEW_MONTHS, [1, 4, 7, 10]);

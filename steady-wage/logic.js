@@ -15,15 +15,16 @@
  *   Leanest       the run of months that fell furthest behind the wage.
  *   stretch       Checked round the calendar, so a winter that runs
  *                 December to February counts as one stretch
- *   Full pot      the leanest stretch + 3 months of wages, rounded up to £50.
- *                 For steady work that's about 3 months of wages; for work
- *                 that comes in big lumps it's nearer 6, as the carousel says
- *   Low           2 months of wages. Under this at a pay review: take a cut
+ *   Full pot      the leanest stretch + 2 months of wages, rounded up to £50.
+ *                 Go into a stretch like that with a full pot and there's
+ *                 still a month of wages in hand at its lowest point, so it
+ *                 can run a month longer than last time and payday still comes
+ *   Low           1 month of wages. Under this at a pay review: take a cut
  *   Good-year     anything over the full pot + 3 more months of wages
  *   money
  *
  * The pay review (once a wage is set):
- *   Cut    the pot is under 2 months of wages. The new wage is 10% less, or
+ *   Cut    the pot is under 1 month of wages. The new wage is 10% less, or
  *          what the last 12 months support if that's lower still.
  *   Rise   the last 12 months support at least 10% more AND the pot would
  *          still be full at the new wage. Never more than 10% at a time.
@@ -36,6 +37,13 @@
  * own was too slow when income really fell, and a flat "three or six months"
  * left seasonal work short, which is why both are worked out from the
  * person's own figures here.
+ *
+ * How big a cushion (Jonathan, 19 November 2026): the first build held the
+ * leanest stretch + 3 months, with the cut line at 2. That almost never
+ * missed a payday, but it's a lot of money to leave sitting there. It now
+ * holds the leanest stretch + 2, with the cut line at 1. One month less than
+ * that leaves nothing between a normal year's low point and an empty pot,
+ * so the pay review has no room to step in. HANDOVER.md has the figures.
  *
  * Money is added up in whole pence so the sums never drift. Figures come
  * back in pounds.
@@ -51,9 +59,11 @@
   var WINDOW = 12;           // months of income asked for
   var MIN_MONTHS = 3;        // the fewest months a plan can be built on
   var DIVISOR = 15;          // 12 months ÷ 15 = a quiet month
-  var LOW_MONTHS = 2;        // pot under this many wages: take a cut
-  var CUSHION_MONTHS = 3;    // full pot = leanest stretch + this many wages
+  var LOW_MONTHS = 1;        // pot under this many wages: take a cut
+  var CUSHION_MONTHS = 2;    // full pot = leanest stretch + this many wages
   var HEADROOM_MONTHS = 3;   // over full by this many wages: good-year money
+  // The three together. tests/simulate.js passes its own to compare cushions.
+  var POT = { low: LOW_MONTHS, cushion: CUSHION_MONTHS, headroom: HEADROOM_MONTHS };
   var STEP_PERCENT = 10;     // the smallest cut, and the biggest rise
   var WAGE_ROUND = 1000;     // wages round down to the nearest £10 (in pence)
   var POT_ROUND = 5000;      // pot lines round up to the nearest £50 (in pence)
@@ -191,28 +201,31 @@
   }
 
   // The three lines on the pot, for a wage and the months behind it. Pence.
-  function potLines(net, wagePence) {
+  // sizes: { low, cushion, headroom } in months of wages. Left out, it's POT.
+  function potLines(net, wagePence, sizes) {
+    var size = sizes || POT;
     var lean = leanestStretch(net, wagePence);
-    var full = roundUp(lean.shortfall + CUSHION_MONTHS * wagePence, POT_ROUND);
+    var full = roundUp(lean.shortfall + size.cushion * wagePence, POT_ROUND);
     return {
       lean: lean,
-      low: LOW_MONTHS * wagePence,
+      low: size.low * wagePence,
       full: full,
-      top: full + HEADROOM_MONTHS * wagePence
+      top: full + size.headroom * wagePence
     };
   }
 
   // The pay review. Everything in pence.
   // Returns { verdict: 'cut' | 'rise' | 'hold', wage }.
-  function review(wagePence, potPence, quietPence, net) {
-    if (potPence < LOW_MONTHS * wagePence) {
+  function review(wagePence, potPence, quietPence, net, sizes) {
+    var size = sizes || POT;
+    if (potPence < size.low * wagePence) {
       var cut = Math.min(Math.floor(wagePence * (100 - STEP_PERCENT) / 100), quietPence);
       return { verdict: 'cut', wage: Math.max(roundDown(cut, WAGE_ROUND), WAGE_ROUND) };
     }
     if (quietPence * 100 >= wagePence * (100 + STEP_PERCENT)) {
       var rise = roundDown(Math.min(quietPence, Math.floor(wagePence * (100 + STEP_PERCENT) / 100)), WAGE_ROUND);
       // The pot has to be full at the new wage, so a rise never leaves it short.
-      if (rise > wagePence && potPence >= potLines(net, rise).full) return { verdict: 'rise', wage: rise };
+      if (rise > wagePence && potPence >= potLines(net, rise, size).full) return { verdict: 'rise', wage: rise };
     }
     return { verdict: 'hold', wage: wagePence };
   }

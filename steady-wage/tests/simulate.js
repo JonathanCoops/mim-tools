@@ -79,7 +79,9 @@ function runOnce(profile, opts) {
   if (sum(trailing) < 15 * L.WAGE_ROUND) return null;
   var wage = L.quietWage(sum(trailing), 12);
   var firstWage = wage;
-  var lines = opts.flat ? flatLines(wage, opts.flat) : L.potLines(trailing, wage);
+  var sizes = opts.sizes;   // left out, the planner's own pot sizes
+  var lowMonths = sizes ? sizes.low : L.LOW_MONTHS;
+  var lines = opts.flat ? flatLines(wage, opts.flat) : L.potLines(trailing, wage, sizes);
   var pot = opts.startEmpty ? income[11] : lines.full;
   var fullAt = opts.startEmpty ? null : 0;
   var r = { shortMonths: 0, changes: 0, cuts: 0, lowestWage: wage, fullMonths: lines.full / wage, fullAfter: null, withoutPlan: 0, months: YEARS * 12 };
@@ -88,10 +90,10 @@ function runOnce(profile, opts) {
       var quiet = Math.max(L.quietWage(sum(trailing), 12), L.WAGE_ROUND);
       var verdict;
       if (opts.rule === 'tenPercent') {
-        // The carousel's rule on its own: under two months, 10% off.
-        verdict = pot < 2 * wage ? { wage: Math.floor(wage * 0.9) } : L.review(wage, pot, quiet, trailing);
+        // A flat 10% off when the pot is low, however far income has fallen.
+        verdict = pot < lowMonths * wage ? { wage: Math.floor(wage * 0.9) } : L.review(wage, pot, quiet, trailing, sizes);
       } else {
-        verdict = L.review(wage, pot, quiet, trailing);
+        verdict = L.review(wage, pot, quiet, trailing, sizes);
       }
       if (verdict.wage !== wage) {
         r.changes++;
@@ -99,7 +101,7 @@ function runOnce(profile, opts) {
         wage = verdict.wage;
         if (wage < r.lowestWage) r.lowestWage = wage;
       }
-      lines = opts.flat ? flatLines(wage, opts.flat) : L.potLines(trailing, wage);
+      lines = opts.flat ? flatLines(wage, opts.flat) : L.potLines(trailing, wage, sizes);
       if (pot > lines.top) pot = lines.top;   // good-year money comes out
     }
     var pay = Math.min(wage, pot);
@@ -115,8 +117,11 @@ function runOnce(profile, opts) {
   return r;
 }
 
-// The carousel's flat rule: three months of wages (or six), good-year money over six.
-function flatLines(wage, months) { return { low: 2 * wage, full: months * wage, top: 6 * wage }; }
+// The same pot for everyone, whatever their year looked like: so many months
+// of wages, with the planner's own low line and headroom.
+function flatLines(wage, months) {
+  return { low: L.LOW_MONTHS * wage, full: months * wage, top: (months + L.HEADROOM_MONTHS) * wage };
+}
 
 function run(name, opts) {
   var N = opts.runs || 3000;
@@ -155,6 +160,12 @@ if (require.main === module) {
   table('4. Income drops by 40% six months in, and stays down', Object.assign({ change: { at: 6, factor: 0.6 } }, base));
   table('5. Income grows by 40% six months in', Object.assign({ change: { at: 6, factor: 1.4 } }, base));
   table('6. Starting with an empty pot', Object.assign({ startEmpty: true }, base));
+  // How big a cushion? The planner holds the leanest stretch + 2 months of
+  // wages, with the cut line at 1. These two are the alternatives either side.
+  table('7. A bigger cushion: leanest stretch + 3 months, cut under 2 (the first build)',
+    Object.assign({ sizes: { low: 2, cushion: 3, headroom: 3 } }, base));
+  table('8. A smaller cushion: leanest stretch + 1 month, cut under 1',
+    Object.assign({ sizes: { low: 1, cushion: 1, headroom: 3 } }, base));
 }
 
 module.exports = { run: run, runOnce: runOnce, PROFILES: PROFILES };
