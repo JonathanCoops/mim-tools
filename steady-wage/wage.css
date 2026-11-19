@@ -1,0 +1,368 @@
+/* =====================================================================
+   Pay Yourself a Steady Wage
+   Extra styles for this tool only. Everything else comes from
+   /assets/styles.css. Colours are always the shared CSS variables, so
+   dark mode and any rebrand carry straight through.
+   ===================================================================== */
+
+.sw { padding: 2rem 0 1rem; }
+.sw-intro .small.muted { margin: 1rem 0 0; }
+
+.sw-how-steps { margin: 0 0 1rem; padding-left: 1.4rem; }
+.sw-how-steps li { margin-bottom: 0.35rem; padding-left: 0.25rem; }
+.sw-how-steps li::marker { font-weight: 900; color: var(--heading); }
+
+/* ----- Form fields ----- */
+
+.sw-hint {
+  margin: -0.2rem 0 0.4rem;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+.sw-affix { position: relative; }
+.sw-affix > span {
+  position: absolute;
+  top: 0; bottom: 0;
+  display: flex;
+  align-items: center;
+  color: var(--text-muted);
+  font-weight: 600;
+  pointer-events: none;
+}
+.sw-affix-pre > span { left: 1rem; }
+.sw-affix-pre input { padding-left: 2.1rem; }
+.sw-affix-post > span { right: 1rem; }
+.sw-affix-post input { padding-right: 2.4rem; }
+.sw-error {
+  margin: 0.4rem 0 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--accent);
+}
+.sw-narrow .sw-affix { max-width: 14rem; }
+
+/* The 12 months: two across on a phone, three then four as there's room */
+.sw-months {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 0.75rem;
+  margin-top: 1.25rem;
+}
+@media (min-width: 30rem) { .sw-months { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 40rem) { .sw-months { grid-template-columns: repeat(4, 1fr); } }
+.sw-month { margin-bottom: 0.75rem; }
+.sw-month label { margin-bottom: 0.2rem; font-size: 15px; color: var(--text-muted); }
+.sw-month input { min-height: 3rem; padding-top: 0.55rem; padding-bottom: 0.55rem; font-variant-numeric: tabular-nums; }
+.sw-months + .sw-error { margin: 0 0 0.75rem; }
+
+.sw-part-year { margin: 0.75rem 0 0; }
+.sw-check-hint {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+.sw-starting { margin: 0.75rem 0 0; }
+.sw-starting .link-button { min-height: 0; font-size: inherit; }
+.sw-needs { margin-top: 1rem; }
+.sw-needs .field { margin-bottom: 0; }
+.sw-fund { margin: 0.5rem 0 1rem; }
+.sw-tax { margin-top: 0; }
+.sw-tax legend { padding: 0; margin-bottom: 0.75rem; font-weight: 600; }
+.sw-set-aside { margin-top: 1.25rem; }
+.sw-set-aside .field { margin-bottom: 0.5rem; }
+
+.sw-example {
+  margin-top: 1.25rem;
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-medium);
+  background: var(--surface-alt);
+}
+.sw-example p { margin-bottom: 0.75rem; }
+.sw-show .form-status { margin-top: 0.75rem; }
+
+/* ----- The wage ----- */
+
+.sw-headline {
+  margin-bottom: 0.75rem;
+  font-size: clamp(2rem, 7.5vw, 2.9rem);
+  line-height: 1.15;
+}
+.sw-headline-wage {
+  display: inline-block;
+  padding: 0 0.35em;
+  border-radius: 999px;
+  background: var(--band-btn);
+  color: var(--band-btn-text);
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+.sw-hero > * { position: relative; }
+.sw-hero-body { max-width: 36rem; }
+.sw-warning {
+  margin: 1rem 0 0;
+  padding: 0.9rem 1.1rem;
+  border-left: 6px solid var(--care-border);
+  border-radius: 0 var(--radius-medium) var(--radius-medium) 0;
+  background: var(--mim-cream);
+  color: var(--mim-ink);
+}
+
+/* ----- The year against the wage -----
+   Plain boxes, so the same picture can go on the PDF. A bar's height is a
+   share of the plot, and the wage line sits at the same scale. */
+
+.sw-chart { margin: 1.25rem 0 0.5rem; }
+/* The plot is exactly the height the bars are measured against. The month
+   labels hang below it, in the margin. */
+.sw-plot {
+  position: relative;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 4px;
+  height: 200px;
+  margin-bottom: 1.8rem;
+}
+@media (min-width: 40rem) { .sw-plot { height: 240px; gap: 8px; } }
+.sw-col {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+  box-shadow: 0 2px 0 var(--field);
+}
+.sw-bar {
+  width: 100%;
+  border-radius: 6px 6px 0 0;
+  background: var(--primary);
+}
+.sw-bar.is-short { background: var(--mim-amber); }
+.sw-bar.is-empty { border-radius: 0; background: var(--mim-amber); }
+.sw-col-label {
+  position: absolute;
+  left: 0; right: 0;
+  bottom: -1.7rem;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.sw-col-long { display: none; }
+@media (min-width: 34rem) {
+  .sw-col-long { display: inline; }
+  .sw-col-short { display: none; }
+}
+/* The wage, at the same scale as the bars */
+.sw-wage-line {
+  position: absolute;
+  left: 0; right: 0;
+  height: 0;
+  border-top: 2px dashed var(--text);
+  transform: translateY(1px);
+  pointer-events: none;
+}
+.sw-wage-line span {
+  position: absolute;
+  right: 0;
+  bottom: 4px;
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  background: var(--text);
+  color: var(--surface);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+  white-space: nowrap;
+  box-shadow: 0 0 0 2px var(--surface);
+}
+
+.sw-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.25rem;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+.sw-legend li { display: flex; align-items: center; gap: 0.45rem; }
+.sw-key { width: 0.85rem; height: 0.85rem; border-radius: 3px; background: var(--primary); }
+.sw-key.is-short { background: var(--mim-amber); }
+.sw-chart-note { margin: 1rem 0 0; }
+
+.sw-table-details { margin-top: 1.25rem; background: var(--surface-alt); }
+.sw-table { width: 100%; border-collapse: collapse; font-size: 15px; }
+.sw-table th, .sw-table td {
+  padding: 0.45rem 0.25rem;
+  border-bottom: 1px solid var(--border);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.sw-table thead th { font-weight: 600; color: var(--text-muted); vertical-align: bottom; line-height: 1.25; }
+.sw-table th:first-child { text-align: left; font-weight: 400; white-space: nowrap; }
+.sw-table thead th:first-child { font-weight: 600; }
+.sw-table tr:last-child td, .sw-table tbody tr:last-child th { border-bottom: 0; }
+.sw-table .is-short th:first-child { font-weight: 600; }
+.sw-table-note { margin: 0.75rem 0 0; }
+
+/* ----- The pot ----- */
+
+.sw-full { margin-bottom: 0.5rem; font-size: 1.1rem; font-weight: 600; color: var(--heading); }
+.sw-full strong {
+  display: inline-block;
+  padding: 0 0.4em;
+  border-radius: 999px;
+  background: var(--primary-soft);
+  font-family: var(--font-heading);
+  font-size: 1.9rem;
+  font-weight: 900;
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+  vertical-align: -0.12em;
+}
+.sw-today { margin: 1.5rem 0 1rem; }
+.sw-today-label { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0 1rem; margin-bottom: 0.4rem; }
+.sw-today-label strong { font-weight: 900; color: var(--heading); font-variant-numeric: tabular-nums; }
+.sw-meter {
+  height: 0.9rem;
+  border-radius: 999px;
+  background: var(--track);
+  overflow: hidden;
+}
+.sw-meter-fill { height: 100%; border-radius: 999px; background: var(--primary); }
+.sw-pot-status { margin-bottom: 0.5rem; }
+
+/* ----- What to do now ----- */
+
+.sw-wage-area { margin-top: 1rem; }
+.sw-wage-area .field { margin-bottom: 0; }
+.sw-plan .ladder-desc { margin-top: 0.15rem; }
+.sw-step-action { display: block; margin-top: 0.75rem; }
+.sw-step-action .btn { width: 100%; }
+@media (min-width: 30rem) { .sw-step-action .btn { width: auto; } }
+.sw-step-hint { display: block; margin-top: 0.5rem; font-size: 15px; color: var(--text-muted); }
+.sw-step-action .form-status { margin-top: 0.4rem; font-size: 15px; }
+
+/* ----- Good months and lean months ----- */
+
+.sw-verse { font-style: italic; }
+.sw-tips { margin: 0; padding: 0; list-style: none; }
+.sw-tips li { padding: 0.85rem 0; border-bottom: 1px solid var(--border); }
+.sw-tips li:first-child { padding-top: 0.25rem; }
+.sw-tips strong { color: var(--heading); }
+.sw-rules-details { margin-top: 1.25rem; background: var(--surface-alt); }
+.sw-rules { margin: 0; padding-left: 1.25rem; font-size: 15px; }
+.sw-rules li { margin-bottom: 0.4rem; }
+.sw-rules li:last-child { margin-bottom: 0; }
+.sw-benefits {
+  margin: 1.25rem 0 0;
+  padding: 0.9rem 1.1rem;
+  border-left: 6px solid var(--care-border);
+  border-radius: 0 var(--radius-medium) var(--radius-medium) 0;
+  background: var(--care-bg);
+}
+
+/* =====================================================================
+   The printed plan (built by app.js, laid out by assets/pdf.js)
+   Inside .pdf-sheet the variables are always the light-mode ones.
+   ===================================================================== */
+
+.pdf-body:has(> .sw-pdf-end) { display: flex; flex-direction: column; }
+
+.sw-pdf-hero {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 16px;
+  padding: 14px 20px 16px;
+  border-radius: 16px;
+  background: var(--mim-lime);
+  color: var(--mim-forest);
+}
+.pdf-body .sw-pdf-hero p { margin: 0; }
+.pdf-body .sw-pdf-label {
+  margin: 0 0 2px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.pdf-body .sw-pdf-wage {
+  font-family: var(--font-heading);
+  font-size: 46px;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+}
+.sw-pdf-wage span { font-size: 18px; font-weight: 600; letter-spacing: 0; }
+.pdf-body .sw-pdf-payday { margin-top: 8px; font-size: 13.5px; font-weight: 600; }
+.sw-pdf-blank {
+  display: inline-block;
+  width: 54px;
+  height: 18px;
+  border-bottom: 1.5px solid var(--mim-forest);
+  vertical-align: -2px;
+}
+.pdf-body .sw-pdf-from { margin-top: 2px; font-size: 12px; }
+.sw-pdf-lines {
+  flex: none;
+  padding-left: 22px;
+  border-left: 1.5px solid rgba(25, 66, 41, 0.3);
+  font-size: 13px;
+  line-height: 1.7;
+}
+.sw-pdf-lines dl { display: grid; grid-template-columns: auto auto; gap: 0 18px; margin: 0; }
+.sw-pdf-lines dt { font-weight: 600; }
+.sw-pdf-lines dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+
+/* The bars, smaller, in print colours */
+.pdf-sheet .sw-chart { margin: 4px 0 8px; }
+.pdf-sheet .sw-plot { height: 130px; gap: 8px; margin-bottom: 22px; }
+.pdf-sheet .sw-col-label { bottom: -20px; font-size: 10.5px; }
+.pdf-sheet .sw-col-long { display: inline; }
+.pdf-sheet .sw-col-short { display: none; }
+.pdf-sheet .sw-wage-line span { font-size: 10.5px; }
+.pdf-sheet .sw-bar { border-radius: 4px 4px 0 0; }
+
+.sw-pdf-steps { margin: 0; padding: 0; list-style: none; }
+.sw-pdf-steps li { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 6px; }
+.sw-pdf-num {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px; height: 22px;
+  border-radius: 7px;
+  background: var(--primary);
+  color: var(--on-primary);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.sw-pdf-reviews { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 8px 0 10px; }
+.sw-pdf-review {
+  padding: 10px 12px 12px;
+  border: 1.5px solid var(--primary);
+  border-radius: 10px;
+}
+.pdf-body .sw-pdf-review p { margin: 0; }
+.pdf-body .sw-pdf-review .sw-pdf-review-month { font-size: 13px; font-weight: 600; color: var(--mim-forest); }
+.pdf-body .sw-pdf-review .sw-pdf-review-line { display: flex; align-items: flex-end; gap: 4px; margin-top: 10px; font-size: 12px; font-weight: 600; }
+.sw-pdf-rule { flex: 1; height: 18px; border-bottom: 1.5px solid var(--text-muted); }
+.pdf-body .sw-pdf-review .sw-pdf-review-choices { margin-top: 12px; font-size: 11.5px; color: var(--text-muted); }
+.pdf-body .sw-pdf-good { margin: 0; }
+
+.sw-pdf-end { margin-top: auto; padding-top: 14px; }
+.pdf-body .sw-pdf-end .pdf-quote { margin: 0 0 8px; font-size: 13px; }
+.sw-pdf-end .pdf-app p { margin: 0; }
+
+.pdf-compact .sw-pdf-hero { padding: 10px 18px 12px; margin-bottom: 10px; }
+.pdf-compact .sw-pdf-wage { font-size: 38px; }
+.pdf-compact .sw-plot { height: 105px; }
+.pdf-compact .sw-pdf-review { padding: 8px 10px 10px; }
+.pdf-compact .sw-pdf-end { padding-top: 8px; }

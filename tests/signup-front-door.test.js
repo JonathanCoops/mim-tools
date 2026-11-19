@@ -187,7 +187,7 @@ test('empty fields are left out of the MailerLite body', function () {
 });
 
 test('every tool name is accepted', function () {
-  ['quiz', 'debt-planner', 'saving-for-mission', 'christmas'].forEach(function (tool) {
+  ['quiz', 'debt-planner', 'saving-for-mission', 'christmas', 'steady-wage'].forEach(function (tool) {
     var s = makeScript();
     assert.deepEqual(s.post(goodBody({ tool: tool })), { ok: true }, tool);
     assert.equal(s.calls[0].body.fields.tool, tool);

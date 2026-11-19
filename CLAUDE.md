@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Money in Motion's free money tools: four browser tools at https://tools.moneyinmotion.org/, served by GitHub Pages from `main`. Plain HTML, CSS and JavaScript with no build step. Email sign-ups go through a Google Apps Script in `apps-script/`.
+Money in Motion's free money tools: five browser tools at https://tools.moneyinmotion.org/, served by GitHub Pages from `main`. Plain HTML, CSS and JavaScript with no build step. Email sign-ups go through a Google Apps Script in `apps-script/`.
 
 ## Read first, every session
 
@@ -21,7 +21,7 @@ Nothing about payments is built in this repo. The tools are free and take no mon
 ## Working rules
 
 - Work on a branch and open a pull request. Never push to `main`; it goes live as soon as it's merged.
-- Run all five test suites before pushing. The commands are in `HANDOVER.md` under Testing.
+- Run all six test suites before pushing. The commands are in `HANDOVER.md` under Testing.
 - The repo is public. No secrets, API keys or personal data, ever. The MailerLite key lives only in the Apps Script's Script Properties.
 - Every link and setting lives in `assets/config.js`. Each tool's words live in its own `content.js`.
 - Nothing a person types leaves their device except the optional email sign-up. No analytics and no cookies unless Jonathan agrees and the privacy page says so.

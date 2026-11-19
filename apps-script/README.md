@@ -1,6 +1,6 @@
 # Sign-up front door (Google Apps Script)
 
-Every email sign-up from the four tools comes here first. The script:
+Every email sign-up from the tools comes here first. The script:
 
 1. checks the request: a hidden "website" box that only bots fill in, at least 3 seconds between the form appearing and being sent, at most 3 sign-ups per email address an hour and 100 an hour in total, and the field rules (a real-looking email, a known tool, sensible lengths);
 2. adds the person to MailerLite, in the group "Leads - Free Tools", with the `name`, `tool` and `baby_step` fields filled in;
@@ -51,6 +51,8 @@ Do this signed in to the Money in Motion business Google account.
 8. **Connect the tools.** Paste the URL into `assets/config.js` as `signup.endpoint`, on a branch, and open a pull request. Once it's merged and live, do one test sign-up from each tool and check: a row with `added` in the Sheet, the subscriber in "Leads - Free Tools" in MailerLite with `tool` (and `baby_step` from the quiz) filled in, and the welcome email arriving. The subscriber should show as **Active**. If it shows as **Unconfirmed**, MailerLite is applying double opt-in to API sign-ups: leave the setting alone and raise it in a Claude session before changing anything.
 
 ## Changing the script later (same URL)
+
+A new tool needs its name adding to `TOOLS` in `Code.gs`, or its sign-ups are turned away as `invalid`. Redeploying is safe to do before the tool's pull request is merged: the script simply accepts one more name.
 
 1. Edit `Code.gs` in this repo first, run `node tests/signup-front-door.test.js`, and merge it.
 2. Paste the new `Code.gs` into the Apps Script editor and save.
