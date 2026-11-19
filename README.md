@@ -8,7 +8,7 @@ Free web tools for [Money in Motion](https://moneyinmotion.org/). **New to this 
 | Debt Snowball Planner | `debt-planner/` | Live |
 | Saving for Mission Builder | `saving-for-mission/` | Live |
 | Christmas Without Debt | `christmas/` | Live |
-| Pay Yourself a Steady Wage | `steady-wage/` | Built 19 November 2026, live once its pull request is merged |
+| Pay Yourself a Steady Wage | `steady-wage/` | Live |
 
 ## Folder structure
 
