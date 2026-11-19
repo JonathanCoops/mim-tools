@@ -8,7 +8,7 @@ Free web tools for [Money in Motion](https://moneyinmotion.org/). **New to this 
 | Debt Snowball Planner | `debt-planner/` | Live |
 | Saving for Mission Builder | `saving-for-mission/` | Live |
 | Christmas Without Debt | `christmas/` | Live |
-| Steady Wage Planner | `steady-wage/` | Built 19 November 2026, live once its pull request is merged |
+| Pay Yourself a Steady Wage | `steady-wage/` | Built 19 November 2026, live once its pull request is merged |
 
 ## Folder structure
 
@@ -88,7 +88,7 @@ Open the file, change the text between the quote marks, save. Keep the quote mar
 | `signup.debtPlanner` / `savingForMission` / `christmas` / `steadyWage` | The same two messages for the other four tools, which send the tool's name instead of a Baby Step. |
 | `videos` | A full link to Jonathan's video for each step (`0` to `7`, plus `3b` and `6b`). Videos open in a new tab; they aren't embedded, so no video site sets cookies here. |
 | `debtHelp` | The three free debt charities shown when someone's answers suggest real pressure. |
-| `links` | Website, Money & Faith course, and the app: `appPage` is moneyinmotion.org/app, which has the App Store, Google Play and web links. Every app link in the tools goes there. `hmrcTaxEstimate` is HMRC's Self Assessment calculator, which the Steady Wage Planner points to for anyone unsure how much tax to set aside. |
+| `links` | Website, Money & Faith course, and the app: `appPage` is moneyinmotion.org/app, which has the App Store, Google Play and web links. Every app link in the tools goes there. `hmrcTaxEstimate` is HMRC's Self Assessment calculator, which Pay Yourself a Steady Wage points to for anyone unsure how much tax to set aside. |
 
 To change the **wording** of a tool, edit its `content.js` (in `quiz/`, `debt-planner/`, `saving-for-mission/`, `christmas/` or `steady-wage/`). To change the wording of the **steps themselves**, edit `assets/baby-steps.js`. To change **colours or fonts**, edit the first `:root` block in `assets/styles.css` (each colour has a light and a dark value).
 
@@ -119,7 +119,7 @@ No installs needed, just Node. Run the one for a tool after changing its sums or
 - **Debt Snowball Planner:** checks the snowball sums, including thousands of random plans against a separate copy of the maths, and the copy.
 - **Saving for Mission Builder:** checks the worked example comes out at A £2,400 to G £560 from any start date, the sums and edge cases, and the copy.
 - **Christmas Without Debt:** checks the dates, paydays and sums against a day-by-day count, and the copy.
-- **Steady Wage Planner:** checks the wage (last year ÷ 15), the leanest stretch and the pot lines against a plain month-by-month count on thousands of random years, the pay review (cut, rise, hold), what happens with blank or wrong figures, and the copy. It also runs a short version of `steady-wage/tests/simulate.js` to check the method still holds on made-up steady and seasonal income.
+- **Pay Yourself a Steady Wage:** checks the wage (last year ÷ 15), the leanest stretch and the pot lines against a plain month-by-month count on thousands of random years, the pay review (cut, rise, hold), what happens with blank or wrong figures, and the copy. It also runs a short version of `steady-wage/tests/simulate.js` to check the method still holds on made-up steady and seasonal income.
 - **Sign-up front door:** runs `apps-script/Code.gs` against pretend Google services and checks the spam rules, field rules, rate limits, what goes to MailerLite (never `status` or `resubscribe`) and what's logged.
 
 ## Notes for adding a tool
@@ -162,11 +162,13 @@ The framework (the Money in Motion Baby Steps, inspired by the principles of Dav
 
 The steps work in order, one at a time.
 
-The Steady Wage Planner follows Jonathan's own method from the self-employed video series and the "Pay yourself a wage" carousel (November 2026). Use exactly this:
+Pay Yourself a Steady Wage follows Jonathan's own method from the self-employed video series and the "Pay yourself a wage" carousel (November 2026). Use exactly this:
 
+- It is part of Step 0. The wage is someone's regular income, the number their budget is built on. It's set so they can meet their needs and obligations even in their leanest month. What they do with it is up to them.
 - Everything earned lands in a holding account. Tax and costs come out first. The same wage goes to the current account on the same day every month.
 - The wage is a quiet month: the last 12 months, after tax and costs, divided by 15.
-- Pay reviews are in January, April, July and October. Under two months of wages in the pot means a cut. Good-year money is what's left over once the pot is well past full.
+- Pay reviews are in January, April, July and October. Under two months of wages in the pot means a cut.
+- More money than the wage: if it keeps coming it's regular income, so take a rise and budget for it in the app. If it's a good year they're not ready to count on, the wage stays put and the extra goes on things that can flex (a nicer holiday, an extra present for the kids at Christmas, a boost to a Junior ISA or pension).
 - The share to set aside for tax and costs is always the person's own figure. The tools never suggest a tax rate.
 
 ### PRIVACY

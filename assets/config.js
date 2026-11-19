@@ -28,8 +28,8 @@ window.MIM_CONFIG = {
     // Your website's privacy page. Shown next to the email form.
     privacyPolicy: 'https://moneyinmotion.org/privacy',
 
-    // HMRC's "Estimate your Self Assessment tax bill" calculator. The Steady
-    // Wage Planner points to it for anyone unsure how much tax to set aside.
+    // HMRC's "Estimate your Self Assessment tax bill" calculator. Pay Yourself
+    // a Steady Wage points to it for anyone unsure how much tax to set aside.
     hmrcTaxEstimate: 'https://www.gov.uk/self-assessment-ready-reckoner'
   },
 
@@ -132,7 +132,7 @@ window.MIM_CONFIG = {
   },
 
   /* ---------------------------------------------------------------------
-   * Steady Wage Planner
+   * Pay Yourself a Steady Wage
    * Its email sign-up ("Stay in touch while you fill the pot") uses the same
    * front door as the quiz (signup.endpoint above), and fills the "tool"
    * field with "steady-wage". Only the email address, first name (if given)

@@ -1,5 +1,5 @@
 /*
- * Steady Wage Planner: the page.
+ * Pay Yourself a Steady Wage: the page.
  * The sums are in logic.js, the words are in content.js, links and settings
  * are in /assets/config.js. This file just puts them on screen.
  */
@@ -195,22 +195,25 @@
       el.setAsideArea
     );
 
-    // The pot, and the wage if there is one
+    // The pot, and the wage for anyone who already pays themselves one
     el.pot = field('sw-pot', P.label, { inputmode: 'decimal', prefix: '£', maxlength: L.MAX.money, hint: P.hint, className: 'sw-narrow' });
     el.pot.input.addEventListener('input', function () {
       state.pot = el.pot.input.value;
       changed();
     });
-    el.wage = field('sw-wage', P.wage, { inputmode: 'decimal', prefix: '£', maxlength: L.MAX.money, hint: P.wageHint, optional: P.optional, className: 'sw-narrow' });
+    el.wage = field('sw-wage', P.wage, { inputmode: 'decimal', prefix: '£', maxlength: L.MAX.money, hint: P.wageHint, className: 'sw-narrow' });
     el.wage.input.addEventListener('input', function () {
       state.wage = el.wage.input.value;
       state.wageSet = '';   // typed by hand, so the planner reviews it straight away
       changed();
     });
+    el.wageArea = h('div', { className: 'sw-wage-area', hidden: true }, el.wage.wrap);
+    el.already = h('button', { type: 'button', className: 'link-button', onClick: function () { showWage(true); el.wage.input.focus(); } }, P.already);
     var potCard = h('section', { className: 'card', 'aria-labelledby': 'sw-pot-heading' },
       h('h2', { className: 'h3', id: 'sw-pot-heading' }, P.heading),
       el.pot.wrap,
-      el.wage.wrap
+      el.already,
+      el.wageArea
     );
 
     el.showButton = h('button', { type: 'button', className: 'btn btn-primary btn-block', onClick: showPlan }, C.show);
@@ -221,7 +224,6 @@
     el.resultsMain = h('div', { className: 'stack' });
     // ...and the parts that stay put, so nothing typed in them is lost.
     el.keep = keepCard();
-    el.appCard = appCard();
     el.email = emailCard();
     el.share = MIM.shareRow({ heading: R.share.heading, message: R.share.message });
     el.end = h('div', { className: 'result-end' },
@@ -229,7 +231,7 @@
       h('button', { type: 'button', className: 'link-button', onClick: function () { clearAll(); } }, R.clear)
     );
     el.results = h('div', { className: 'stack sw-results', id: 'sw-results', hidden: true },
-      el.resultsMain, el.keep, el.appCard, el.email, el.share, el.end
+      el.resultsMain, el.keep, el.email, el.share, el.end
     );
 
     app.textContent = '';
@@ -238,6 +240,12 @@
 
   function showSetAside() {
     el.setAsideArea.hidden = state.tax !== 'before';
+  }
+
+  // The wage box stays out of the way until there's a wage to put in it.
+  function showWage(open) {
+    el.wageArea.hidden = !open;
+    el.already.hidden = open;
   }
 
   // Puts what's saved into the boxes.
@@ -250,6 +258,7 @@
     el.wage.input.value = state.wage;
     el.pdfName.value = state.name;
     showSetAside();
+    showWage(state.wage.trim() !== '');
     el.exampleArea.hidden = L.hasData(state);
   }
 
@@ -380,9 +389,8 @@
     el.resultsMain.textContent = '';
     var nodes = [];
     if (state.example) nodes.push(h('p', { className: 'heading-for' }, C.example.note));
-    nodes.push(heroCard(plan), chartCard(plan), potCard(plan), landsCard(plan), reviewCard(plan));
+    nodes.push(heroCard(plan), chartCard(plan), potCard(plan), planCard(plan), tipsCard(plan));
     MIM.append(el.resultsMain, nodes);
-    el.appBody.textContent = fill(R.app.body, { wage: money(plan.wage) });
     el.results.hidden = false;
 
     if (moveFocus) {
@@ -398,11 +406,10 @@
 
   function heroCard(plan) {
     var V = R[plan.verdict];
-    var afterTax = plan.percent > 0 ? R.afterTax : '';
     var wage = money(plan.wage);
     var body;
     if (plan.verdict === 'start') {
-      body = fill(plan.fullYear ? V.body : V.bodyPart, { afterTax: afterTax, total: money(plan.total), n: plan.counted });
+      body = V.body;
     } else if (plan.verdict === 'set') {
       body = fill(V.body, { since: L.formatMonth(plan.wageSet), review: L.formatMonth(plan.nextReview) });
     } else if (plan.verdict === 'cut') {
@@ -490,7 +497,7 @@
     var lean = leanText(plan);
     return h('section', { className: 'card', 'aria-labelledby': 'sw-chart-heading' },
       h('h2', { className: 'h3', id: 'sw-chart-heading' }, CH.heading),
-      h('p', { className: 'muted small' }, fill(CH.caption, { afterTax: taxed ? R.afterTax : '' })),
+      h('p', { className: 'muted small' }, fill(plan.fullYear ? CH.caption : CH.captionPart, { afterTax: taxed ? R.afterTax : '', total: money(plan.total) })),
       bars(plan, false),
       h('ul', { className: 'sw-legend', 'aria-hidden': 'true' },
         h('li', null, h('span', { className: 'sw-key' }), CH.covered),
@@ -508,138 +515,137 @@
 
   /* ---------------- The pot ---------------- */
 
-  function potLine(label, value, body, className) {
-    return h('li', { className: 'sw-line' + (className ? ' ' + className : '') },
-      h('span', { className: 'sw-line-label' }, label),
-      h('span', { className: 'sw-line-value' }, value),
-      h('span', { className: 'sw-line-body' }, body)
-    );
-  }
-
   function wholeMonths(n) {
     return String(Math.round(n * 2) / 2).replace(/\.5$/, '½');
   }
 
+  // One number to aim for, and where the pot is today. The other two lines
+  // (low, and good-year money) are in the tips, where they're needed.
   function potCard(plan) {
     var P = R.pot;
-    var wage = money(plan.wage);
-    var nodes = [
-      h('h2', { className: 'h3', id: 'sw-pot-result-heading' }, P.heading),
-      h('p', { className: 'muted' }, P.intro),
-      h('ul', { className: 'sw-lines', role: 'list' },
-        potLine(P.full, money(plan.full), plan.lean ? fill(P.fullBody, { months: wholeMonths(plan.fullMonths) }) : P.fullBodyFlat, 'is-full'),
-        potLine(P.low, money(plan.low), P.lowBody),
-        potLine(P.top, fill(P.topValue, { amount: money(plan.top) }), P.topBody)
-      )
-    ];
-
+    var building = plan.stage === 'building';
     var share = Math.max(0, Math.min(100, plan.full > 0 ? plan.pot / plan.full * 100 : 0));
-    nodes.push(h('div', { className: 'sw-today' },
-      h('p', { className: 'sw-today-label' }, P.today, ' ', h('strong', null, money(plan.pot))),
-      h('div', { className: 'sw-meter', role: 'img', 'aria-label': fill(P.meter, { pot: money(plan.pot), full: money(plan.full) }) },
-        h('div', { className: 'sw-meter-fill', style: 'width:' + share.toFixed(1) + '%' })),
-      plan.stage === 'building' ? h('p', { className: 'small muted' }, fill(P.toGo, { amount: money(plan.toFull) })) : null
-    ));
 
-    var S = P[plan.stage];
-    var status = [h('h3', { className: 'sw-status-heading' }, S.heading)];
-    if (plan.stage === 'building') {
-      status.push(h('p', null, fill(S.body, { wage: wage })));
+    var status;
+    if (building) {
+      var B = P.building;
       var f = plan.forecast;
-      if (f.months === null) status.push(h('p', null, S.never));
+      status = B.body + ' ';
+      if (f.months === null) status += B.never;
       else {
-        var when = fill(plan.fullYear ? S.when : S.whenAverage, { month: L.formatMonth(f.month) });
-        var short = f.short ? ' ' + (f.short === 1 ? S.shortOne : fill(S.shortMany, { count: f.short })) : '';
-        status.push(h('p', null, when + short + ' ' + S.faster));
+        status += fill(plan.fullYear ? B.when : B.whenAverage, { month: L.formatMonth(f.month) });
+        if (f.short) status += ' ' + (f.short === 1 ? B.shortOne : fill(B.shortMany, { count: f.short }));
       }
-      if (plan.verdict === 'start' && plan.pot < plan.low) status.push(h('p', null, fill(S.underLow, { low: money(plan.low) })));
     } else if (plan.stage === 'steady') {
-      status.push(h('p', null, fill(S.body, { wage: wage })));
+      status = P.steady;
     } else {
-      status.push(h('p', null, fill(S.body, { amount: money(plan.goodYear), wage: wage })));
-    }
-    nodes.push(h('div', { className: 'sw-status' }, status));
-
-    if (plan.lean && plan.lean.length > 1 && plan.fullYear && plan.stage === 'building') {
-      nodes.push(h('p', { className: 'small muted sw-proof' }, fill(P.season, { month: L.monthName(plan.lean.from.m) })));
+      status = fill(P.over, { amount: money(plan.goodYear), top: money(plan.top) });
     }
 
-    return h('section', { className: 'card', 'aria-labelledby': 'sw-pot-result-heading' }, nodes);
-  }
-
-  /* ---------------- When money lands ---------------- */
-
-  function landsSteps(plan) {
-    var S = R.lands.steps;
-    var middle = plan.percent > 0
-      ? { title: fill(S.before.title, { percent: String(plan.percent) }),
-          body: fill(S.before.body, { aside: money(plan.per1000.aside), keep: money(plan.per1000.pot) }) }
-      : S.after;
-    return [S.in, middle, { title: fill(S.pay.title, { wage: money(plan.wage) }), body: S.pay.body }];
-  }
-
-  function landsCard(plan) {
-    return h('section', { className: 'card', 'aria-labelledby': 'sw-lands-heading' },
-      h('h2', { className: 'h3', id: 'sw-lands-heading' }, R.lands.heading),
-      h('ol', { className: 'ladder', role: 'list' }, landsSteps(plan).map(function (step, i) {
-        return h('li', null,
-          h('span', { className: 'ladder-num', 'aria-hidden': 'true' }, String(i + 1)),
-          h('span', null,
-            h('span', { className: 'ladder-title' }, step.title),
-            h('span', { className: 'ladder-desc' }, step.body))
-        );
-      })),
-      h('p', { className: 'faith-line' }, R.lands.faith)
+    return h('section', { className: 'card', 'aria-labelledby': 'sw-pot-result-heading' },
+      h('h2', { className: 'h3', id: 'sw-pot-result-heading' }, P.heading),
+      h('p', { className: 'sw-full' }, P.full, ' ', h('strong', null, money(plan.full))),
+      h('p', null, plan.lean ? fill(P.fullBody, { months: wholeMonths(plan.fullMonths) }) : P.fullBodyFlat),
+      h('div', { className: 'sw-today' },
+        h('p', { className: 'sw-today-label' },
+          h('span', null, P.today, ' ', h('strong', null, money(plan.pot))),
+          building ? h('span', { className: 'muted' }, fill(P.toGo, { amount: money(plan.toFull) })) : null),
+        h('div', { className: 'sw-meter', role: 'img', 'aria-label': fill(P.meter, { pot: money(plan.pot), full: money(plan.full) }) },
+          h('div', { className: 'sw-meter-fill', style: 'width:' + share.toFixed(1) + '%' }))
+      ),
+      h('p', { className: 'sw-pot-status' }, status),
+      building && plan.lean && plan.lean.length > 1 && plan.fullYear
+        ? h('p', { className: 'small muted' }, fill(P.season, { month: L.monthName(plan.lean.from.m) })) : null
     );
   }
 
-  /* ---------------- The pay review ---------------- */
+  /* ---------------- What to do now ---------------- */
 
-  function reviewCard(plan) {
-    var V = R.review;
-    var nodes = [
-      h('h2', { className: 'h3', id: 'sw-review-heading' }, V.heading),
-      h('p', null, V.intro),
-      h('ul', { className: 'sw-rules' }, V.rules.map(function (rule) {
-        return h('li', null, fill(rule, { low: money(plan.low) }));
-      })),
-      h('p', null, fill(V.goodYear, { top: money(plan.top) }), ' ', V.quiz, ' ', h('a', { href: '../quiz/' }, V.quizLink), '.')
-    ];
-
-    // Setting the wage, so the next visit is a pay review.
+  // Setting the wage, so the next visit is a pay review. Once it's set, this
+  // just says when the next review is.
+  function setWageArea(plan) {
+    var V = R.plan;
     var typedWage = L.toPence(state.wage) / 100;
     var needsSetting = plan.verdict === 'start' || plan.verdict === 'rise' || plan.verdict === 'cut' ||
       (plan.verdict === 'hold' && !state.wageSet);
     var status = h('p', { className: 'form-status', role: 'status', 'aria-live': 'polite' });
-    if (needsSetting) {
-      var label = fill(typedWage && typedWage !== plan.wage ? V.change : V.set, { wage: money(plan.wage) });
-      var button = h('button', { type: 'button', className: 'btn btn-primary' }, label);
-      button.addEventListener('click', function () {
-        state.wage = String(plan.wage);
-        state.wageSet = thisMonthKey();
-        state.example = false;
-        el.wage.input.value = state.wage;
-        save();
-        renderResults(false);
-        var done = document.getElementById('sw-set-status');
-        if (done) {
-          done.textContent = fill(V.setDone, { month: L.formatMonth(current.nextReview) });
-          done.focus();
-        }
-      });
-      nodes.push(h('div', { className: 'sw-set' },
-        h('div', { className: 'button-row' }, button),
-        h('p', { className: 'small muted' }, V.setHint),
-        status));
-    } else {
+    if (!needsSetting) {
       status.id = 'sw-set-status';
       status.tabIndex = -1;
       status.textContent = fill(V.next, { month: L.formatMonth(plan.nextReview) });
-      nodes.push(h('div', { className: 'sw-set' }, status));
+      return h('span', { className: 'sw-step-action' }, status);
     }
+    var label = fill(typedWage && typedWage !== plan.wage ? V.change : V.set, { wage: money(plan.wage) });
+    var button = h('button', { type: 'button', className: 'btn btn-secondary' }, label);
+    button.addEventListener('click', function () {
+      state.wage = String(plan.wage);
+      state.wageSet = thisMonthKey();
+      state.example = false;
+      el.wage.input.value = state.wage;
+      showWage(true);
+      save();
+      renderResults(false);
+      var done = document.getElementById('sw-set-status');
+      if (done) {
+        done.textContent = fill(V.setDone, { month: L.formatMonth(current.nextReview) });
+        done.focus();
+      }
+    });
+    return h('span', { className: 'sw-step-action' },
+      button,
+      h('span', { className: 'sw-step-hint' }, fill(V.setHint, { month: L.formatMonth(L.nextReview(today)) })),
+      status);
+  }
 
-    nodes.push(h('p', { className: 'small sw-benefits' }, V.benefits));
-    return h('section', { className: 'card', 'aria-labelledby': 'sw-review-heading' }, nodes);
+  function planCard(plan) {
+    var S = R.plan.steps;
+    var wage = money(plan.wage);
+    var tax = plan.percent > 0
+      ? { title: fill(S.before.title, { percent: String(plan.percent) }),
+          body: fill(S.before.body, { aside: money(plan.per1000.aside), keep: money(plan.per1000.pot) }) }
+      : S.after;
+    var steps = [
+      S.account,
+      tax,
+      { title: fill(S.pay.title, { wage: wage }),
+        body: fill(plan.stage === 'building' ? S.pay.building : S.pay.full, { wage: wage }),
+        action: setWageArea(plan) },
+      { title: fill(S.budget.title, { wage: wage }),
+        body: S.budget.body,
+        action: h('span', { className: 'sw-step-action' }, MIM.extLink(links.appPage, S.budget.button, 'btn btn-primary')) }
+    ];
+    return h('section', { className: 'card', 'aria-labelledby': 'sw-plan-heading' },
+      h('h2', { className: 'h3', id: 'sw-plan-heading' }, R.plan.heading),
+      h('ol', { className: 'ladder sw-plan', role: 'list' }, steps.map(function (step, i) {
+        return h('li', null,
+          h('span', { className: 'ladder-num', 'aria-hidden': 'true' }, String(i + 1)),
+          h('span', null,
+            h('span', { className: 'ladder-title' }, step.title),
+            h('span', { className: 'ladder-desc' }, step.body),
+            step.action || null)
+        );
+      }))
+    );
+  }
+
+  /* ---------------- Good months and lean months ---------------- */
+
+  function tipsCard(plan) {
+    var T = R.tips;
+    var values = { low: money(plan.low), top: money(plan.top) };
+    return h('section', { className: 'card', 'aria-labelledby': 'sw-tips-heading' },
+      h('h2', { className: 'h3', id: 'sw-tips-heading' }, T.heading),
+      h('ul', { className: 'sw-tips', role: 'list' }, T.items.map(function (tip) {
+        return h('li', null, h('strong', null, tip.title), ' ', fill(tip.body, values));
+      })),
+      h('details', { className: 'steps-details sw-rules-details' },
+        h('summary', null, T.rulesHeading),
+        h('div', { className: 'steps-details-body' },
+          h('ul', { className: 'sw-rules' }, T.rules.map(function (rule) { return h('li', null, fill(rule, values)); })))
+      ),
+      h('p', { className: 'small sw-benefits' }, T.benefits),
+      h('p', { className: 'faith-line' }, T.faith)
+    );
   }
 
   /* ---------------- Keep your plan (PDF) ---------------- */
@@ -714,7 +720,8 @@
     var steps = [
       P.landsIn,
       plan.percent > 0 ? fill(P.landsBefore, { percent: String(plan.percent) }) : P.landsAfter,
-      fill(P.landsPay, { wage: wage })
+      fill(P.landsPay, { wage: wage }),
+      fill(P.landsBudget, { wage: wage })
     ];
     nodes.push(h('div', { className: 'pdf-section' },
       h('p', { className: 'pdf-h2' }, P.lands),
@@ -750,19 +757,7 @@
     return nodes;
   }
 
-  /* ---------------- The app and the email sign-up ---------------- */
-
-  function appCard() {
-    var A = R.app;
-    el.appBody = h('p', null, '');
-    return h('section', { className: 'card', 'aria-labelledby': 'sw-app-heading' },
-      h('h2', { className: 'h3', id: 'sw-app-heading' }, A.heading),
-      el.appBody,
-      h('div', { className: 'button-row' },
-        MIM.extLink(links.appPage, A.button, 'btn btn-primary')
-      )
-    );
-  }
+  /* ---------------- The email sign-up ---------------- */
 
   function emailCard() {
     var E = R.email;

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*
- * Steady Wage Planner: does the method hold up?
+ * Pay Yourself a Steady Wage: does the method hold up?
  *
  *   node steady-wage/tests/simulate.js
  *

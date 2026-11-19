@@ -1,5 +1,5 @@
 /*
- * Steady Wage Planner: the sums.
+ * Pay Yourself a Steady Wage: the sums.
  * No words and no page code in here, just months and money, so it can be
  * tested on its own (node steady-wage/tests/wage.test.js).
  *

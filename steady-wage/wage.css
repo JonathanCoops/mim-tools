@@ -1,5 +1,5 @@
 /* =====================================================================
-   Steady Wage Planner
+   Pay Yourself a Steady Wage
    Extra styles for this tool only. Everything else comes from
    /assets/styles.css. Colours are always the shared CSS variables, so
    dark mode and any rebrand carry straight through.
@@ -206,38 +206,21 @@
 
 /* ----- The pot ----- */
 
-.sw-lines { margin: 1rem 0 0; padding: 0; list-style: none; }
-.sw-line {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 0 1rem;
-  align-items: baseline;
-  padding: 0.8rem 0;
-  border-bottom: 1px solid var(--border);
-}
-.sw-line:first-child { border-top: 1px solid var(--border); }
-.sw-line-label { font-weight: 600; color: var(--heading); }
-.sw-line-value {
-  font-family: var(--font-heading);
-  font-size: 1.25rem;
-  font-weight: 900;
-  color: var(--heading);
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-.sw-line-body { grid-column: 1 / -1; font-size: 15px; color: var(--text-muted); }
-.sw-line.is-full {
-  margin: 0 -0.75rem;
-  padding: 0.9rem 0.75rem;
-  border: 0;
-  border-radius: var(--radius-medium);
+.sw-full { margin-bottom: 0.5rem; font-size: 1.1rem; font-weight: 600; color: var(--heading); }
+.sw-full strong {
+  display: inline-block;
+  padding: 0 0.4em;
+  border-radius: 999px;
   background: var(--primary-soft);
+  font-family: var(--font-heading);
+  font-size: 1.9rem;
+  font-weight: 900;
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+  vertical-align: -0.12em;
 }
-.sw-line.is-full + .sw-line { border-top: 0; }
-.sw-line.is-full .sw-line-value { font-size: 1.6rem; }
-
-.sw-today { margin-top: 1.5rem; }
-.sw-today-label { margin-bottom: 0.4rem; }
+.sw-today { margin: 1.5rem 0 1rem; }
+.sw-today-label { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0 1rem; margin-bottom: 0.4rem; }
 .sw-today-label strong { font-weight: 900; color: var(--heading); font-variant-numeric: tabular-nums; }
 .sw-meter {
   height: 0.9rem;
@@ -246,28 +229,31 @@
   overflow: hidden;
 }
 .sw-meter-fill { height: 100%; border-radius: 999px; background: var(--primary); }
-.sw-today .small { margin: 0.4rem 0 0; }
+.sw-pot-status { margin-bottom: 0.5rem; }
 
-.sw-status {
-  margin-top: 1.5rem;
-  padding: 1.1rem 1.25rem;
-  border-radius: var(--radius-medium);
-  background: var(--surface-alt);
-}
-.sw-status-heading { margin-bottom: 0.4rem; font-size: 1.1rem; }
-.sw-status p { margin-bottom: 0.6rem; }
-.sw-status p:last-child { margin-bottom: 0; }
-.sw-proof { margin: 1rem 0 0; }
+/* ----- What to do now ----- */
 
-/* ----- The pay review ----- */
+.sw-wage-area { margin-top: 1rem; }
+.sw-wage-area .field { margin-bottom: 0; }
+.sw-plan .ladder-desc { margin-top: 0.15rem; }
+.sw-step-action { display: block; margin-top: 0.75rem; }
+.sw-step-action .btn { width: 100%; }
+@media (min-width: 30rem) { .sw-step-action .btn { width: auto; } }
+.sw-step-hint { display: block; margin-top: 0.5rem; font-size: 15px; color: var(--text-muted); }
+.sw-step-action .form-status { margin-top: 0.4rem; font-size: 15px; }
 
-.sw-rules { margin: 0 0 1rem; padding-left: 1.25rem; }
+/* ----- Good months and lean months ----- */
+
+.sw-tips { margin: 0; padding: 0; list-style: none; }
+.sw-tips li { padding: 0.85rem 0; border-bottom: 1px solid var(--border); }
+.sw-tips li:first-child { padding-top: 0.25rem; }
+.sw-tips strong { color: var(--heading); }
+.sw-rules-details { margin-top: 1.25rem; background: var(--surface-alt); }
+.sw-rules { margin: 0; padding-left: 1.25rem; font-size: 15px; }
 .sw-rules li { margin-bottom: 0.4rem; }
-.sw-set { margin-top: 1.5rem; }
-.sw-set .small { margin: 0.6rem 0 0; }
-.sw-set .form-status { margin-top: 0.6rem; }
+.sw-rules li:last-child { margin-bottom: 0; }
 .sw-benefits {
-  margin: 1.5rem 0 0;
+  margin: 1.25rem 0 0;
   padding: 0.9rem 1.1rem;
   border-left: 6px solid var(--care-border);
   border-radius: 0 var(--radius-medium) var(--radius-medium) 0;

@@ -19,13 +19,13 @@ They were built in October 2026 with one-off Claude cloud-session credit, in thi
 | Debt Snowball Planner | Smallest-balance-first plan with a debt-free date, a chart, "what if I found £50 more" and a fridge PDF. | `debt-planner` |
 | Saving for Mission Builder | Jonathan's six-step Mission Cost Plan (A to G) as a live builder, with a worked example, a full plan PDF and a "Partner with me" PDF for supporters. | `saving-for-mission` |
 | Christmas Without Debt | Plans Christmas around paydays so it is paid in cash: gift list, the costs people forget, ways to cut the cost and ways to boost the pot (extra shifts, selling things and so on), a message suggesting a cheaper Christmas to the family, and two PDFs. The plan page tracks real progress: tick off each payday and each bit of extra money as it comes in, and "Still to find" goes down. | `christmas` |
-| Steady Wage Planner | For income that goes up and down. Takes the last 12 months of what landed and gives a steady wage to pay yourself, the size of holding pot that keeps it steady, a quarterly pay review (hold, rise or cut) and a one-page PDF. Built 19 November 2026; live once its pull request is merged. See "Steady Wage Planner" below. | `steady-wage` |
+| Pay Yourself a Steady Wage | For income that goes up and down. Takes the last 12 months of what landed and gives one number to budget on: a steady wage to pay yourself, with the size of holding pot that keeps it steady, a quarterly pay review (hold, rise or cut) and a one-page PDF. Built 19 November 2026; live once its pull request is merged. See "Pay Yourself a Steady Wage" below. | `steady-wage` |
 
 ## Source material
 
 - The Baby Steps wording comes from Jonathan's UK Baby Steps series (three-minute summary media pack in Drive). The Step 1 starter fund is £500.
 - Saving for Mission follows Jonathan's talk for the Neuma programme (Tim Jones, September 2026) and his Mission Cost Planner, both in Drive: "Saving for Mission" and "Mission-Cost-Planner-v1.md".
-- The Steady Wage Planner follows Jonathan's self-employed series (three videos: pay yourself a salary, the tax pot, budgeting with variable income; media packs in Drive, the last posted to TikTok on 18 November 2026) and the "Pay yourself a wage" carousel built on 18 November 2026 (Drive folder `2026-11-18-pay-yourself-a-wage`, including `notes.md`).
+- Pay Yourself a Steady Wage follows Jonathan's self-employed series (three videos: pay yourself a salary, the tax pot, budgeting with variable income; media packs in Drive, the last posted to TikTok on 18 November 2026) and the "Pay yourself a wage" carousel built on 18 November 2026 (Drive folder `2026-11-18-pay-yourself-a-wage`, including `notes.md`).
 - Copy follows the mim-voice skill. Faith is light and earned, there is no jargon, UK English is used throughout, and banned words stay out.
 
 ## Decisions made during the build (keep these)
@@ -76,9 +76,11 @@ Build tailored per-step sequences only after an upgrade.
   - the Makeover V2 build starting.
 - Suggested test: in Claude Desktop, list contacts and tags, draft (don't send) a newsletter, and pull last month's email stats.
 
-## Steady Wage Planner (built 19 November 2026)
+## Pay Yourself a Steady Wage (built 19 November 2026)
 
 **Why:** people keep asking Jonathan how to budget when their income is up and down: mostly the self-employed, but also seasonal trades and anyone on commission or zero-hours. The question on the Money & Faith course was "Does the app handle one-off payments?" The answer in Jonathan's videos is to stop budgeting the lumps and pay yourself a wage from a holding account. This tool puts a number on it. For now it sits beside the budget app as the "income" tool: the wage it gives is the income to put in the app.
+
+**Where it sits (Jonathan, 19 November 2026):** it is part of Step 0, because it's all to do with making a budget. It sets someone's regular income. The point to stress is that they always want to know they can meet their needs and obligations in their leanest month. What they do with that money is still up to them.
 
 **The problem it solves:** for most people with lumpy income the year adds up, but the months don't. Bills are level and income isn't, so a good month feels like spare money and a lean month goes on a credit card. Budget apps assume one wage on one day. A holding pot fixes the timing, and a wage set at a quiet month keeps the pot from running dry.
 
@@ -111,23 +113,33 @@ With those rules, starting from a full pot: steady, seasonal and late-paid work 
 - **A blank month is never counted as £0.** Every month needs a figure (0 if nothing came in) unless "I started less than a year ago" is ticked. Otherwise a seasonal worker who skipped the winter boxes would get a wage that's far too high.
 - **"Set £X as my wage" starts the clock.** The planner remembers the wage on the device and leaves it alone until the next review month, so nobody's wage gets chipped away each time they look. A wage typed into the form by hand is reviewed straight away.
 - **With an empty pot, start anyway:** pay yourself the wage or whatever's in the pot, never more. The planner says when the pot should be full and how many paydays may come up short on the way.
-- **Good-year money** goes "towards the Baby Step you're on, or on things you'd happily go without in a leaner year", which is the carousel's line with the Baby Steps added.
-- **One faith line,** Proverbs 21:20, after the "when money lands" steps (the same verse as the carousel).
+- **One faith line,** Proverbs 21:20, at the end of the tips (the same verse as the carousel).
 - **Benefits:** a line asks people on Universal Credit or other benefits to check with Citizens Advice before building a pot, with no figures.
 - **The chart is plain boxes, not Chart.js,** so the same picture goes on the PDF and nothing extra is downloaded.
 
-**Open questions for Jonathan** (none blocks the tool):
-1. **Where does the pot sit in the Baby Steps?** The copy treats it as part of getting a budget (Step 0): it's wages waiting, not savings. If Jonathan would rather someone clears debt before filling it, say so on the pot card.
-2. **A pay-review nudge by email.** Four short emails a year (January, April, July, October) to people who signed up from this tool would be a real reason to sign up. They'd be manual campaigns to `tool` = `steady-wage`, like the Christmas nudges. Not promised anywhere yet.
-3. **The name.** "Steady Wage Planner" matches the carousel's "pay yourself a steady wage". It's set in `steady-wage/content.js` and the home page card.
-4. **The app's wording.** The app card says to put the wage in "as your monthly income". Check that matches what the budget builder calls it.
+**How the results are laid out, and why** (reworked 19 November 2026 after Jonathan's first look: "it feels like a lot and the important stuff is presented next to the less important"). One idea per card, most important first:
+
+1. **The wage,** labelled "Your regular income". The card says what the number is for, in Jonathan's words (build your budget on it; needs and obligations met in the leanest month; what you do with it is up to you). No sums here.
+2. **Your year against your wage:** the chart, where the number comes from (÷ 15) and the leanest stretch. The month-by-month table is folded away.
+3. **The pot that keeps it steady:** one number, "Full at £X", with where the pot is today. The other two lines (low, and good-year money) only appear where they're needed.
+4. **What to do now:** four steps. Open a holding account; move tax and costs out; pay yourself the wage on the same day every month ("Set £X as my wage" sits here); build your budget on the wage, which is Step 0, with "Get the app". There's no separate app card.
+5. **Good months and lean months:** five short tips. A big payment isn't payday. A lean month isn't an emergency. Earning more and it keeps coming: it's regular income, so take a rise and budget for it in the app. A good year you're not ready to count on: keep the wage and use the extra for things that can flex (Jonathan's examples: a nicer holiday, an extra present for the kids at Christmas, a boost to a Junior ISA or pension). Check in every three months. The exact pay-review rules are folded away under "How the planner decides".
+
+On the form, the "wage you pay yourself now" box is hidden behind "I already pay myself a set wage", because a first-time visitor doesn't need it.
+
+**Answered by Jonathan on 19 November 2026:**
+- **Name:** "Pay Yourself a Steady Wage". The folder, address and email tag stay `steady-wage`, and the PDF is still "My Steady Wage Plan".
+- **"Monthly income"** is the right wording for the app.
+- **No pay-review emails for now.** It's another thing to set up and he isn't ready for it. Nothing in the tool promises one, and a test fails if the sign-up copy ever does. The pay review inside the tool stays, because it needs nothing from him.
+
+**Still open:** the made-up example sets aside 25% for tax and costs. Jonathan kept a percentage off the carousel on purpose, so the example could switch to "tax already off" if he'd rather it didn't show one.
 
 ## To do
 
 **Jonathan**
 1. Review and schedule the two Christmas nudge drafts in MailerLite. Suggested send dates: Friday 27 November and Friday 11 December 2026.
 2. Send the Saving for Mission link (tools.moneyinmotion.org/saving-for-mission/) to Tim Jones at Neuma by WhatsApp, as planned on 3 November 2026. He may pass it to Rebecca, who runs his online course.
-3. **Steady Wage Planner, before or straight after merging:** paste the new `apps-script/Code.gs` into the Apps Script editor and deploy a new version (steps in `apps-script/README.md`, "Changing the script later"). Until that's done, email sign-ups from the new tool are turned away. It's safe to do before the merge. Then do one test sign-up from the tool, and read the "Free Tools – Welcome" email to check it still makes sense for someone arriving from this tool.
+3. **Pay Yourself a Steady Wage, before or straight after merging:** paste the new `apps-script/Code.gs` into the Apps Script editor and deploy a new version (steps in `apps-script/README.md`, "Changing the script later"). Until that's done, email sign-ups from the new tool are turned away. It's safe to do before the merge. Then do one test sign-up from the tool, and read the "Free Tools – Welcome" email to check it still makes sense for someone arriving from this tool.
 4. Delete the merged branches on GitHub (Code > Branches). Cloud sessions aren't allowed to delete branches. Turning on "Automatically delete head branches" in the repo settings stops them building up.
 
 Done by 3 November 2026: test sign-ups from every tool, the homepage link to the tools, and a check of the StepChange, CAP and Citizens Advice links.
@@ -137,7 +149,7 @@ Done by 3 November 2026: test sign-ups from every tool, the homepage link to the
 2. Write launch content: a TikTok media pack for each tool. Christmas Without Debt is under way (first media pack drafted 19 October 2026, in Drive).
 3. Optional: a cookie-free visit counter (for example GoatCounter). This needs Jonathan's OK and a line on the privacy page.
 4. Email the 3 people in the old "Leads - Free Christmas Savings Tracker" group about the new Christmas planner.
-5. Steady Wage Planner launch: add it to moneyinmotion.org/start if Jonathan wants it there (Framer, small text change), and write a TikTok media pack. The carousel going out on 23, 26 and 28 November 2026 is the natural place to point to it.
+5. Pay Yourself a Steady Wage launch: add it to moneyinmotion.org/start if Jonathan wants it there (Framer, small text change), and write a TikTok media pack. The carousel going out on 23, 26 and 28 November 2026 is the natural place to point to it.
 
 ## Ideas backlog (not started)
 
@@ -146,7 +158,7 @@ Done by 3 November 2026: test sign-ups from every tool, the homepage link to the
 - **"If anything happens" family folder.** A possible first paid tool: a guided, printed family binder covering accounts, wishes and who to call. Hints only, never passwords.
 - **Couples Money Date kit.** Paid backup idea: 12 monthly money dates. Date 1 free.
 - **Church Money Health Check.** Paused: not enough church leaders yet to try it.
-- **Steady Wage Planner, next steps:** a second year of figures for very lumpy income (one year isn't much to go on); a "a payment's just landed" splitter (this much to tax, this much stays, and how many paydays it covers); and the same sums inside the budget app, so the wage feeds the budget directly.
+- **Pay Yourself a Steady Wage, next steps:** a pay-review email each January, April, July and October for people who signed up from it (parked on 19 November 2026: Jonathan isn't ready to set it up; they'd be manual campaigns to `tool` = `steady-wage`, like the Christmas nudges); a second year of figures for very lumpy income (one year isn't much to go on); a "a payment's just landed" splitter (this much to tax, this much stays, and how many paydays it covers); and the same sums inside the budget app, so the wage feeds the budget directly.
 - **Also suggested:** a Give/Sow/Store planner, a 30-day no-spend challenge, a Bills MOT, a 2027 faith budget planner, and a first payslip pack for 16–22s.
 
 ## Testing
@@ -158,7 +170,7 @@ node tests/quiz-logic.test.js                  # 57,645 checks
 node debt-planner/snowball.test.js             # 4,026 checks
 node saving-for-mission/tests/mission.test.js  # 41 checks
 node christmas/tests/christmas.test.js         # 74 checks
-node steady-wage/tests/wage.test.js            # 50 checks
+node steady-wage/tests/wage.test.js            # 52 checks
 node tests/signup-front-door.test.js           # 19 checks
 python3 -m http.server 8000                    # then open http://localhost:8000/
 ```
@@ -169,7 +181,7 @@ Work on a branch and open a pull request. Several cloud sessions editing `assets
 
 Newest first. Each one went through a pull request on this repo unless it says otherwise.
 
-- **19 November 2026: Steady Wage Planner** (new tool, `steady-wage/`). For income that goes up and down: a steady wage from the last 12 months, a holding pot sized to the person's own leanest stretch, a quarterly pay review and a PDF. It follows Jonathan's self-employed videos and the 18 November carousel, and the rules were tested on made-up years of income first. The home page has a fifth card, `config.js` has a `steadyWage` block and `links.hmrcTaxEstimate`, and the front door's `TOOLS` list has `steady-wage` (it needs redeploying: see To do). The full write-up is under "Steady Wage Planner" above.
+- **19 November 2026: Pay Yourself a Steady Wage** (new tool, `steady-wage/`). For income that goes up and down: a steady wage from the last 12 months, a holding pot sized to the person's own leanest stretch, a quarterly pay review and a PDF. It follows Jonathan's self-employed videos and the 18 November carousel, and the rules were tested on made-up years of income first. It was first built as "Steady Wage Planner" and renamed the same day, when the results were also reordered and the tips added after Jonathan's first look. The home page has a fifth card, `config.js` has a `steadyWage` block and `links.hmrcTaxEstimate`, and the front door's `TOOLS` list has `steady-wage` (it needs redeploying: see To do). The full write-up is under "Pay Yourself a Steady Wage" above.
 
 - **3 November 2026: Framer connector** (not this repo). Claude can now edit moneyinmotion.org through the Framer connector from cloud and web sessions, not only from a local session on Jonathan's Mac. Tested on the 15 October "Money In Motion (copy)" project. Edits land unpublished on `main` with no branch, Claude never publishes, and big changes or new pages start with Jonathan duplicating the live project. The rules are in `CLAUDE.md` and the Business Overview.
 

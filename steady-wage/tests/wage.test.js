@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*
- * Tests for the Steady Wage Planner.
+ * Tests for Pay Yourself a Steady Wage.
  *
  *   node steady-wage/tests/wage.test.js
  *
@@ -538,30 +538,70 @@ test('every verdict the sums can give has words', function () {
     assert.ok(V && V.eyebrow && V.body, verdict);
     assert.deepEqual(placeholders(V.headline), ['{wage}'], verdict + ' headline');
   });
-  ['building', 'steady', 'over'].forEach(function (stage) {
-    assert.ok(CONTENT.results.pot[stage].heading && CONTENT.results.pot[stage].body, stage);
-  });
+  var P = CONTENT.results.pot;
+  assert.ok(P.building.body && P.building.when && P.building.whenAverage && P.building.never);
+  assert.ok(P.steady && P.over);
   ['empty', 'missing', 'invalid', 'tooFew', 'tooLow'].forEach(function (key) { assert.ok(CONTENT.income.errors[key], key); });
 });
 
 test('the words quote the method the sums use', function () {
   var R = CONTENT.results;
-  assert.ok(/divided by 15/.test(R.start.body));
-  assert.ok(/four-fifths/.test(R.start.bodyPart));
-  assert.ok(/Two months of wages/.test(R.pot.lowBody) && L.LOW_MONTHS === 2);
+  assert.ok(/divided by 15/.test(R.chart.caption));
+  assert.ok(/four-fifths/.test(R.chart.captionPart));
+  assert.ok(/two months of wages/.test(R.tips.rules[0]) && L.LOW_MONTHS === 2);
   assert.ok(/less than two months of wages/.test(R.cut.body));
-  assert.ok(/Three months of wages/.test(R.pot.fullBodyFlat) && L.CUSHION_MONTHS === 3);
-  assert.ok(/10% more/.test(R.review.rules[1]) && L.STEP_PERCENT === 10);
-  assert.ok(/January, April, July and October/.test(R.review.intro));
+  assert.ok(/still have two months of wages in hand/.test(R.pot.fullBody), 'a full pot never drops under the low line');
+  assert.ok(/three months of wages/.test(R.pot.fullBodyFlat) && L.CUSHION_MONTHS === 3);
+  assert.ok(/10% more/.test(R.tips.rules[1]) && L.STEP_PERCENT === 10);
+  assert.ok(/January, April, July and October/.test(R.tips.items[4].body));
   assert.deepEqual(L.REVIEW_MONTHS, [1, 4, 7, 10]);
-  assert.equal(R.review.rules.length, 3);
+  assert.equal(R.tips.rules.length, 4);
   assert.equal(CONTENT.how.steps.length, 3);
 });
 
-test('the tool sits alongside the app: the wage is the income to budget on', function () {
-  assert.ok(/\{wage\}/.test(CONTENT.results.app.body));
-  assert.ok(/monthly income/.test(CONTENT.results.app.body));
+test('the name, and what the number is for', function () {
+  assert.equal(CONTENT.intro.title, 'Pay Yourself a Steady Wage');
+  var page = fs.readFileSync(path.join(ROOT, 'steady-wage', 'index.html'), 'utf8');
+  assert.ok(page.indexOf('<title>Pay Yourself a Steady Wage | Money in Motion</title>') !== -1);
+  var home = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  assert.ok(home.indexOf('<h2>Pay Yourself a Steady Wage</h2>') !== -1);
+  // Jonathan's point, 19 November 2026: this is the regular income a budget is
+  // built on, set so needs and obligations are met in the leanest month.
+  var start = CONTENT.results.start;
+  assert.equal(start.eyebrow, 'Your regular income');
+  assert.ok(/build your budget on/.test(start.body));
+  assert.ok(/meet your needs and obligations even in your leanest month/.test(start.body));
+  assert.ok(/still up to you/.test(start.body));
+  assert.deepEqual(placeholders(start.body), [], 'the headline card carries no sums, just what the number is for');
+});
+
+test('it is part of Step 0: the wage is the income to budget on, in the app', function () {
+  var budget = CONTENT.results.plan.steps.budget;
+  assert.deepEqual(placeholders(budget.title), ['{wage}']);
+  assert.ok(/monthly income/.test(budget.body));
+  assert.ok(/Step 0 of the Baby Steps: get a budget, and tell every pound where to go before the month starts/.test(budget.body));
   assert.equal(CONFIG.links.appPage, 'https://moneyinmotion.org/app');
+  var steps = CONTENT.results.plan.steps;
+  assert.deepEqual(Object.keys(steps), ['account', 'before', 'after', 'pay', 'budget']);
+  assert.ok(/Until the pot is full/.test(steps.pay.building) && /standing order/.test(steps.pay.full));
+});
+
+test('the tips: a big payment, a lean month, and what to do with more', function () {
+  var items = CONTENT.results.tips.items;
+  assert.equal(items.length, 5);
+  assert.ok(/isn't payday/.test(items[0].title.replace(/’/g, "'")));
+  assert.ok(/isn't an emergency/.test(items[1].title.replace(/’/g, "'")));
+  // More money, and it's regular: a rise, budgeted for in the app.
+  assert.ok(/regular income/.test(items[2].body) && /rise/.test(items[2].body) && /budget for it in the app/.test(items[2].body));
+  // More money, but not ready to count on it: keep the wage, spend on things that flex.
+  assert.ok(/not ready to count on/.test(items[3].title));
+  assert.ok(/Keep your wage where it is/.test(items[3].body));
+  ['a nicer holiday', 'an extra present for the kids at Christmas', 'Junior ISA', 'pension'].forEach(function (idea) {
+    assert.ok(items[3].body.indexOf(idea) !== -1, idea);
+  });
+  assert.deepEqual(placeholders(items[3].body), ['{top}'], 'it says when there is extra to use');
+  // The rise itself gives both choices too.
+  assert.ok(/Budget for it in the app/.test(CONTENT.results.rise.body) && /Not ready to count on it yet\?/.test(CONTENT.results.rise.body));
 });
 
 test('one faith line, from the approved verses, after the practical point', function () {
@@ -571,9 +611,9 @@ test('one faith line, from the approved verses, after the practical point', func
     if (typeof node === 'string') { if (faithy.test(node)) lines.push(where); return; }
     if (node && typeof node === 'object') Object.keys(node).forEach(function (k) { walk(node[k], where + '.' + k); });
   })(CONTENT, 'content');
-  assert.deepEqual(lines, ['content.results.lands.faith', 'content.pdf.faith']);
+  assert.deepEqual(lines, ['content.results.tips.faith', 'content.pdf.faith']);
   var verse = 'Proverbs 21:20 says the wise store up choice food and olive oil, but fools gulp theirs down.';
-  assert.ok(CONTENT.results.lands.faith.indexOf(verse) === 0);
+  assert.ok(CONTENT.results.tips.faith.indexOf(verse) === 0);
   assert.equal(CONTENT.pdf.faith, verse);
 });
 
@@ -581,15 +621,15 @@ test('no tax rates or other UK figures are quoted', function () {
   var text = JSON.stringify(CONTENT).replace(JSON.stringify(CONTENT.example), '');
   // The only percentage in the words is the 10% pay-review step. The share for
   // tax and costs is always the person's own figure.
-  assert.deepEqual(text.match(/\d+\s?%/g), ['10%', '10%']);
+  assert.deepEqual(text.match(/\d+\s?%/g), ['10%', '10%']);  // the on-screen rule and the PDF's copy of it
   assert.ok(!/personal allowance|national insurance|basic rate|higher rate|£6,000|£16,000/i.test(text));
   assert.ok(/Use your own figure/.test(CONTENT.tax.setAsideHint));
   assert.equal(CONFIG.links.hmrcTaxEstimate, 'https://www.gov.uk/self-assessment-ready-reckoner');
 });
 
 test('people on benefits are told to check first', function () {
-  assert.ok(/Universal Credit or other benefits/.test(CONTENT.results.review.benefits));
-  assert.ok(/Citizens Advice/.test(CONTENT.results.review.benefits));
+  assert.ok(/Universal Credit or other benefits/.test(CONTENT.results.tips.benefits));
+  assert.ok(/Citizens Advice/.test(CONTENT.results.tips.benefits));
 });
 
 test('sign-up: the tool has its own tag, and promises only what is sent', function () {
@@ -598,7 +638,8 @@ test('sign-up: the tool has its own tag, and promises only what is sent', functi
   assert.ok(/welcome email, then the weekly Thursday email/.test(own.consentText));
   assert.ok(/Your figures stay on this device/.test(own.consentText));
   assert.ok(!/confirm/i.test(own.consentText + own.successMessage));
-  assert.ok(!/nudge|remind/i.test(own.consentText + CONTENT.results.email.intro), 'no reminders are promised');
+  // Jonathan, 19 November 2026: no pay-review emails for now.
+  assert.ok(!/nudge|remind/i.test(own.consentText + CONTENT.results.email.intro + JSON.stringify(CONTENT.results.plan)), 'no reminders are promised');
   var script = fs.readFileSync(path.join(ROOT, 'apps-script', 'Code.gs'), 'utf8');
   assert.ok(/var TOOLS = \[[^\]]*'steady-wage'[^\]]*\]/.test(script), 'the front door accepts this tool');
 });

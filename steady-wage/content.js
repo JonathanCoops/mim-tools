@@ -1,5 +1,5 @@
 /*
- * Steady Wage Planner: all the words.
+ * Pay Yourself a Steady Wage: all the words.
  * Edit any text here. Keep the quote marks and commas.
  * Words in {curly brackets} are filled in by the planner, so leave those as they are.
  * Links live in /assets/config.js.
@@ -9,8 +9,8 @@ window.MIM_WAGE_CONTENT = {
 
   intro: {
     eyebrow: 'Free tool · about 5 minutes',
-    title: 'Steady Wage Planner',
-    lead: 'For income that goes up and down. Put in what landed over the last 12 months and see the steady wage you can pay yourself, and the size of pot that keeps it steady.',
+    title: 'Pay Yourself a Steady Wage',
+    lead: 'When your income goes up and down, which number do you budget on? Put in what landed over the last 12 months and you’ll get the answer: a steady wage to pay yourself every month.',
     privacy: 'Your numbers are saved on this device only, so you can come back to them. We don’t store or see them.'
   },
 
@@ -61,11 +61,12 @@ window.MIM_WAGE_CONTENT = {
   },
 
   pot: {
-    heading: 'Your pot',
+    heading: 'Your holding pot',
     label: 'In your holding account today',
     hint: 'This is money waiting to pay your wage. Leave out anything put by for tax, and put 0 if you haven’t started a pot yet.',
+    already: 'I already pay myself a set wage',
     wage: 'The wage you pay yourself now',
-    wageHint: 'Only fill this in if you already pay yourself a set amount each month. Leave it blank and the planner works one out.',
+    wageHint: 'What goes to your current account each month. The planner will tell you whether to hold it, raise it or trim it.',
     optional: '(optional)',
     errors: {
       pot: 'That doesn’t look right. Use a number like 2500, or 0.',
@@ -89,14 +90,15 @@ window.MIM_WAGE_CONTENT = {
   },
 
   results: {
+
+    /* The wage. This is the headline, so it says what the number is for. */
     start: {
-      eyebrow: 'Your steady wage',
+      eyebrow: 'Your regular income',
       headline: 'Pay yourself {wage} a month',
-      body: 'The same amount, on the same day, every month. It comes from what landed in your last 12 months{afterTax} ({total}), divided by 15. That’s a quiet month rather than a good one, so it’s a wage you can keep paying when work is thin.',
-      bodyPart: 'The same amount, on the same day, every month. It’s four-fifths of an average month across the {n} months you’ve given{afterTax}. That’s a quiet month rather than a good one, so it’s a wage you can keep paying when work is thin.'
+      body: 'This is the number to build your budget on. It’s set at a quiet month rather than a good one, so you know you can meet your needs and obligations even in your leanest month. What you do with it is still up to you.'
     },
     set: {
-      eyebrow: 'Your steady wage',
+      eyebrow: 'Your regular income',
       headline: 'You’re on {wage} a month',
       body: 'You set this in {since}. Leave it alone until your pay review in {review}, whatever lands in between.'
     },
@@ -108,7 +110,7 @@ window.MIM_WAGE_CONTENT = {
     rise: {
       eyebrow: 'Your pay review',
       headline: 'Give yourself a rise: {wage} a month',
-      body: 'Up from {previous}. Your last 12 months support it, and your pot is still full at the new wage. Call HR.'
+      body: 'Up from {previous}. Your last 12 months support it, and your pot is still full at the new wage. Budget for it in the app like any other income. Not ready to count on it yet? Stay on {previous} and treat the extra as a good year.'
     },
     cut: {
       eyebrow: 'Your pay review',
@@ -124,9 +126,11 @@ window.MIM_WAGE_CONTENT = {
       drift: 'A heads-up: your last 12 months would support {quiet}, which is less than you’re paying yourself. The pot can carry the difference for now. If it keeps draining, expect a cut at your next review.'
     },
 
+    /* Where the number comes from, and the gap the pot has to cover. */
     chart: {
-      heading: 'Your year, levelled',
-      caption: 'The bars are what landed each month{afterTax}. The line is your wage.',
+      heading: 'Your year against your wage',
+      caption: 'The bars are what landed each month{afterTax}. The line is your wage: {total} for the year, divided by 15.',
+      captionPart: 'The bars are what landed each month{afterTax}. The line is your wage: four-fifths of an average month.',
       wage: 'Your wage: {wage}',
       covered: 'Covered your wage',
       under: 'Came in under',
@@ -144,99 +148,107 @@ window.MIM_WAGE_CONTENT = {
       tableNote: 'The last column starts the year with a full pot of {full}, pays your wage on the 1st, then adds what landed.'
     },
 
+    /* The pot: one number to aim for, and where they are today. */
     pot: {
-      heading: 'Your holding pot',
-      intro: 'The pot is what keeps the wage steady. Three lines on it matter.',
-      full: 'Full',
-      fullBody: 'About {months} months of wages. That’s enough to get through a stretch like your leanest one without dropping under the low line.',
-      fullBodyFlat: 'Three months of wages. No month fell short of your wage, so that’s all the cushion you need.',
-      low: 'Low',
-      lowBody: 'Two months of wages. If the pot is under this at a pay review, take a cut.',
-      top: 'Good-year money',
-      topBody: 'Anything over this is yours to use.',
-      topValue: 'over {amount}',
+      heading: 'The pot that keeps it steady',
+      full: 'Full at',
+      fullBody: 'That’s about {months} months of wages: enough to keep paying yourself through a stretch like your leanest one and still have two months of wages in hand.',
+      fullBodyFlat: 'That’s three months of wages. Every month covered your wage, so it’s all the cushion you need.',
       today: 'In the pot today',
       meter: 'Your pot holds {pot} of the {full} that makes it full.',
-      toGo: '{amount} to go until it’s full.',
+      toGo: '{amount} to go.',
       building: {
-        heading: 'Start now, and fill it as you go',
-        body: 'On payday, pay yourself {wage}, or whatever is in the pot if it holds less. Never more, however good the month has been. That’s what fills it.',
-        when: 'On a year like your last one, the pot would be full around {month}.',
-        whenAverage: 'At your average month, the pot would be full around {month}.',
+        body: 'You don’t need a full pot to start.',
+        when: 'On a year like your last one, it would be full around {month}.',
+        whenAverage: 'At your average month, it would be full around {month}.',
         shortOne: 'One payday on the way would come up short, which is normal while it fills.',
         shortMany: '{count} paydays on the way would come up short, which is normal while it fills.',
-        never: 'On a year like your last one, the pot wouldn’t fill at this wage.',
-        underLow: 'If the pot is still under {low} at your first pay review, the planner will suggest a slightly lower wage until it’s there.',
-        faster: 'A tax refund or one big job is the quickest way to fill it.'
+        never: 'On a year like your last one, the pot wouldn’t fill at this wage.'
       },
-      steady: {
-        heading: 'Your pot is full',
-        body: 'Set up a standing order for {wage} on the same day every month, and let it run.'
-      },
-      over: {
-        heading: 'You have good-year money',
-        body: 'Your pot is {amount} over the top line. Set up the standing order for {wage} if you haven’t already, then see your pay review below for what to do with the extra.'
-      },
+      steady: 'Your pot is full, so your wage is covered through a stretch like your leanest one.',
+      over: 'Your pot is well past full. The {amount} over {top} is yours to use, and there are ideas further down.',
       season: 'Your leanest stretch started in {month}. Go into the next one with a full pot and it’s covered.'
     },
 
-    lands: {
-      heading: 'When money lands',
+    /* What to do, in order. The last step hands over to the budget app. */
+    plan: {
+      heading: 'What to do now',
       steps: {
-        in: {
-          title: 'It all goes into the holding account',
-          body: 'Every invoice and every cash job, big or small. Name the account Payroll, so you never mistake it for spending money.'
+        account: {
+          title: 'Open a holding account',
+          body: 'Everything you earn lands here, every invoice and every cash job. Name it Payroll, so you never mistake it for spending money.'
         },
         before: {
           title: 'Move {percent}% out for tax and costs',
           body: 'Do it the day the money lands. Of every £1,000, {aside} goes to your tax pot and {keep} stays.'
         },
         after: {
-          title: 'Tax is already off, so it all stays',
-          body: 'If you have any work costs to pay, move those out first.'
+          title: 'Leave what lands in the pot',
+          body: 'Tax is already off, so it all stays. If you have any work costs to pay, move those out first.'
         },
         pay: {
-          title: 'On payday, {wage} goes to your current account',
-          body: 'Pick a day and stick to it. The 1st is easy to remember. That’s payday. A big payment isn’t.'
+          title: 'Pay yourself {wage} on the same day every month',
+          building: 'Pick a day and stick to it. Until the pot is full, pay yourself {wage} or whatever the pot holds, if that’s less. Never more, however good the month has been.',
+          full: 'Pick a day and set up a standing order, so it happens without you.'
+        },
+        budget: {
+          title: 'Build your budget on {wage}',
+          body: 'Put it into the free Money in Motion app as your monthly income. That’s Step 0 of the Baby Steps: get a budget, and tell every pound where to go before the month starts.',
+          button: 'Get the app'
         }
       },
-      faith: 'Proverbs 21:20 says the wise store up choice food and olive oil, but fools gulp theirs down. So when the big payment lands, leave it in the pot.'
-    },
-
-    review: {
-      heading: 'Your pay review',
-      intro: 'Every three months, in January, April, July and October, come back here. Add the new months and what’s in the pot, and the planner tells you whether to hold, take a rise or take a cut.',
-      rules: [
-        'If the pot is under {low}, take a cut now, before it has to be a big one.',
-        'If your last 12 months support 10% more and the pot would still be full, give yourself a rise.',
-        'Otherwise, hold. A good month on its own doesn’t change anything.'
-      ],
-      goodYear: 'Once the pot is over {top}, the extra is good-year money. Put it towards the Baby Step you’re on, or spend some on things you’d happily go without in a leaner year. Your monthly budget never depends on it.',
-      quiz: 'Not sure which Baby Step you’re on?',
-      quizLink: 'Take the quiz',
-      next: 'Your next pay review is in {month}.',
       set: 'Set {wage} as my wage',
       change: 'Change my wage to {wage}',
-      setHint: 'The planner remembers it on this device, so at your next review it can tell you whether to hold, rise or cut.',
+      setHint: 'The planner remembers it on this device. At your pay review in {month} it tells you whether to hold, rise or cut.',
       setDone: 'Saved on this device. Come back in {month} for your pay review.',
+      next: 'Your next pay review is in {month}.'
+    },
+
+    /* How to think about it. Short, and in the order people meet them. */
+    tips: {
+      heading: 'Good months and lean months',
+      items: [
+        {
+          title: 'A big payment isn’t payday.',
+          body: 'It has to pay your wage next month and the month after, so leave it in the pot.'
+        },
+        {
+          title: 'A lean month isn’t an emergency.',
+          body: 'Your wage still goes out, because that’s what the pot is for. No need to touch your emergency fund or reach for a card.'
+        },
+        {
+          title: 'Earning more, and it keeps coming?',
+          body: 'Then it’s regular income. Give yourself a rise at your pay review and budget for it in the app, the same as the rest.'
+        },
+        {
+          title: 'A good year you’re not ready to count on?',
+          body: 'Keep your wage where it is. Anything in the pot over {top} is extra, so use it for things that can flex: a nicer holiday, an extra present for the kids at Christmas, a boost to a Junior ISA or your pension. Your monthly budget never depends on it.'
+        },
+        {
+          title: 'Check in every three months.',
+          body: 'In January, April, July and October, come back with the new months and what’s in the pot. The planner tells you whether to hold your wage, raise it or trim it.'
+        }
+      ],
+      rulesHeading: 'How the planner decides',
+      rules: [
+        'Under {low} in the pot (two months of wages): take a cut now, before it has to be a big one.',
+        'Your last 12 months support 10% more, and the pot would still be full: take a rise.',
+        'Anything else: hold. One good month doesn’t change anything.',
+        'Over {top} in the pot: the extra is good-year money.'
+      ],
+      faith: 'Proverbs 21:20 says the wise store up choice food and olive oil, but fools gulp theirs down. Store in the plenty, so the lean months don’t catch you.',
       benefits: 'On Universal Credit or other benefits? Money held in a pot can change what you get, so check with Citizens Advice before you build one up.'
     },
 
     keep: {
       heading: 'Keep your plan',
-      body: 'One A4 page for the fridge: your wage, your pot lines, what to do when money lands, and your next four pay reviews with boxes to fill in.',
+      body: 'One A4 page for the fridge: your wage, your pot, what to do when money lands, and your next four pay reviews with boxes to fill in.',
       name: 'Your name',
       nameHint: 'Goes at the top of the page.',
       button: 'Download my plan (PDF)',
       working: 'Making your PDF…',
       done: 'Your PDF has downloaded.',
       printed: 'Your browser couldn’t make the PDF, so the print window opened instead. Choose “Save as PDF” there.'
-    },
-
-    app: {
-      heading: 'Budget on the wage, not the lumps',
-      body: 'Put {wage} into the free Money in Motion app as your monthly income and build your budget on that. The lumps stay in the pot. It’s on iPhone, Android and the web.',
-      button: 'Get the app'
     },
 
     email: {
@@ -247,7 +259,7 @@ window.MIM_WAGE_CONTENT = {
 
     share: {
       heading: 'Know someone whose income goes up and down?',
-      message: 'This free planner works out a steady wage from an up-and-down income: {url}'
+      message: 'This free tool works out a steady wage from an up-and-down income: {url}'
     },
 
     edit: 'Change my numbers',
@@ -257,7 +269,7 @@ window.MIM_WAGE_CONTENT = {
 
   pdf: {
     filename: 'my-steady-wage-plan.pdf',
-    eyebrow: 'Steady Wage Planner',
+    eyebrow: 'Pay Yourself a Steady Wage',
     title: 'My Steady Wage Plan',
     wage: 'My wage',
     perMonth: 'a month',
@@ -272,16 +284,17 @@ window.MIM_WAGE_CONTENT = {
     over: 'over {amount}',
     year: 'My last 12 months against my wage',
     yearPart: 'My last {n} months against my wage',
-    lands: 'When money lands',
-    landsIn: 'It all goes into the holding account.',
+    lands: 'What I do',
+    landsIn: 'Everything I earn goes into the holding account.',
     landsBefore: 'I move {percent}% out for tax and costs, the day it lands.',
     landsAfter: 'Tax is already off, so it all stays in the pot.',
     landsPay: 'On payday, {wage} goes to my current account. A big payment isn’t payday.',
+    landsBudget: 'My budget is built on {wage}. That’s my regular income.',
     reviews: 'My pay reviews',
     reviewsHint: 'Write in what the pot holds, then circle one. Under {low}: cut. Last 12 months support 10% more and the pot stays full: rise. Otherwise: hold.',
     potBlank: 'Pot',
     choices: 'Hold  ·  Rise  ·  Cut',
-    goodYear: 'Over {top} in the pot? The extra is good-year money.',
+    goodYear: 'Over {top} in the pot? The extra is for things that can flex. My monthly budget never depends on it.',
     faith: 'Proverbs 21:20 says the wise store up choice food and olive oil, but fools gulp theirs down.',
     app: 'Budget on the wage in the free Money in Motion app'
   }
