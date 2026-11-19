@@ -264,6 +264,10 @@ window.MIM_WAGE_CONTENT = {
           body: 'Keep your wage where it is. Anything in the pot over {top} is extra, so use it for things that can flex: a nicer holiday, an extra present for the kids at Christmas, a boost to a Junior ISA or your pension. Your monthly budget never depends on it.'
         },
         {
+          title: 'Still clearing debt?',
+          body: 'The pot is wages waiting for payday, so it doesn’t count as savings. Keep your £500 starter fund separate, run the snowball from your wage, and put any extra on your smallest debt first.'
+        },
+        {
           title: 'Check in every three months.',
           body: 'In January, April, July and October, come back with the new months and what’s in the pot. The planner tells you whether to hold your wage, raise it or trim it.'
         }
@@ -275,7 +279,12 @@ window.MIM_WAGE_CONTENT = {
         'Anything else: hold. One good month doesn’t change anything.',
         'Over {top} in the pot: the extra is good-year money.'
       ],
-      faith: 'Proverbs 21:20 says the wise store up choice food and olive oil, but fools gulp theirs down. Store in the plenty, so the lean months don’t catch you.',
+      // The verse is kept apart from the words around it, so the page can set it in italics.
+      faith: {
+        before: 'Proverbs 21:20 says ',
+        verse: 'the wise store up choice food and olive oil, but fools gulp theirs down.',
+        after: ' Store in the plenty, so the lean months don’t catch you.'
+      },
       benefits: 'On Universal Credit or other benefits? Money held in a pot can change what you get, so check with Citizens Advice before you build one up.'
     },
 
@@ -335,7 +344,11 @@ window.MIM_WAGE_CONTENT = {
     potBlank: 'Pot',
     choices: 'Hold  ·  Rise  ·  Cut',
     goodYear: 'Over {top} in the pot? The extra is for things that can flex. My monthly budget never depends on it.',
-    faith: 'Proverbs 21:20 says the wise store up choice food and olive oil, but fools gulp theirs down.',
+    faith: {
+      before: 'Proverbs 21:20 says ',
+      verse: 'the wise store up choice food and olive oil, but fools gulp theirs down.',
+      after: ''
+    },
     app: 'Budget on the wage in the free Money in Motion app'
   }
 };

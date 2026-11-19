@@ -169,6 +169,8 @@ Pay Yourself a Steady Wage follows Jonathan's own method from the self-employed 
 - The wage is a quiet month: the last 12 months, after tax and costs, divided by 15.
 - A full pot is the person's leanest stretch plus two months of wages, or plus one if they have a full emergency fund (Step 3), because the fund is the cushion then. Pay reviews are in January, April, July and October. Under one month of wages in the pot means a cut.
 - Someone just starting out, with under three months of income, starts from what they need each month to cover their needs and obligations. The usual sums take over once three months have landed.
+- The pot is wages waiting for payday. It doesn't count as savings, so someone on Step 1 or 2 keeps their £500 starter fund separate, runs the snowball from their wage and puts any extra on the smallest debt.
+- Scripture is set in italics: the verse itself, not the reference.
 - More money than the wage: if it keeps coming it's regular income, so take a rise and budget for it in the app. If it's a good year they're not ready to count on, the wage stays put and the extra goes on things that can flex (a nicer holiday, an extra present for the kids at Christmas, a boost to a Junior ISA or pension).
 - The share to set aside for tax and costs is always the person's own figure. The tools never suggest a tax rate.
 

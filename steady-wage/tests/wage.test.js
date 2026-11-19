@@ -724,7 +724,7 @@ test('the words quote the method the sums use', function () {
   assert.ok(/for another month if it runs long/.test(R.pot.fullBody), 'full covers the leanest stretch and a month more');
   assert.ok(/two months of wages/.test(R.pot.fullBodyFlat) && L.CUSHION_MONTHS === 2);
   assert.ok(/10% more/.test(R.tips.rules[1]) && L.STEP_PERCENT === 10);
-  assert.ok(/January, April, July and October/.test(R.tips.items[4].body));
+  assert.ok(/January, April, July and October/.test(R.tips.items[5].body));
   assert.deepEqual(L.REVIEW_MONTHS, [1, 4, 7, 10]);
   assert.equal(R.tips.rules.length, 4);
   assert.equal(CONTENT.how.steps.length, 3);
@@ -748,6 +748,22 @@ test('starting out and the emergency fund are said plainly', function () {
   assert.ok(/No need to touch your emergency fund/.test(lean.body));
   assert.ok(/use your emergency fund/.test(lean.bodyFund) && /Pay it back before you count anything as extra/.test(lean.bodyFund));
   assert.ok(R.notes.driftPart && /you said you need each month/.test(R.notes.belowNeeds));
+});
+
+test('how the pot fits with Baby Steps 1 and 2', function () {
+  // Jonathan, 19 November 2026: someone paying off debt isn't ready to hold a
+  // rainy-day surplus beyond the starter fund, so say where the pot sits.
+  var tip = CONTENT.results.tips.items[4];
+  assert.equal(tip.title, 'Still clearing debt?');
+  assert.ok(/wages waiting for payday/.test(tip.body) && /doesn't count as savings/.test(tip.body.replace(/’/g, "'")));
+  assert.ok(/£500 starter fund/.test(tip.body), 'Step 1, in the framework\'s figure');
+  assert.ok(/run the snowball from your wage/.test(tip.body));
+  assert.ok(/any extra on your smallest debt first/.test(tip.body), 'Step 2: smallest balance first');
+  // The emergency fund tick never changes the wage, only how full "full" is.
+  var without = L.compute(examplePlan(), TODAY);
+  var withFund = L.compute(examplePlan({ fund: true }), TODAY);
+  assert.equal(without.wage, withFund.wage);
+  assert.ok(without.full > withFund.full);
 });
 
 test('the name, and what the number is for', function () {
@@ -779,7 +795,7 @@ test('it is part of Step 0: the wage is the income to budget on, in the app', fu
 
 test('the tips: a big payment, a lean month, and what to do with more', function () {
   var items = CONTENT.results.tips.items;
-  assert.equal(items.length, 5);
+  assert.equal(items.length, 6);
   assert.ok(/isn't payday/.test(items[0].title.replace(/’/g, "'")));
   assert.ok(/isn't an emergency/.test(items[1].title.replace(/’/g, "'")));
   // More money, and it's regular: a rise, budgeted for in the app.
@@ -802,10 +818,22 @@ test('one faith line, from the approved verses, after the practical point', func
     if (typeof node === 'string') { if (faithy.test(node)) lines.push(where); return; }
     if (node && typeof node === 'object') Object.keys(node).forEach(function (k) { walk(node[k], where + '.' + k); });
   })(CONTENT, 'content');
-  assert.deepEqual(lines, ['content.results.tips.faith', 'content.pdf.faith']);
+  assert.deepEqual(lines, ['content.results.tips.faith.before', 'content.pdf.faith.before']);
   var verse = 'Proverbs 21:20 says the wise store up choice food and olive oil, but fools gulp theirs down.';
-  assert.ok(CONTENT.results.tips.faith.indexOf(verse) === 0);
-  assert.equal(CONTENT.pdf.faith, verse);
+  [CONTENT.results.tips.faith, CONTENT.pdf.faith].forEach(function (line) {
+    assert.equal(line.before + line.verse, verse);
+  });
+  assert.ok(/lean months/.test(CONTENT.results.tips.faith.after), 'the practical point follows it');
+});
+
+test('scripture is set in italics, on the page and on the PDF', function () {
+  var code = fs.readFileSync(path.join(ROOT, 'steady-wage', 'app.js'), 'utf8');
+  assert.ok(/h\('em', \{ className: 'sw-verse' \}, line\.verse\)/.test(code));
+  assert.ok(code.indexOf("scripture(T.faith)") !== -1 && code.indexOf("scripture(P.faith)") !== -1);
+  var css = fs.readFileSync(path.join(ROOT, 'steady-wage', 'wage.css'), 'utf8');
+  assert.ok(/\.sw-verse \{ font-style: italic; \}/.test(css));
+  // Only the Bible's words, never the reference or the words around them.
+  assert.ok(!/Proverbs|\d/.test(CONTENT.results.tips.faith.verse));
 });
 
 test('no tax rates or other UK figures are quoted', function () {
@@ -814,6 +842,8 @@ test('no tax rates or other UK figures are quoted', function () {
   // tax and costs is always the person's own figure.
   assert.deepEqual(text.match(/\d+\s?%/g), ['10%', '10%']);  // the on-screen rule and the PDF's copy of it
   assert.ok(!/personal allowance|national insurance|basic rate|higher rate|£6,000|£16,000/i.test(text));
+  // The one framework figure used: the £500 starter fund, from Step 1.
+  assert.deepEqual(text.match(/£\d{1,3}(?:,\d{3})*/g), ['£1,000', '£500'], 'the tax split per £1,000, and the starter fund');
   assert.ok(/Use your own figure/.test(CONTENT.tax.setAsideHint));
   assert.equal(CONFIG.links.hmrcTaxEstimate, 'https://www.gov.uk/self-assessment-ready-reckoner');
 });

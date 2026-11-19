@@ -715,6 +715,12 @@
 
   /* ---------------- Good months and lean months ---------------- */
 
+  // Scripture goes in italics, so it sits apart from the words around it.
+  // line: { before, verse, after }
+  function scripture(line) {
+    return [line.before, h('em', { className: 'sw-verse' }, line.verse), line.after];
+  }
+
   function tipsCard(plan) {
     var T = R.tips;
     var values = { low: money(plan.low), top: money(plan.top) };
@@ -729,7 +735,7 @@
           h('ul', { className: 'sw-rules' }, T.rules.map(function (rule) { return h('li', null, fill(rule, values)); })))
       ),
       h('p', { className: 'small sw-benefits' }, T.benefits),
-      h('p', { className: 'faith-line' }, T.faith)
+      h('p', { className: 'faith-line' }, scripture(T.faith))
     );
   }
 
@@ -844,7 +850,7 @@
     ));
 
     nodes.push(h('div', { className: 'sw-pdf-end' },
-      h('p', { className: 'pdf-quote' }, P.faith),
+      h('p', { className: 'pdf-quote' }, scripture(P.faith)),
       h('div', { className: 'pdf-app' },
         h('p', null, h('strong', null, P.app), '  ',
           h('a', { href: links.appPage }, prettyUrl(links.appPage)))
@@ -895,6 +901,6 @@
     showErrors(saved);
     if (saved.ok) renderResults(false);
     // A new month has come round since the last visit.
-    else if (saved.errors.months === 'missing') el.flash.textContent = C.welcomeBack;
+    else if (saved.errors.months === 'missing' || saved.errors.months === 'empty') el.flash.textContent = C.welcomeBack;
   }
 })();

@@ -249,6 +249,7 @@
 
 /* ----- Good months and lean months ----- */
 
+.sw-verse { font-style: italic; }
 .sw-tips { margin: 0; padding: 0; list-style: none; }
 .sw-tips li { padding: 0.85rem 0; border-bottom: 1px solid var(--border); }
 .sw-tips li:first-child { padding-top: 0.25rem; }
