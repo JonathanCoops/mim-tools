@@ -119,7 +119,7 @@ No installs needed, just Node. Run the one for a tool after changing its sums or
 - **Debt Snowball Planner:** checks the snowball sums, including thousands of random plans against a separate copy of the maths, and the copy.
 - **Saving for Mission Builder:** checks the worked example comes out at A £2,400 to G £560 from any start date, the sums and edge cases, and the copy.
 - **Christmas Without Debt:** checks the dates, paydays and sums against a day-by-day count, and the copy.
-- **Pay Yourself a Steady Wage:** checks the wage (last year ÷ 15), the leanest stretch and the pot lines against a plain month-by-month count on thousands of random years, the pay review (cut, rise, hold), what happens with blank or wrong figures, and the copy. It also runs a short version of `steady-wage/tests/simulate.js` to check the method still holds on made-up steady and seasonal income.
+- **Pay Yourself a Steady Wage:** checks the wage (last year ÷ 15), the leanest stretch and the pot lines against a plain month-by-month count on thousands of random years, the pay review (cut, rise, hold), what happens with blank or wrong figures, and the copy. It covers the starting-out plan and the leaner pot for someone with an emergency fund, and runs a short version of `steady-wage/tests/simulate.js` to check the method still holds on made-up steady and seasonal income.
 - **Sign-up front door:** runs `apps-script/Code.gs` against pretend Google services and checks the spam rules, field rules, rate limits, what goes to MailerLite (never `status` or `resubscribe`) and what's logged.
 
 ## Notes for adding a tool
@@ -167,7 +167,8 @@ Pay Yourself a Steady Wage follows Jonathan's own method from the self-employed 
 - It is part of Step 0. The wage is someone's regular income, the number their budget is built on. It's set so they can meet their needs and obligations even in their leanest month. What they do with it is up to them.
 - Everything earned lands in a holding account. Tax and costs come out first. The same wage goes to the current account on the same day every month.
 - The wage is a quiet month: the last 12 months, after tax and costs, divided by 15.
-- A full pot is the person's leanest stretch plus two months of wages. Pay reviews are in January, April, July and October. Under one month of wages in the pot means a cut.
+- A full pot is the person's leanest stretch plus two months of wages, or plus one if they have a full emergency fund (Step 3), because the fund is the cushion then. Pay reviews are in January, April, July and October. Under one month of wages in the pot means a cut.
+- Someone just starting out, with under three months of income, starts from what they need each month to cover their needs and obligations. The usual sums take over once three months have landed.
 - More money than the wage: if it keeps coming it's regular income, so take a rise and budget for it in the app. If it's a good year they're not ready to count on, the wage stays put and the extra goes on things that can flex (a nicer holiday, an extra present for the kids at Christmas, a boost to a Junior ISA or pension).
 - The share to set aside for tax and costs is always the person's own figure. The tools never suggest a tax rate.
 

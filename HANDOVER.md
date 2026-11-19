@@ -84,7 +84,7 @@ Build tailored per-step sequences only after an upgrade.
 
 **The problem it solves:** for most people with lumpy income the year adds up, but the months don't. Bills are level and income isn't, so a good month feels like spare money and a lean month goes on a credit card. Budget apps assume one wage on one day. A holding pot fixes the timing, and a wage set at a quiet month keeps the pot from running dry.
 
-**What someone puts in:** what landed in each of the last 12 months, whether tax has come off (and if not, the share they set aside for tax and costs), what's in the pot today, and the wage they pay themselves now if they have one. Nothing else.
+**What someone puts in:** what landed in each of the last 12 months, whether tax has come off (and if not, the share they set aside for tax and costs), and what's in the pot today. Three optional extras stay out of the way until they're needed: a tick for "I have a full emergency fund", the wage they pay themselves now if they have one, and, for someone with under three months of income, what they need each month.
 
 **What it works out** (all in `steady-wage/logic.js`, which explains each rule):
 
@@ -93,7 +93,9 @@ Build tailored per-step sequences only after an upgrade.
 | Wage | Last 12 months after tax and costs ÷ 15, rounded down to £10 | Jonathan's "pay yourself a quiet month" (carousel, slide 5) |
 | Leanest stretch | The run of months that fell furthest behind the wage, checked round the calendar | New. It's the person's own figure for "how lumpy am I?" |
 | Full pot | Leanest stretch + 2 months of wages, rounded up to £50 | Sized with Jonathan on 19 November 2026 (see "How big a cushion" below). It gives about 2 months for steady work, 4 for seasonal or late-paid work, and 7 for a long off-season |
+| Full pot, with a full emergency fund | Leanest stretch + 1 month of wages | Jonathan, 19 November 2026 (see "With an emergency fund" below) |
 | Low | 1 month of wages | A month under the cushion, so a year like the last one never trips a cut |
+| Starting wage | What the person needs each month, until three months of income have landed | For someone just starting out (see "Just starting out" below) |
 | Good-year money | Anything over the full pot + 3 more months of wages | Carousel, slide 9 (which says over six months; this is about five for steady work) |
 | Pay review | January, April, July, October. Cut if the pot is under Low; rise if the last 12 months support 10% more and the pot would still be full; otherwise hold | Carousel, slide 8, with the sizes below |
 
@@ -121,6 +123,14 @@ The tool now sits a notch below the carousel's rules of thumb (three months to s
 
 With these rules, starting from a full pot: steady, seasonal and late-paid work had no short payday in 76 to 88% of five-year runs, and the wage changed less than once a year. Starting from an empty pot, it filled in about 7 to 11 months.
 
+**With an emergency fund (decided 19 November 2026).** Jonathan's point: someone with Baby Step 3 done already has three to six months of essential expenses put by. If the pot carries a spare month as well, they're protecting themselves twice. So a tick, "I have a full emergency fund", takes the spare month off: full becomes the leanest stretch + 1 month of wages. That's exactly enough to make every payday in a year like the last one. If a stretch runs longer, the fund makes up the wage and gets paid back before anything counts as extra (the lean-month tip says so when the box is ticked). The cut line and the good-year line don't change.
+
+Tested the same way (table 9 in `simulate.js`), with the fund covering any shortfall and being repaid first. For steady, seasonal, on/off and late-paid work the fund was dipped into about once every 4 to 12 years, and once every 2 to 3 for work with big swings. In the worst 1 run in 20 it was owed between one and just over two months of wages, which a full fund can carry. For very lumpy income it's a different story: the worst 1 in 20 owed nearly nine months of wages, more than a fund holds. The tick doesn't check for that, so it's worth knowing if anyone asks.
+
+**Just starting out (decided 19 November 2026).** Someone newly self-employed, or starting again after redundancy, has no income to put in but still has to pick a figure to pay themselves. With under three months of income the planner starts from the other end: what they need each month to cover their needs and obligations (their bare-bones budget). That's the starting wage. The results then say three things: how many months of that wage the pot covers with nothing coming in (redundancy money or savings set aside for this count as the pot); what has to land each month to keep the wage up (the wage × 15 ÷ 12, and the takings figure before tax if they've given a share); and to come back once three months have landed, when the usual sums take over. The pot target is two months of wages (one with a fund) until there's a year to size it on.
+
+How it shows up: ticking "I started less than a year ago" with fewer than three months filled in reveals the "What you need each month" box, and a link above the months ("Start from what you need") does the same for someone with nothing to enter. Once three months are in, the box goes and the wage comes from real figures. If that's less than what they said they need, the planner says so plainly: a pot can cover the gap for a while, but the work has to close it.
+
 **Where it's weaker, and says so:** very lumpy income (a third of months empty) had a short payday about every two years, and "three or four big payments a year" nearly one a year (against six to eight a year with no pot). One year of figures isn't enough to pin down a wage for those people. The planner shows a note when money landed in four months or fewer, and the pay review does the rest.
 
 **Decisions (keep these):**
@@ -134,6 +144,8 @@ With these rules, starting from a full pot: steady, seasonal and late-paid work 
 - **The chart is plain boxes, not Chart.js,** so the same picture goes on the PDF and nothing extra is downloaded.
 
 **How the results are laid out, and why** (reworked 19 November 2026 after Jonathan's first look: "it feels like a lot and the important stuff is presented next to the less important"). One idea per card, most important first:
+
+Someone just starting out gets the same five cards, with "How long it lasts, and what it takes" in place of the chart and "Your starting wage" on the first.
 
 1. **The wage,** labelled "Your regular income". The card says what the number is for, in Jonathan's words (build your budget on it; needs and obligations met in the leanest month; what you do with it is up to you). No sums here.
 2. **Your year against your wage:** the chart, where the number comes from (÷ 15) and the leanest stretch. The month-by-month table is folded away.
@@ -149,6 +161,7 @@ On the form, the "wage you pay yourself now" box is hidden behind "I already pay
 - **No pay-review emails for now.** It's another thing to set up and he isn't ready for it. Nothing in the tool promises one, and a test fails if the sign-up copy ever does.
 - **The pay review stays in the tool.**
 - **The made-up example keeps 25% set aside for tax and costs.**
+- **Baby Step 3 done means a leaner pot,** and **someone just starting out starts from what they need.** Both are written up above.
 
 ## To do
 
@@ -186,7 +199,7 @@ node tests/quiz-logic.test.js                  # 57,645 checks
 node debt-planner/snowball.test.js             # 4,026 checks
 node saving-for-mission/tests/mission.test.js  # 41 checks
 node christmas/tests/christmas.test.js         # 74 checks
-node steady-wage/tests/wage.test.js            # 54 checks
+node steady-wage/tests/wage.test.js            # 63 checks
 node tests/signup-front-door.test.js           # 19 checks
 python3 -m http.server 8000                    # then open http://localhost:8000/
 ```
@@ -197,7 +210,7 @@ Work on a branch and open a pull request. Several cloud sessions editing `assets
 
 Newest first. Each one went through a pull request on this repo unless it says otherwise.
 
-- **19 November 2026: Pay Yourself a Steady Wage** (new tool, `steady-wage/`). For income that goes up and down: a steady wage from the last 12 months, a holding pot sized to the person's own leanest stretch, a quarterly pay review and a PDF. It follows Jonathan's self-employed videos and the 18 November carousel, and the rules were tested on made-up years of income first. It was first built as "Steady Wage Planner" and renamed the same day, when the results were also reordered and the tips added after Jonathan's first look. The pot's cushion was then trimmed from the leanest stretch + 3 months to + 2. The home page has a fifth card, `config.js` has a `steadyWage` block and `links.hmrcTaxEstimate`, and the front door's `TOOLS` list has `steady-wage` (it needs redeploying: see To do). The full write-up is under "Pay Yourself a Steady Wage" above.
+- **19 November 2026: Pay Yourself a Steady Wage** (new tool, `steady-wage/`). For income that goes up and down: a steady wage from the last 12 months, a holding pot sized to the person's own leanest stretch, a quarterly pay review and a PDF. It follows Jonathan's self-employed videos and the 18 November carousel, and the rules were tested on made-up years of income first. It was first built as "Steady Wage Planner" and renamed the same day, when the results were also reordered and the tips added after Jonathan's first look. The pot's cushion was then trimmed from the leanest stretch + 3 months to + 2, a tick for a full emergency fund was added (which trims it to + 1), and so was a way in for someone just starting out with no income to go on. The home page has a fifth card, `config.js` has a `steadyWage` block and `links.hmrcTaxEstimate`, and the front door's `TOOLS` list has `steady-wage` (it needs redeploying: see To do). The full write-up is under "Pay Yourself a Steady Wage" above.
 
 - **3 November 2026: Framer connector** (not this repo). Claude can now edit moneyinmotion.org through the Framer connector from cloud and web sessions, not only from a local session on Jonathan's Mac. Tested on the 15 October "Money In Motion (copy)" project. Edits land unpublished on `main` with no branch, Claude never publishes, and big changes or new pages start with Jonathan duplicating the live project. The rules are in `CLAUDE.md` and the Business Overview.
 

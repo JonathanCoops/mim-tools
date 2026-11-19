@@ -84,7 +84,8 @@ function runOnce(profile, opts) {
   var lines = opts.flat ? flatLines(wage, opts.flat) : L.potLines(trailing, wage, sizes);
   var pot = opts.startEmpty ? income[11] : lines.full;
   var fullAt = opts.startEmpty ? null : 0;
-  var r = { shortMonths: 0, changes: 0, cuts: 0, lowestWage: wage, fullMonths: lines.full / wage, fullAfter: null, withoutPlan: 0, months: YEARS * 12 };
+  var r = { shortMonths: 0, changes: 0, cuts: 0, lowestWage: wage, fullMonths: lines.full / wage, fullAfter: null, withoutPlan: 0, months: YEARS * 12, mostOwed: 0 };
+  var owed = 0;   // with opts.fund: what's been borrowed from the emergency fund to make up a wage
   for (var t = 0; t < YEARS * 12; t++) {
     if (t > 0 && t % 3 === 0) {
       var quiet = Math.max(L.quietWage(sum(trailing), 12), L.WAGE_ROUND);
@@ -104,8 +105,13 @@ function runOnce(profile, opts) {
       lines = opts.flat ? flatLines(wage, opts.flat) : L.potLines(trailing, wage, sizes);
       if (pot > lines.top) pot = lines.top;   // good-year money comes out
     }
+    // The fund is paid back first, from anything the pot holds beyond one wage.
+    if (owed > 0 && pot > wage) { var back = Math.min(owed, pot - wage); pot -= back; owed -= back; }
     var pay = Math.min(wage, pot);
-    if (pay < wage) r.shortMonths++;
+    if (pay < wage) {
+      r.shortMonths++;
+      if (opts.fund) { owed += wage - pay; if (owed / wage > r.mostOwed) r.mostOwed = owed / wage; }
+    }
     pot -= pay;
     var landed = income[12 + t];
     if (landed < firstWage) r.withoutPlan++;
@@ -139,6 +145,14 @@ function run(name, opts) {
     'cuts a year': avg(function (r) { return r.cuts / (r.months / 12); }).toFixed(2),
     'lowest wage vs first': Math.round(100 * avg(function (r) { return r.lowestWage; })) + '%'
   };
+  if (opts.fund) {
+    var worst = all.map(function (r) { return r.mostOwed; }).sort(function (a, b) { return a - b; });
+    delete row['short paydays a year, with plan'];
+    delete row['runs with no short payday'];
+    row['dips into the fund a year'] = avg(function (r) { return r.shortMonths / (r.months / 12); }).toFixed(2);
+    row['runs never touching the fund'] = pct(function (r) { return r.shortMonths === 0; }) + '%';
+    row['most owed to the fund, 1 run in 20 (months of wages)'] = worst[Math.floor(worst.length * 0.95)].toFixed(1);
+  }
   if (opts.startEmpty) {
     var filled = all.filter(function (r) { return r.fullAfter !== null; });
     row['months to fill the pot'] = filled.length ? (sum(filled.map(function (r) { return r.fullAfter; })) / filled.length).toFixed(0) : '-';
@@ -166,6 +180,10 @@ if (require.main === module) {
     Object.assign({ sizes: { low: 2, cushion: 3, headroom: 3 } }, base));
   table('8. A smaller cushion: leanest stretch + 1 month, cut under 1',
     Object.assign({ sizes: { low: 1, cushion: 1, headroom: 3 } }, base));
+  // The same smaller pot, for someone with a full emergency fund (Baby Step 3).
+  // When the pot can't pay the wage, the fund makes it up and is paid back first.
+  table('9. With an emergency fund behind it: leanest stretch + 1 month, and the fund covers any shortfall',
+    Object.assign({ fund: true, sizes: { low: L.LOW_MONTHS, cushion: L.FUND_CUSHION_MONTHS, headroom: L.HEADROOM_MONTHS } }, base));
 }
 
 module.exports = { run: run, runOnce: runOnce, PROFILES: PROFILES };

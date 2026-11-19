@@ -38,6 +38,17 @@
  * left seasonal work short, which is why both are worked out from the
  * person's own figures here.
  *
+ * Two things can change the plan:
+ *   A full emergency fund (Baby Step 3). The pot then only has to cover the
+ *   leanest stretch itself: full is the leanest stretch + 1 month of wages.
+ *   A stretch that runs longer is what the fund is for. Otherwise the fund
+ *   and the pot's cushion would be doing the same job twice.
+ *   Just starting out. With under 3 months of income there's nothing to work
+ *   a wage out from, so it starts from the other end: what the person needs
+ *   each month to cover their needs and obligations. The plan then shows how
+ *   long the pot lasts and what has to land to keep that wage up, until
+ *   3 months of income are in and the usual sums take over.
+ *
  * How big a cushion (Jonathan, 19 November 2026): the first build held the
  * leanest stretch + 3 months, with the cut line at 2. That almost never
  * missed a payday, but it's a lot of money to leave sitting there. It now
@@ -62,8 +73,10 @@
   var LOW_MONTHS = 1;        // pot under this many wages: take a cut
   var CUSHION_MONTHS = 2;    // full pot = leanest stretch + this many wages
   var HEADROOM_MONTHS = 3;   // over full by this many wages: good-year money
+  var FUND_CUSHION_MONTHS = 1; // ...or this many, with a full emergency fund behind it
   // The three together. tests/simulate.js passes its own to compare cushions.
   var POT = { low: LOW_MONTHS, cushion: CUSHION_MONTHS, headroom: HEADROOM_MONTHS };
+  var POT_WITH_FUND = { low: LOW_MONTHS, cushion: FUND_CUSHION_MONTHS, headroom: HEADROOM_MONTHS };
   var STEP_PERCENT = 10;     // the smallest cut, and the biggest rise
   var WAGE_ROUND = 1000;     // wages round down to the nearest £10 (in pence)
   var POT_ROUND = 5000;      // pot lines round up to the nearest £50 (in pence)
@@ -304,10 +317,16 @@
     });
     var counted = WINDOW - first;
     var anyTyped = typed.some(function (raw) { return raw !== ''; });
-    if (!anyTyped) errors.months = 'empty';
+    // Just starting out: under three months of income, so the wage comes
+    // from what they need each month instead.
+    var starting = plan.partYear && counted < MIN_MONTHS;
+    if (!starting && !anyTyped) errors.months = 'empty';
     else if (invalid.length) errors.months = 'invalid';
     else if (missing.length) errors.months = 'missing';
-    else if (counted < MIN_MONTHS) errors.months = 'tooFew';
+    if (starting) {
+      if (!filled(plan.needs)) errors.needs = 'required';
+      else if (moneyProblem(plan.needs) || toPence(plan.needs) < WAGE_ROUND) errors.needs = 'invalid';
+    }
 
     var percent = 0;
     if (TAX.indexOf(plan.tax) === -1) errors.tax = 'required';
@@ -326,7 +345,8 @@
       invalid: invalid,
       months: months,
       first: first,
-      counted: counted
+      counted: counted,
+      starting: starting
     };
     if (Object.keys(errors).length) return result;
 
@@ -335,14 +355,29 @@
     var netAll = landed.map(function (p) { return Math.round(p * (100 - percent) / 100); });
     var net = netAll.slice(first);
     var total = net.reduce(function (a, b) { return a + b; }, 0);
+    // With a full emergency fund behind it, the pot runs leaner.
+    var sizes = plan.fund ? POT_WITH_FUND : POT;
+    var pot = toPence(plan.pot);
+    var setWage = toPence(plan.wage);
+    result.fund = !!plan.fund;
+    result.percent = percent;
+    result.per1000 = { aside: Math.round(percent * 10), pot: 1000 - Math.round(percent * 10) };
+    result.rows = months.map(function (mo, i) {
+      return {
+        key: mo.key, y: mo.y, m: mo.m,
+        counted: i >= first,
+        landed: i >= first ? pounds(landed[i]) : null,
+        net: i >= first ? pounds(netAll[i]) : null
+      };
+    });
+    if (starting) return starterPlan(result, plan, today, sizes, pot, setWage, total, percent);
+
     var quiet = quietWage(total, counted);
     if (quiet < WAGE_ROUND) {
       result.errors.months = 'tooLow';
       return result;
     }
 
-    var pot = toPence(plan.pot);
-    var setWage = toPence(plan.wage);
     var mode = setWage > 0 ? 'review' : 'start';
     var verdict = 'start';
     var wage = quiet;
@@ -357,13 +392,13 @@
         wage = setWage;
         reviewMonth = firstReview;
       } else {
-        var r = review(setWage, pot, quiet, net);
+        var r = review(setWage, pot, quiet, net, sizes);
         verdict = r.verdict;
         wage = r.wage;
       }
     }
 
-    var lines = potLines(net, wage);
+    var lines = potLines(net, wage, sizes);
     var fullYear = counted === WINDOW;
     var byMonth = null;
     if (fullYear) {
@@ -394,18 +429,11 @@
     result.previousWage = mode === 'review' ? pounds(setWage) : null;
     result.quietWage = pounds(quiet);
     result.fullYear = fullYear;
-    result.percent = percent;
     result.total = pounds(total);
     result.average = pounds(average);
-    result.rows = months.map(function (mo, i) {
-      return {
-        key: mo.key, y: mo.y, m: mo.m,
-        counted: i >= first,
-        landed: i >= first ? pounds(landed[i]) : null,
-        net: i >= first ? pounds(netAll[i]) : null,
-        short: i >= first && netAll[i] < wage,
-        lean: !!lean && lean.indexes.indexOf(i) !== -1
-      };
+    result.rows.forEach(function (row, i) {
+      row.short = row.counted && netAll[i] < wage;
+      row.lean = !!lean && lean.indexes.indexOf(i) !== -1;
     });
     result.shortMonths = result.rows.filter(function (row) { return row.short; }).length;
     result.lean = lean;
@@ -429,10 +457,58 @@
       lowest: pounds(back.lowest.value),
       lowestMonth: months[first + back.lowest.index]
     };
-    // Of every £1,000 that lands: this much to tax and costs, the rest stays.
-    result.per1000 = { aside: Math.round(percent * 10), pot: 1000 - Math.round(percent * 10) };
     result.nextReview = reviewMonth;
     result.wageSet = mode === 'review' ? parseMonth(plan.wageSet) : null;
+    return result;
+  }
+
+  // Just starting out: the wage is what they need, and the plan says how
+  // long the pot lasts and what has to land to keep it up. Pence in.
+  function starterPlan(result, plan, today, sizes, pot, setWage, total, percent) {
+    var needs = roundDown(toPence(plan.needs), 100);
+    // A wage set with the button stands, as it does for everyone else.
+    var setIn = parseMonth(plan.wageSet);
+    var isSet = setWage > 0 && !!setIn;
+    var wage = isSet ? setWage : needs;
+    var firstReview = isSet ? nextReview(setIn) : null;
+    var full = roundUp(sizes.cushion * wage, POT_ROUND);
+    var top = full + sizes.headroom * wage;
+    // A quiet month is four-fifths of an average one, so the average has to
+    // be the wage × 15 ÷ 12 to keep it up.
+    var keepUp = roundUp(Math.ceil(wage * DIVISOR / WINDOW), WAGE_ROUND);
+
+    result.ok = true;
+    result.mode = 'starter';
+    result.verdict = isSet ? 'set' : 'starter';
+    result.wage = pounds(wage);
+    result.previousWage = null;
+    result.quietWage = null;
+    result.fullYear = false;
+    result.total = pounds(total);
+    result.average = null;
+    result.rows.forEach(function (row) { row.short = false; row.lean = false; });
+    result.shortMonths = 0;
+    result.lean = null;
+    result.pot = pounds(pot);
+    result.low = pounds(sizes.low * wage);
+    result.full = pounds(full);
+    result.top = pounds(top);
+    result.fullMonths = Math.round(full / wage * 10) / 10;
+    result.stage = pot > top ? 'over' : pot >= full ? 'steady' : 'building';
+    result.toFull = pounds(Math.max(0, full - pot));
+    result.goodYear = pounds(Math.max(0, pot - top));
+    result.forecast = { months: null, month: null, short: null };
+    result.replay = null;
+    result.starter = {
+      needs: pounds(needs),
+      runway: Math.floor(pot / wage),                 // whole months of wages in the pot
+      keepUp: pounds(keepUp),                         // a month, after tax and costs
+      keepUpYear: pounds(keepUp * WINDOW),
+      takings: percent > 0 ? pounds(roundUp(Math.ceil(keepUp * 100 / (100 - percent)), WAGE_ROUND)) : null,
+      monthsToGo: MIN_MONTHS - result.counted         // until there's enough income to go on
+    };
+    result.nextReview = firstReview && compareMonths(today, firstReview) < 0 ? firstReview : nextReview(today);
+    result.wageSet = isSet ? setIn : null;
     return result;
   }
 
@@ -442,6 +518,8 @@
     return {
       months: {},        // { '2026-10': '4200' }: what landed, as typed
       partYear: false,   // started part-way through: skip the blank months before the first figure
+      needs: '',         // what they need each month, as typed. Only used with under 3 months of income
+      fund: false,       // has a full emergency fund (Baby Step 3), so the pot can run leaner
       tax: '',           // 'after' (tax already off) or 'before' (still to come out)
       setAside: '',      // % set aside for tax and costs, as typed
       pot: '',           // in the holding account today, as typed
@@ -473,6 +551,8 @@
       });
     }
     plan.partYear = raw.partYear === true;
+    plan.needs = str(raw.needs, MAX.money);
+    plan.fund = raw.fund === true;
     plan.tax = TAX.indexOf(raw.tax) !== -1 ? raw.tax : '';
     plan.setAside = str(raw.setAside, MAX.percent);
     plan.pot = str(raw.pot, MAX.money);
@@ -486,7 +566,7 @@
 
   function hasData(plan) {
     return Object.keys(plan.months).length > 0 || !!plan.tax || filled(plan.setAside) ||
-      filled(plan.pot) || filled(plan.wage);
+      filled(plan.pot) || filled(plan.wage) || filled(plan.needs) || plan.fund || plan.partYear;
   }
 
   return {
@@ -496,6 +576,7 @@
     LOW_MONTHS: LOW_MONTHS,
     CUSHION_MONTHS: CUSHION_MONTHS,
     HEADROOM_MONTHS: HEADROOM_MONTHS,
+    FUND_CUSHION_MONTHS: FUND_CUSHION_MONTHS,
     STEP_PERCENT: STEP_PERCENT,
     WAGE_ROUND: WAGE_ROUND,
     POT_ROUND: POT_ROUND,

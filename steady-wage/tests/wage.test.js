@@ -14,6 +14,8 @@
  *   4. the pay review: cut, rise, hold, and leaving a newly set wage alone
  *      until the next review month;
  *   5. what's typed: blanks, part years, wrong figures;
+ *   5b. just starting out (under three months of income), and the leaner pot
+ *      for someone with a full emergency fund;
  *   6. filling the pot from where it is today;
  *   7. saved plans are cleaned up safely;
  *   8. the method itself, on made-up years of steady and seasonal income;
@@ -243,6 +245,7 @@ function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 42949
 var RANDOM_YEARS = 3000;
 
 test(RANDOM_YEARS + ' random years: the leanest stretch matches a plain count, and a full pot always carries it', function () {
+  var FUND = { low: L.LOW_MONTHS, cushion: L.FUND_CUSHION_MONTHS, headroom: L.HEADROOM_MONTHS };
   for (var i = 0; i < RANDOM_YEARS; i++) {
     var net = [];
     for (var m = 0; m < 12; m++) net.push(rnd() < 0.3 ? 0 : Math.round(rnd() * 600000));
@@ -258,12 +261,19 @@ test(RANDOM_YEARS + ' random years: the leanest stretch matches a plain count, a
     assert.equal(lines.top, lines.full + L.HEADROOM_MONTHS * wage);
     // Start any month of that year with a full pot, pay the wage on the 1st for
     // a year, and the pot never drops under the low line.
+    // With an emergency fund the pot is a month leaner: it still makes every payday.
+    var leaner = L.potLines(net, wage, FUND);
+    assert.ok(leaner.full >= lean.shortfall + wage && leaner.full < lean.shortfall + wage + L.POT_ROUND);
     for (var start = 0; start < 12; start++) {
       var pot = lines.full;
+      var thin = leaner.full;
       for (var k = 0; k < 12; k++) {
         pot -= wage;
+        thin -= wage;
         assert.ok(pot >= lines.low, 'year ' + i + ', starting month ' + start + ': ' + pot + ' is under ' + lines.low);
+        assert.ok(thin >= 0, 'year ' + i + ', starting month ' + start + ': the leaner pot missed a payday');
         pot += net[(start + k) % 12];
+        thin += net[(start + k) % 12];
       }
     }
   }
@@ -394,15 +404,132 @@ test('a blank month is never quietly counted as £0', function () {
   assert.equal(winter.full, 4 * 1600 + 2 * 1600);
 });
 
-test('a part year still needs every month after the first, and at least three', function () {
+test('a part year still needs every month after the first', function () {
   var holes = [null, null, null, null, 3000, null, 3000, 3000, 3000, 3000, 3000, 3000];
   var r = L.compute(plan(holes, { partYear: true }), TODAY);
   assert.equal(r.errors.months, 'missing');
   assert.deepEqual(r.missing, ['2026-04']);
-  var two = [null, null, null, null, null, null, null, null, null, null, 3000, 3000];
-  assert.equal(L.compute(plan(two, { partYear: true }), TODAY).errors.months, 'tooFew');
   var three = [null, null, null, null, null, null, null, null, null, 3000, 3000, 3000];
-  assert.equal(L.compute(plan(three, { partYear: true }), TODAY).ok, true);
+  var enough = L.compute(plan(three, { partYear: true }), TODAY);
+  assert.equal(enough.ok, true);
+  assert.equal(enough.mode, 'start');
+  assert.equal(enough.starting, false);
+});
+
+/* ---------------- 5b. Just starting out, and the emergency fund ---------------- */
+
+var TWO_MONTHS = [null, null, null, null, null, null, null, null, null, null, 900, 2400];
+
+test('under three months of income: the wage starts from what they need', function () {
+  // Made redundant, £6,000 set aside, nothing landed yet.
+  var r = L.compute(plan([], { partYear: true, needs: '1800', pot: '6000', tax: 'before', setAside: '25' }), TODAY);
+  assert.equal(r.ok, true);
+  assert.equal(r.starting, true);
+  assert.equal(r.mode, 'starter');
+  assert.equal(r.verdict, 'starter');
+  assert.equal(r.wage, 1800);
+  assert.equal(r.counted, 0);
+  assert.equal(r.starter.runway, 3, '£6,000 is three months of £1,800 with nothing coming in');
+  // A quiet month is four-fifths of an average one, so £1,800 needs £2,250 to land...
+  assert.equal(r.starter.keepUp, 2250);
+  assert.equal(r.starter.keepUpYear, 27000);
+  // ...which is £3,000 of takings before a quarter comes out.
+  assert.equal(r.starter.takings, 3000);
+  assert.equal(r.starter.monthsToGo, 3);
+  // No year to size the pot on yet: two months of wages, and the usual lines.
+  assert.equal(r.full, 3600);
+  assert.equal(r.low, 1800);
+  assert.equal(r.top, 9000);
+  assert.equal(r.stage, 'steady');
+  assert.equal(r.lean, null);
+  assert.equal(r.forecast.months, null);
+});
+
+test('one or two months in is still starting out, and an empty pot has no runway', function () {
+  var r = L.compute(plan(TWO_MONTHS, { partYear: true, needs: '1800' }), TODAY);
+  assert.equal(r.mode, 'starter');
+  assert.equal(r.counted, 2);
+  assert.equal(r.total, 3300);
+  assert.equal(r.starter.monthsToGo, 1);
+  assert.equal(r.starter.runway, 0);
+  assert.equal(r.starter.takings, null, 'tax is already off, so there is no takings figure');
+  assert.equal(r.stage, 'building');
+  assert.equal(r.toFull, 3600);
+  var thin = L.compute(plan(TWO_MONTHS, { partYear: true, needs: '1800', pot: '1799' }), TODAY);
+  assert.equal(thin.starter.runway, 0);
+  var two = L.compute(plan(TWO_MONTHS, { partYear: true, needs: '1800', pot: '3600' }), TODAY);
+  assert.equal(two.starter.runway, 2);
+});
+
+test('starting out needs a figure for what they need', function () {
+  var none = L.compute(plan([], { partYear: true }), TODAY);
+  assert.equal(none.ok, false);
+  assert.equal(none.errors.needs, 'required');
+  assert.equal(none.errors.months, undefined, 'an empty year is fine when they have only just started');
+  assert.equal(L.compute(plan(TWO_MONTHS, { partYear: true, needs: 'enough' }), TODAY).errors.needs, 'invalid');
+  assert.equal(L.compute(plan(TWO_MONTHS, { partYear: true, needs: '5' }), TODAY).errors.needs, 'invalid');
+  // Without the tick, an empty year is still just empty.
+  var plain = L.compute(plan([], { needs: '1800' }), TODAY);
+  assert.equal(plain.errors.months, 'empty');
+  assert.equal(plain.errors.needs, undefined);
+});
+
+test('once three months have landed, the usual sums take over', function () {
+  var three = [null, null, null, null, null, null, null, null, null, 3000, 900, 2400];
+  var r = L.compute(plan(three, { partYear: true, needs: '1800' }), TODAY);
+  assert.equal(r.mode, 'start');
+  assert.equal(r.starter, undefined);
+  assert.equal(r.wage, 1680, 'four-fifths of an average month of £2,100');
+  assert.equal(r.errors.needs, undefined);
+});
+
+test('a starting wage set with the button stands, like any other', function () {
+  var r = L.compute(plan(TWO_MONTHS, { partYear: true, needs: '1800', wage: '1800', wageSet: '2026-11', pot: '500' }), TODAY);
+  assert.equal(r.mode, 'starter');
+  assert.equal(r.verdict, 'set');
+  assert.equal(r.wage, 1800);
+  assert.deepEqual(r.nextReview, { y: 2027, m: 1 });
+  // Three months in, with the wage set and a thin pot, the pay review is due and bites.
+  var janKeys = L.monthsFor({ y: 2027, m: 1, d: 10 });
+  var jan = L.blank();
+  [['2026-09', '900'], ['2026-10', '2400'], ['2026-11', '1500'], ['2026-12', '1200']].forEach(function (m) { jan.months[m[0]] = m[1]; });
+  assert.equal(janKeys[8].key, '2026-09');
+  jan.partYear = true; jan.tax = 'after'; jan.needs = '1800'; jan.wage = '1800'; jan.wageSet = '2026-11'; jan.pot = '900';
+  var due = L.compute(jan, { y: 2027, m: 1, d: 10 });
+  assert.equal(due.mode, 'review');
+  assert.equal(due.verdict, 'cut');
+  assert.equal(due.wage, 1200, 'four months averaging £1,500 support £1,200');
+});
+
+var FUND = { low: L.LOW_MONTHS, cushion: L.FUND_CUSHION_MONTHS, headroom: L.HEADROOM_MONTHS };
+
+test('with a full emergency fund, the pot only covers the leanest stretch itself', function () {
+  assert.equal(L.FUND_CUSHION_MONTHS, 1);
+  var without = L.compute(examplePlan(), TODAY);
+  var withFund = L.compute(examplePlan({ fund: true }), TODAY);
+  assert.equal(withFund.fund, true);
+  assert.equal(without.fund, false);
+  assert.equal(withFund.wage, without.wage, 'the wage is the same either way');
+  assert.equal(withFund.full, 5100, '£3,200 + one month of wages');
+  assert.equal(withFund.full, without.full - 1900);
+  assert.equal(withFund.low, 1900, 'the cut line stays at one month');
+  assert.equal(withFund.top, 10800);
+  assert.deepEqual(withFund.forecast.month, { y: 2027, m: 4 }, 'and it fills sooner');
+  // Steady work: one month of wages.
+  var steady = L.compute(plan(flat(2500), { fund: true }), TODAY);
+  assert.deepEqual([steady.full, steady.low, steady.top], [2000, 2000, 8000]);
+  // Starting out: one month too.
+  var starter = L.compute(plan([], { partYear: true, needs: '1800', fund: true }), TODAY);
+  assert.equal(starter.full, 1800);
+});
+
+test('the pay review uses the leaner pot too', function () {
+  var good = pence(flat(2750));   // supports £2,200; with a fund, full at £2,200 is £2,200
+  assert.deepEqual(L.review(200000, 220000, 220000, good, FUND), { verdict: 'rise', wage: 220000 });
+  assert.deepEqual(L.review(200000, 220000, 220000, good), { verdict: 'hold', wage: 200000 }, 'without the fund the pot would need £4,400');
+  var rise = L.compute(plan(flat(2750), { wage: '2000', pot: '2500', fund: true }), TODAY);
+  assert.equal(rise.verdict, 'rise');
+  assert.equal(L.compute(plan(flat(2750), { wage: '2000', pot: '2500' }), TODAY).verdict, 'hold');
 });
 
 test('tax needs an answer, and a share when it still has to come out', function () {
@@ -492,12 +619,16 @@ test('rubbish in storage comes back as a blank plan', function () {
 test('saved plans are trimmed, and old months dropped', function () {
   var p = L.sanitize({
     months: { '2026-10': '4200', '2023-10': '900', '2099-01': '5', 'nonsense': '1', '2026-13': '2', '2026-09': '   ', '2026-08': '12345678901234567890' },
-    partYear: 'yes', tax: 'sideways', setAside: '1234567', pot: {}, wage: '1800', wageSet: '2026-1', name: new Array(100).join('a'),
+    partYear: 'yes', needs: '12345678901234567890', fund: 'yes', tax: 'sideways', setAside: '1234567', pot: {}, wage: '1800', wageSet: '2026-1', name: new Array(100).join('a'),
     shown: true, example: 1, extra: 'ignored'
   }, TODAY);
   assert.deepEqual(Object.keys(p.months).sort(), ['2026-08', '2026-10']);
   assert.equal(p.months['2026-08'].length, L.MAX.money);
   assert.equal(p.partYear, false);
+  assert.equal(p.needs.length, L.MAX.money);
+  assert.equal(p.fund, false);
+  assert.equal(L.sanitize({ fund: true, needs: '1800', partYear: true }, TODAY).fund, true);
+  assert.equal(L.sanitize({ fund: true, needs: '1800', partYear: true }, TODAY).needs, '1800');
   assert.equal(p.tax, '');
   assert.equal(p.setAside.length, L.MAX.percent);
   assert.equal(p.pot, '');
@@ -544,6 +675,16 @@ test('a bigger cushion is safer and a smaller one is not: the choice is a trade'
   assert.ok(bigger <= chosen && chosen < smaller, bigger + ' <= ' + chosen + ' < ' + smaller);
 });
 
+test('with an emergency fund behind a leaner pot, the fund is rarely needed and never for much', function () {
+  var opts = { yearSpread: 0.15, runs: 400, fund: true, sizes: { low: L.LOW_MONTHS, cushion: L.FUND_CUSHION_MONTHS, headroom: L.HEADROOM_MONTHS } };
+  ['steady work, some variation', 'seasonal, thin winter', 'seven months on, five off', 'steady work, paid in lumps'].forEach(function (name) {
+    var row = SIM.run(name, opts);
+    assert.ok(parseFloat(row['dips into the fund a year']) <= 0.3, name + ': ' + row['dips into the fund a year'] + ' dips a year');
+    // A full fund is three to six months of essential expenses. The worst 1 run in 20 asks it for under three months of wages.
+    assert.ok(parseFloat(row['most owed to the fund, 1 run in 20 (months of wages)']) < 3, name + ': ' + row['most owed to the fund, 1 run in 20 (months of wages)']);
+  });
+});
+
 test('very lumpy income still comes up short far less often than with no plan', function () {
   var row = SIM.run('very lumpy, a third of months empty', { yearSpread: 0.15, runs: 400 });
   assert.ok(parseFloat(row['short paydays a year, with plan']) * 10 < parseFloat(row['short paydays a year, no plan']));
@@ -563,7 +704,7 @@ test('the example on the page builds the plan the docs describe', function () {
 });
 
 test('every verdict the sums can give has words', function () {
-  ['start', 'set', 'hold', 'rise', 'cut'].forEach(function (verdict) {
+  ['start', 'starter', 'set', 'hold', 'rise', 'cut'].forEach(function (verdict) {
     var V = CONTENT.results[verdict];
     assert.ok(V && V.eyebrow && V.body, verdict);
     assert.deepEqual(placeholders(V.headline), ['{wage}'], verdict + ' headline');
@@ -571,7 +712,7 @@ test('every verdict the sums can give has words', function () {
   var P = CONTENT.results.pot;
   assert.ok(P.building.body && P.building.when && P.building.whenAverage && P.building.never);
   assert.ok(P.steady && P.over);
-  ['empty', 'missing', 'invalid', 'tooFew', 'tooLow'].forEach(function (key) { assert.ok(CONTENT.income.errors[key], key); });
+  ['empty', 'missing', 'invalid', 'tooLow', 'needsRequired', 'needsInvalid'].forEach(function (key) { assert.ok(CONTENT.income.errors[key], key); });
 });
 
 test('the words quote the method the sums use', function () {
@@ -587,6 +728,26 @@ test('the words quote the method the sums use', function () {
   assert.deepEqual(L.REVIEW_MONTHS, [1, 4, 7, 10]);
   assert.equal(R.tips.rules.length, 4);
   assert.equal(CONTENT.how.steps.length, 3);
+});
+
+test('starting out and the emergency fund are said plainly', function () {
+  var I = CONTENT.income;
+  var R = CONTENT.results;
+  assert.ok(/needs and obligations/.test(I.needsHint) && /bare-bones budget/.test(I.needsHint));
+  assert.ok(I.errors.needsRequired && I.errors.needsInvalid && I.starting && I.startingLink);
+  assert.ok(/start from what you need/.test(R.starter.body) && /three months of income/.test(R.starter.body));
+  assert.deepEqual(placeholders(R.starter.body), [], 'no sums on the headline card');
+  assert.deepEqual(placeholders(R.runway.keepUp), ['{keepUp}', '{keepUpYear}', '{wage}'].sort());
+  assert.ok(/Redundancy money or savings/.test(R.runway.seed));
+  assert.ok(/three months of income have landed/.test(R.runway.back));
+  // Baby Step 3, in the README's words.
+  assert.ok(/Baby Step 3: three to six months of essential expenses/.test(CONTENT.pot.fundHint));
+  assert.ok(/emergency fund/.test(R.pot.fullBodyFund) && /emergency fund/.test(R.pot.fullBodyFlatFund) && /emergency fund/.test(R.pot.fullBodyStarterFund));
+  assert.ok(!/for another month/.test(R.pot.fullBodyFund), 'no spare month is promised when the fund is the cushion');
+  var lean = R.tips.items[1];
+  assert.ok(/No need to touch your emergency fund/.test(lean.body));
+  assert.ok(/use your emergency fund/.test(lean.bodyFund) && /Pay it back before you count anything as extra/.test(lean.bodyFund));
+  assert.ok(R.notes.driftPart && /you said you need each month/.test(R.notes.belowNeeds));
 });
 
 test('the name, and what the number is for', function () {

@@ -32,13 +32,18 @@ window.MIM_WAGE_CONTENT = {
     month: '{month} {year}',
     partYear: 'I started less than a year ago',
     partYearHint: 'Leave the months before you started blank.',
+    starting: 'Just starting out, with little or nothing to put in yet?',
+    startingLink: 'Start from what you need',
+    needs: 'What you need each month',
+    needsHint: 'With fewer than three months of income there isn’t enough to go on yet, so the planner starts from the other end. Put in what it takes to cover your needs and obligations: your bare-bones budget.',
     example: 'Load an example',
     exampleHint: 'Just want a look? See a plan built on a made-up year of lumpy income.',
     errors: {
       empty: 'Put in what landed each month, so the planner has something to work with.',
       missing: 'Add a figure for {months}. Put 0 if nothing came in.',
       invalid: 'One of these doesn’t look right. Use a number like 1250 or 1250.50.',
-      tooFew: 'The planner needs at least {min} months to go on. Come back when you have them.',
+      needsRequired: 'Put in what you need each month, so the planner has a wage to start you on.',
+      needsInvalid: 'That doesn’t look right. Use a number like 1800.',
       tooLow: 'There isn’t enough coming in here to work out a wage. Have a look at the figures above.'
     }
   },
@@ -64,6 +69,8 @@ window.MIM_WAGE_CONTENT = {
     heading: 'Your holding pot',
     label: 'In your holding account today',
     hint: 'This is money waiting to pay your wage. Leave out anything put by for tax, and put 0 if you haven’t started a pot yet.',
+    fund: 'I have a full emergency fund',
+    fundHint: 'That’s Baby Step 3: three to six months of essential expenses, in easy reach. With that behind you, the pot can run leaner.',
     already: 'I already pay myself a set wage',
     wage: 'The wage you pay yourself now',
     wageHint: 'What goes to your current account each month. The planner will tell you whether to hold it, raise it or trim it.',
@@ -97,6 +104,11 @@ window.MIM_WAGE_CONTENT = {
       headline: 'Pay yourself {wage} a month',
       body: 'This is the number to build your budget on. It’s set at a quiet month rather than a good one, so you know you can meet your needs and obligations even in your leanest month. What you do with it is still up to you.'
     },
+    starter: {
+      eyebrow: 'Your starting wage',
+      headline: 'Start on {wage} a month',
+      body: 'With no track record yet, start from what you need. This covers your needs and obligations and nothing more, until three months of income give the planner something to go on. Build your budget on it in the meantime.'
+    },
     set: {
       eyebrow: 'Your regular income',
       headline: 'You’re on {wage} a month',
@@ -123,7 +135,9 @@ window.MIM_WAGE_CONTENT = {
     notes: {
       partYear: 'This is built on {n} months, so treat it as a first guess. Seasonal dips only show up over a full year, and the figure gets sharper each time you come back.',
       fewPayments: 'Money landed in only {n} of your 12 months. With so few payments, one year isn’t much to go on, so check the pot every time one lands.',
-      drift: 'A heads-up: your last 12 months would support {quiet}, which is less than you’re paying yourself. The pot can carry the difference for now. If work has really dropped off, cut to {quiet} now rather than waiting for the pot to run down.'
+      drift: 'A heads-up: your last 12 months would support {quiet}, which is less than you’re paying yourself. The pot can carry the difference for now. If work has really dropped off, cut to {quiet} now rather than waiting for the pot to run down.',
+      driftPart: 'A heads-up: your first {n} months would support {quiet}, which is less than you’re paying yourself. The pot is carrying the difference, so keep an eye on how long it can.',
+      belowNeeds: 'That’s less than the {needs} you said you need each month. A pot can cover the gap for a while, but it’s the work that has to close it.'
     },
 
     /* Where the number comes from, and the gap the pot has to cover. */
@@ -148,12 +162,34 @@ window.MIM_WAGE_CONTENT = {
       tableNote: 'The last column starts the year with a full pot of {full}, pays your wage on the 1st, then adds what landed.'
     },
 
+    /* Just starting out: no year to draw yet, so this card says how long the
+       pot lasts and what has to come in. */
+    runway: {
+      heading: 'How long it lasts, and what it takes',
+      covers: 'Your pot covers {months} of wages with nothing coming in.',
+      month: '1 month',
+      months: '{n} months',
+      thin: 'Your pot doesn’t cover a full month’s wage yet, so pay yourself what’s there until it does.',
+      empty: 'You’re starting with an empty pot, so your first wage comes out of your first payments.',
+      seed: 'Redundancy money or savings set aside to get going? That’s your pot, so count it in the box above.',
+      keepUp: 'To keep paying yourself {wage}, about {keepUp} a month has to land after tax and costs. That’s {keepUpYear} a year.',
+      keepUpPlain: 'To keep paying yourself {wage}, about {keepUp} a month has to land. That’s {keepUpYear} a year.',
+      takings: 'Before tax and costs come out, that’s about {takings} a month in takings.',
+      back: 'Come back once three months of income have landed. Add them above, and the planner works your wage out from real figures.'
+    },
+
     /* The pot: one number to aim for, and where they are today. */
     pot: {
       heading: 'The pot that keeps it steady',
       full: 'Full at',
       fullBody: 'That’s about {months} months of wages: enough to keep paying yourself through a stretch like your leanest one, and for another month if it runs long.',
       fullBodyFlat: 'That’s two months of wages. Every month covered your wage, so it’s all the cushion you need.',
+      // With a full emergency fund behind it, the pot only covers the stretch itself.
+      fullBodyFund: 'That’s about {months} months of wages: enough to keep paying yourself through a stretch like your leanest one. If one runs longer, that’s what your emergency fund is for.',
+      fullBodyFlatFund: 'That’s one month of wages. Every month covered your wage, and your emergency fund is the cushion behind it.',
+      // Just starting out: no leanest stretch to size it on yet.
+      fullBodyStarter: 'That’s two months of wages, which is the least to aim for at first. Once you have a year of figures, the planner sizes it to your own leanest stretch.',
+      fullBodyStarterFund: 'That’s one month of wages, with your emergency fund behind it. Once you have a year of figures, the planner sizes it to your own leanest stretch.',
       today: 'In the pot today',
       meter: 'Your pot holds {pot} of the {full} that makes it full.',
       toGo: '{amount} to go.',
@@ -166,6 +202,7 @@ window.MIM_WAGE_CONTENT = {
         never: 'On a year like your last one, the pot wouldn’t fill at this wage.'
       },
       steady: 'Your pot is full, so your wage is covered through a stretch like your leanest one.',
+      steadyStarter: 'Your pot is past that already, which is a good place to start from.',
       over: 'Your pot is well past full. The {amount} over {top} is yours to use, and there are ideas further down.',
       season: 'Your leanest stretch started in {month}. Go into the next one with a full pot and it’s covered.'
     },
@@ -214,7 +251,9 @@ window.MIM_WAGE_CONTENT = {
         },
         {
           title: 'A lean month isn’t an emergency.',
-          body: 'Your wage still goes out, because that’s what the pot is for. No need to touch your emergency fund or reach for a card.'
+          body: 'Your wage still goes out, because that’s what the pot is for. No need to touch your emergency fund or reach for a card.',
+          // Shown instead when they've ticked that they have a full emergency fund.
+          bodyFund: 'Your wage still goes out, because that’s what the pot is for. If a stretch runs longer than the pot can carry, that’s when to use your emergency fund. Pay it back before you count anything as extra.'
         },
         {
           title: 'Earning more, and it keeps coming?',
@@ -290,6 +329,7 @@ window.MIM_WAGE_CONTENT = {
     landsAfter: 'Tax is already off, so it all stays in the pot.',
     landsPay: 'On payday, {wage} goes to my current account. A big payment isn’t payday.',
     landsBudget: 'My budget is built on {wage}. That’s my regular income.',
+    starter: 'A starting wage, from what I need. I’ll work it out again once three months of income have landed.',
     reviews: 'My pay reviews',
     reviewsHint: 'Write in what the pot holds, then circle one. Under {low}: cut. Last 12 months support 10% more and the pot stays full: rise. Otherwise: hold.',
     potBlank: 'Pot',

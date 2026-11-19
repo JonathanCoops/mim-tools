@@ -45,6 +45,8 @@
     MIM.storage.set(STORAGE_KEY, {
       months: state.months,
       partYear: state.partYear,
+      needs: state.needs,
+      fund: state.fund,
       tax: state.tax,
       setAside: state.setAside,
       pot: state.pot,
@@ -130,6 +132,7 @@
         var value = f.input.value;
         if (value.trim() === '') delete state.months[mo.key];
         else state.months[mo.key] = value;
+        showNeeds();
         changed();
       });
       el.months[mo.key] = f;
@@ -140,11 +143,21 @@
     el.partYear = h('input', { type: 'checkbox', id: 'sw-part-year' });
     el.partYear.addEventListener('change', function () {
       state.partYear = el.partYear.checked;
+      showNeeds();
       changed();
       refresh();
     });
     var partYear = h('label', { className: 'check sw-part-year' }, el.partYear,
       h('span', null, I.partYear, h('span', { className: 'sw-check-hint' }, I.partYearHint)));
+
+    // Just starting out: under three months of income, so the wage starts
+    // from what they need. The box only shows while that's the case.
+    el.needs = field('sw-needs', I.needs, { inputmode: 'decimal', prefix: '£', maxlength: L.MAX.money, hint: I.needsHint, className: 'sw-narrow' });
+    el.needs.input.addEventListener('input', function () {
+      state.needs = el.needs.input.value;
+      changed();
+    });
+    el.needsArea = h('div', { className: 'sw-needs', hidden: true }, el.needs.wrap);
 
     el.exampleArea = h('div', { className: 'sw-example' },
       h('p', { className: 'small muted' }, I.exampleHint),
@@ -154,9 +167,12 @@
     var incomeCard = h('section', { className: 'card', 'aria-labelledby': 'sw-income-heading' },
       h('h2', { id: 'sw-income-heading', tabindex: '-1' }, I.heading),
       h('p', { className: 'muted' }, I.intro + ' ', h('strong', null, I.zero)),
+      h('p', { className: 'small muted sw-starting' }, I.starting + ' ',
+        h('button', { type: 'button', className: 'link-button', onClick: startFromNeeds }, I.startingLink)),
       grid,
       el.incomeError,
       partYear,
+      el.needsArea,
       el.exampleArea
     );
 
@@ -208,10 +224,19 @@
       changed();
     });
     el.wageArea = h('div', { className: 'sw-wage-area', hidden: true }, el.wage.wrap);
+    el.fund = h('input', { type: 'checkbox', id: 'sw-fund' });
+    el.fund.addEventListener('change', function () {
+      state.fund = el.fund.checked;
+      changed();
+      refresh();
+    });
+    var fund = h('label', { className: 'check sw-fund' }, el.fund,
+      h('span', null, P.fund, h('span', { className: 'sw-check-hint' }, P.fundHint)));
     el.already = h('button', { type: 'button', className: 'link-button', onClick: function () { showWage(true); el.wage.input.focus(); } }, P.already);
     var potCard = h('section', { className: 'card', 'aria-labelledby': 'sw-pot-heading' },
       h('h2', { className: 'h3', id: 'sw-pot-heading' }, P.heading),
       el.pot.wrap,
+      fund,
       el.already,
       el.wageArea
     );
@@ -242,6 +267,23 @@
     el.setAsideArea.hidden = state.tax !== 'before';
   }
 
+  // The shortcut for someone with nothing to put in yet: tick "less than a
+  // year" for them and take them to the box.
+  function startFromNeeds() {
+    state.partYear = true;
+    el.partYear.checked = true;
+    showNeeds();
+    changed();
+    if (!el.needsArea.hidden) el.needs.input.focus();
+    else el.partYear.focus();
+  }
+
+  // "What you need each month" shows while there are under three months of
+  // income to go on.
+  function showNeeds() {
+    el.needsArea.hidden = !L.compute(state, today).starting;
+  }
+
   // The wage box stays out of the way until there's a wage to put in it.
   function showWage(open) {
     el.wageArea.hidden = !open;
@@ -252,12 +294,15 @@
   function fillForm() {
     months.forEach(function (mo) { el.months[mo.key].input.value = state.months[mo.key] || ''; });
     el.partYear.checked = state.partYear;
+    el.needs.input.value = state.needs;
+    el.fund.checked = state.fund;
     L.TAX.forEach(function (value) { el.taxInputs[value].checked = state.tax === value; });
     el.setAside.input.value = state.setAside;
     el.pot.input.value = state.pot;
     el.wage.input.value = state.wage;
     el.pdfName.value = state.name;
     showSetAside();
+    showNeeds();
     showWage(state.wage.trim() !== '');
     el.exampleArea.hidden = L.hasData(state);
   }
@@ -306,10 +351,13 @@
     } else if (E.months === 'missing') {
       incomeMessage = fill(C.income.errors.missing, { months: monthNames(result.missing) });
       result.missing.forEach(function (key) { setError(el.months[key], ' '); note(el.months[key].input); });
-    } else if (E.months === 'tooFew') { incomeMessage = fill(C.income.errors.tooFew, { min: L.MIN_MONTHS }); note(el.partYear); }
-    else if (E.months === 'tooLow') { incomeMessage = C.income.errors.tooLow; note(el.months[months[0].key].input); }
+    } else if (E.months === 'tooLow') { incomeMessage = C.income.errors.tooLow; note(el.months[months[0].key].input); }
     el.incomeError.textContent = incomeMessage;
     el.incomeError.hidden = !incomeMessage;
+
+    setError(el.needs, E.needs === 'required' ? C.income.errors.needsRequired
+      : E.needs === 'invalid' ? C.income.errors.needsInvalid : '');
+    if (E.needs) note(el.needs.input);
 
     el.taxError.textContent = E.tax ? C.tax.errors.required : '';
     el.taxError.hidden = !E.tax;
@@ -389,7 +437,7 @@
     el.resultsMain.textContent = '';
     var nodes = [];
     if (state.example) nodes.push(h('p', { className: 'heading-for' }, C.example.note));
-    nodes.push(heroCard(plan), chartCard(plan), potCard(plan), planCard(plan), tipsCard(plan));
+    nodes.push(heroCard(plan), plan.mode === 'starter' ? runwayCard(plan) : chartCard(plan), potCard(plan), planCard(plan), tipsCard(plan));
     MIM.append(el.resultsMain, nodes);
     el.results.hidden = false;
 
@@ -408,7 +456,7 @@
     var V = R[plan.verdict];
     var wage = money(plan.wage);
     var body;
-    if (plan.verdict === 'start') {
+    if (plan.verdict === 'start' || plan.verdict === 'starter') {
       body = V.body;
     } else if (plan.verdict === 'set') {
       body = fill(V.body, { since: L.formatMonth(plan.wageSet), review: L.formatMonth(plan.nextReview) });
@@ -429,11 +477,17 @@
     ];
 
     var N = R.notes;
-    if (!plan.fullYear) nodes.push(h('p', { className: 'sw-warning' }, fill(N.partYear, { n: plan.counted })));
+    if (!plan.fullYear && plan.mode !== 'starter') nodes.push(h('p', { className: 'sw-warning' }, fill(N.partYear, { n: plan.counted })));
     var paying = plan.rows.filter(function (row) { return row.counted && row.net > 0; }).length;
     if (plan.fullYear && paying <= 4) nodes.push(h('p', { className: 'sw-warning' }, fill(N.fewPayments, { n: paying })));
-    if ((plan.verdict === 'hold' || plan.verdict === 'set') && plan.quietWage < plan.wage * (100 - L.STEP_PERCENT) / 100) {
-      nodes.push(h('p', { className: 'sw-warning' }, fill(N.drift, { quiet: money(plan.quietWage) })));
+    if ((plan.verdict === 'hold' || plan.verdict === 'set') && plan.quietWage !== null && plan.quietWage < plan.wage * (100 - L.STEP_PERCENT) / 100) {
+      nodes.push(h('p', { className: 'sw-warning' }, fill(plan.fullYear ? N.drift : N.driftPart, { quiet: money(plan.quietWage), n: plan.counted })));
+    }
+    // They came through "just starting out" and said what they need: say so
+    // if the first real figures don't stretch to it.
+    var needs = L.toPence(state.needs) / 100;
+    if (plan.verdict === 'start' && !plan.fullYear && needs > plan.wage) {
+      nodes.push(h('p', { className: 'sw-warning' }, fill(N.belowNeeds, { needs: money(needs) })));
     }
     return h('section', { className: 'card sw-hero band', 'aria-labelledby': 'sw-headline' }, nodes);
   }
@@ -513,6 +567,27 @@
     );
   }
 
+  /* ---------------- Just starting out ---------------- */
+
+  // No year to draw yet. This says how long the pot lasts with nothing coming
+  // in, and what has to land to keep the wage up.
+  function runwayCard(plan) {
+    var W = R.runway;
+    var S = plan.starter;
+    var wage = money(plan.wage);
+    var lasts;
+    if (S.runway >= 1) lasts = fill(W.covers, { months: S.runway === 1 ? W.month : fill(W.months, { n: S.runway }) });
+    else lasts = plan.pot > 0 ? W.thin : W.empty;
+    var keepUp = fill(plan.percent > 0 ? W.keepUp : W.keepUpPlain, { wage: wage, keepUp: money(S.keepUp), keepUpYear: money(S.keepUpYear) });
+    if (S.takings !== null) keepUp += ' ' + fill(W.takings, { takings: money(S.takings) });
+    return h('section', { className: 'card', 'aria-labelledby': 'sw-runway-heading' },
+      h('h2', { className: 'h3', id: 'sw-runway-heading' }, W.heading),
+      h('p', null, h('strong', null, lasts), ' ', W.seed),
+      h('p', null, keepUp),
+      h('p', { className: 'small muted' }, W.back)
+    );
+  }
+
   /* ---------------- The pot ---------------- */
 
   function wholeMonths(n) {
@@ -526,16 +601,26 @@
     var building = plan.stage === 'building';
     var share = Math.max(0, Math.min(100, plan.full > 0 ? plan.pot / plan.full * 100 : 0));
 
+    var starter = plan.mode === 'starter';
+    var fullBody;
+    if (starter) fullBody = plan.fund ? P.fullBodyStarterFund : P.fullBodyStarter;
+    else if (plan.lean) fullBody = fill(plan.fund ? P.fullBodyFund : P.fullBody, { months: wholeMonths(plan.fullMonths) });
+    else fullBody = plan.fund ? P.fullBodyFlatFund : P.fullBodyFlat;
+
     var status;
     if (building) {
       var B = P.building;
       var f = plan.forecast;
-      status = B.body + ' ';
-      if (f.months === null) status += B.never;
+      status = B.body;
+      if (starter) status += '';
+      else if (f.months === null) status += ' ' + B.never;
       else {
+        status += ' ';
         status += fill(plan.fullYear ? B.when : B.whenAverage, { month: L.formatMonth(f.month) });
         if (f.short) status += ' ' + (f.short === 1 ? B.shortOne : fill(B.shortMany, { count: f.short }));
       }
+    } else if (starter && plan.stage === 'steady') {
+      status = P.steadyStarter;
     } else if (plan.stage === 'steady') {
       status = P.steady;
     } else {
@@ -545,7 +630,7 @@
     return h('section', { className: 'card', 'aria-labelledby': 'sw-pot-result-heading' },
       h('h2', { className: 'h3', id: 'sw-pot-result-heading' }, P.heading),
       h('p', { className: 'sw-full' }, P.full, ' ', h('strong', null, money(plan.full))),
-      h('p', null, plan.lean ? fill(P.fullBody, { months: wholeMonths(plan.fullMonths) }) : P.fullBodyFlat),
+      h('p', null, fullBody),
       h('div', { className: 'sw-today' },
         h('p', { className: 'sw-today-label' },
           h('span', null, P.today, ' ', h('strong', null, money(plan.pot))),
@@ -566,7 +651,7 @@
   function setWageArea(plan) {
     var V = R.plan;
     var typedWage = L.toPence(state.wage) / 100;
-    var needsSetting = plan.verdict === 'start' || plan.verdict === 'rise' || plan.verdict === 'cut' ||
+    var needsSetting = plan.verdict === 'start' || plan.verdict === 'starter' || plan.verdict === 'rise' || plan.verdict === 'cut' ||
       (plan.verdict === 'hold' && !state.wageSet);
     var status = h('p', { className: 'form-status', role: 'status', 'aria-live': 'polite' });
     if (!needsSetting) {
@@ -636,7 +721,7 @@
     return h('section', { className: 'card', 'aria-labelledby': 'sw-tips-heading' },
       h('h2', { className: 'h3', id: 'sw-tips-heading' }, T.heading),
       h('ul', { className: 'sw-tips', role: 'list' }, T.items.map(function (tip) {
-        return h('li', null, h('strong', null, tip.title), ' ', fill(tip.body, values));
+        return h('li', null, h('strong', null, tip.title), ' ', fill(plan.fund && tip.bodyFund ? tip.bodyFund : tip.body, values));
       })),
       h('details', { className: 'steps-details sw-rules-details' },
         h('summary', null, T.rulesHeading),
@@ -711,11 +796,22 @@
       )
     ));
 
-    nodes.push(h('div', { className: 'pdf-section' },
-      h('p', { className: 'pdf-h2' }, plan.fullYear ? P.year : fill(P.yearPart, { n: plan.counted })),
-      bars(plan, true),
-      h('p', { className: 'pdf-small pdf-muted' }, shortText(plan) + (leanText(plan) ? ' ' + leanText(plan) : ''))
-    ));
+    if (plan.mode === 'starter') {
+      // No year to draw yet: say what kind of wage this is, and what keeps it up.
+      var S = plan.starter;
+      var W = R.runway;
+      var keepUp = fill(plan.percent > 0 ? W.keepUp : W.keepUpPlain, { wage: wage, keepUp: money(S.keepUp), keepUpYear: money(S.keepUpYear) });
+      nodes.push(h('div', { className: 'pdf-callout' },
+        h('p', { className: 'pdf-h2' }, P.starter),
+        h('p', null, keepUp + (S.takings !== null ? ' ' + fill(W.takings, { takings: money(S.takings) }) : ''))
+      ));
+    } else {
+      nodes.push(h('div', { className: 'pdf-section' },
+        h('p', { className: 'pdf-h2' }, plan.fullYear ? P.year : fill(P.yearPart, { n: plan.counted })),
+        bars(plan, true),
+        h('p', { className: 'pdf-small pdf-muted' }, shortText(plan) + (leanText(plan) ? ' ' + leanText(plan) : ''))
+      ));
+    }
 
     var steps = [
       P.landsIn,

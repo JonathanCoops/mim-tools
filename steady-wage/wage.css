@@ -64,6 +64,11 @@
   font-weight: 400;
   color: var(--text-muted);
 }
+.sw-starting { margin: 0.75rem 0 0; }
+.sw-starting .link-button { min-height: 0; font-size: inherit; }
+.sw-needs { margin-top: 1rem; }
+.sw-needs .field { margin-bottom: 0; }
+.sw-fund { margin: 0.5rem 0 1rem; }
 .sw-tax { margin-top: 0; }
 .sw-tax legend { padding: 0; margin-bottom: 0.75rem; font-weight: 600; }
 .sw-set-aside { margin-top: 1.25rem; }
