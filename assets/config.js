@@ -26,7 +26,11 @@ window.MIM_CONFIG = {
     appPage: 'https://moneyinmotion.org/app',
 
     // Your website's privacy page. Shown next to the email form.
-    privacyPolicy: 'https://moneyinmotion.org/privacy'
+    privacyPolicy: 'https://moneyinmotion.org/privacy',
+
+    // HMRC's "Estimate your Self Assessment tax bill" calculator. The Steady
+    // Wage Planner points to it for anyone unsure how much tax to set aside.
+    hmrcTaxEstimate: 'https://www.gov.uk/self-assessment-ready-reckoner'
   },
 
   /* ---------------------------------------------------------------------
@@ -74,7 +78,7 @@ window.MIM_CONFIG = {
     stepField: 'baby_step',
 
     // The MailerLite field that says which tool someone signed up from:
-    // "quiz", "debt-planner", "saving-for-mission" or "christmas".
+    // "quiz", "debt-planner", "saving-for-mission", "christmas" or "steady-wage".
     toolField: 'tool',
 
     // Ask for a first name as well as an email address? (true or false)
@@ -125,6 +129,20 @@ window.MIM_CONFIG = {
     tag: 'christmas',
     consentText: "We'll send a welcome email, a short payday nudge each month until Christmas, and the weekly Thursday email from Money in Motion. Unsubscribe any time. Only your email, your first name if you give it, and the name of this tool are sent. We keep a record of this sign-up to show you agreed. Your plan and the names on your list stay on this device.",
     successMessage: "You're in. Your welcome email is on its way, with payday nudges to follow. No email in a few minutes? Have a look in your spam folder."
+  },
+
+  /* ---------------------------------------------------------------------
+   * Steady Wage Planner
+   * Its email sign-up ("Stay in touch while you fill the pot") uses the same
+   * front door as the quiz (signup.endpoint above), and fills the "tool"
+   * field with "steady-wage". Only the email address, first name (if given)
+   * and "steady-wage" are sent: no income, no pot and no wage.
+   * ------------------------------------------------------------------- */
+  steadyWage: {
+    // Goes into the MailerLite "tool" field (signup.toolField above).
+    tag: 'steady-wage',
+    consentText: "We'll send a welcome email, then the weekly Thursday email from Money in Motion. Unsubscribe any time. Only your email, your first name if you give it, and the name of this tool are sent. We keep a record of this sign-up to show you agreed. Your figures stay on this device.",
+    successMessage: "You're in. Your welcome email is on its way. No email in a few minutes? Have a look in your spam folder."
   },
 
   /* ---------------------------------------------------------------------

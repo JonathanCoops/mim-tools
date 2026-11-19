@@ -2,7 +2,7 @@
  * Money in Motion Free Tools: sign-up front door
  * ==============================================
  * A Google Apps Script web app, bound to the Sheet "Free Tools — Sign-up Log".
- * The four tools POST their email sign-ups here. This script:
+ * The tools POST their email sign-ups here. This script:
  *   1. checks the request (honeypot, timing, rate limits, field rules);
  *   2. adds the person to MailerLite (group from MAILERLITE_GROUP_ID);
  *   3. logs every request to the "Sign-ups" tab as a consent record.
@@ -25,7 +25,7 @@ var HEADERS = [
   'Received (Europe/London)', 'Tool', 'Baby step', 'Email', 'First name',
   'Consent text shown', 'Page', 'Result', 'MailerLite status'
 ];
-var TOOLS = ['quiz', 'debt-planner', 'saving-for-mission', 'christmas'];
+var TOOLS = ['quiz', 'debt-planner', 'saving-for-mission', 'christmas', 'steady-wage'];
 var MAILERLITE_URL = 'https://connect.mailerlite.com/api/subscribers';
 var TIME_ZONE = 'Europe/London';
 

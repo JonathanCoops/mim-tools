@@ -8,6 +8,7 @@ Free web tools for [Money in Motion](https://moneyinmotion.org/). **New to this 
 | Debt Snowball Planner | `debt-planner/` | Live |
 | Saving for Mission Builder | `saving-for-mission/` | Live |
 | Christmas Without Debt | `christmas/` | Live |
+| Steady Wage Planner | `steady-wage/` | Built 19 November 2026, live once its pull request is merged |
 
 ## Folder structure
 
@@ -53,6 +54,15 @@ christmas/
   pdfs.js               The two PDFs: My Debt-Free Christmas Plan, Christmas shopping list
   christmas.css         Styles for this tool only, set to Brand Guide 2.0
   tests/christmas.test.js Tests the dates, paydays, sums and the copy
+steady-wage/
+  index.html            The planner page
+  logic.js              The wage, the pot lines and the pay review (no words, no page code)
+  content.js            Every word the planner uses, and the example
+  app.js                Puts it on screen, and makes the PDF: My Steady Wage Plan
+  wage.css              Styles for this tool only
+  tests/wage.test.js    Tests the sums, the pay review and the copy
+  tests/simulate.js     Not a test suite: the made-up years of income the rules
+                        were chosen on. Run it to see the evidence
 apps-script/
   Code.gs               The sign-up front door: checks each sign-up, adds it to
                         MailerLite and logs it in a private Google Sheet
@@ -72,15 +82,15 @@ Open the file, change the text between the quote marks, save. Keep the quote mar
 |---|---|
 | `links.privacyPolicy` | Your website's privacy page. Shown next to the email form. |
 | `signup.endpoint` | The web app URL of the sign-up front door (ends in `/exec`). See `apps-script/README.md` for how to deploy it. Leave it empty and the form says it "isn't connected yet" and sends nothing. |
-| MailerLite fields | Two text fields in MailerLite, filled in by the front door. `baby_step` (`signup.stepField`): the quiz fills it with `Step 0`, `Step 1`, `Step 2`, `Step 3`, `Step 3b`, `Step 4`, `Step 5`, `Step 6` or `Step 7`. `tool` (`signup.toolField`): every tool fills it with where the sign-up came from, `quiz`, `debt-planner`, `saving-for-mission` or `christmas`. |
+| MailerLite fields | Two text fields in MailerLite, filled in by the front door. `baby_step` (`signup.stepField`): the quiz fills it with `Step 0`, `Step 1`, `Step 2`, `Step 3`, `Step 3b`, `Step 4`, `Step 5`, `Step 6` or `Step 7`. `tool` (`signup.toolField`): every tool fills it with where the sign-up came from, `quiz`, `debt-planner`, `saving-for-mission`, `christmas` or `steady-wage`. |
 | `signup.askForName` | `true` to ask for a first name (optional for the person) as well as the email address. |
 | `signup.consentText` / `successMessage` | The quiz's consent line and thank-you message. Only promise what is actually sent: today that's a welcome email and the Thursday email. The exact consent wording is saved with each sign-up as the record that the person agreed. |
-| `signup.debtPlanner` / `savingForMission` / `christmas` | The same two messages for the other three tools, which send the tool's name instead of a Baby Step. |
+| `signup.debtPlanner` / `savingForMission` / `christmas` / `steadyWage` | The same two messages for the other four tools, which send the tool's name instead of a Baby Step. |
 | `videos` | A full link to Jonathan's video for each step (`0` to `7`, plus `3b` and `6b`). Videos open in a new tab; they aren't embedded, so no video site sets cookies here. |
 | `debtHelp` | The three free debt charities shown when someone's answers suggest real pressure. |
-| `links` | Website, Money & Faith course, and the app: `appPage` is moneyinmotion.org/app, which has the App Store, Google Play and web links. Every app link in the tools goes there. |
+| `links` | Website, Money & Faith course, and the app: `appPage` is moneyinmotion.org/app, which has the App Store, Google Play and web links. Every app link in the tools goes there. `hmrcTaxEstimate` is HMRC's Self Assessment calculator, which the Steady Wage Planner points to for anyone unsure how much tax to set aside. |
 
-To change the **wording** of a tool, edit its `content.js` (`quiz/`, `debt-planner/` or `saving-for-mission/`). To change the wording of the **steps themselves**, edit `assets/baby-steps.js`. To change **colours or fonts**, edit the first `:root` block in `assets/styles.css` (each colour has a light and a dark value).
+To change the **wording** of a tool, edit its `content.js` (in `quiz/`, `debt-planner/`, `saving-for-mission/`, `christmas/` or `steady-wage/`). To change the wording of the **steps themselves**, edit `assets/baby-steps.js`. To change **colours or fonts**, edit the first `:root` block in `assets/styles.css` (each colour has a light and a dark value).
 
 ## Previewing
 
@@ -99,6 +109,7 @@ node tests/quiz-logic.test.js
 node debt-planner/snowball.test.js
 node saving-for-mission/tests/mission.test.js
 node christmas/tests/christmas.test.js
+node steady-wage/tests/wage.test.js
 node tests/signup-front-door.test.js
 ```
 
@@ -108,6 +119,7 @@ No installs needed, just Node. Run the one for a tool after changing its sums or
 - **Debt Snowball Planner:** checks the snowball sums, including thousands of random plans against a separate copy of the maths, and the copy.
 - **Saving for Mission Builder:** checks the worked example comes out at A £2,400 to G £560 from any start date, the sums and edge cases, and the copy.
 - **Christmas Without Debt:** checks the dates, paydays and sums against a day-by-day count, and the copy.
+- **Steady Wage Planner:** checks the wage (last year ÷ 15), the leanest stretch and the pot lines against a plain month-by-month count on thousands of random years, the pay review (cut, rise, hold), what happens with blank or wrong figures, and the copy. It also runs a short version of `steady-wage/tests/simulate.js` to check the method still holds on made-up steady and seasonal income.
 - **Sign-up front door:** runs `apps-script/Code.gs` against pretend Google services and checks the spam rules, field rules, rate limits, what goes to MailerLite (never `status` or `resubscribe`) and what's logged.
 
 ## Notes for adding a tool
@@ -149,6 +161,13 @@ The framework (the Money in Motion Baby Steps, inspired by the principles of Dav
 - Step 7: Build wealth and give generously. Generosity isn't a Step 7 reward; it's a habit from Step 1 that grows with you. Use Gift Aid.
 
 The steps work in order, one at a time.
+
+The Steady Wage Planner follows Jonathan's own method from the self-employed video series and the "Pay yourself a wage" carousel (November 2026). Use exactly this:
+
+- Everything earned lands in a holding account. Tax and costs come out first. The same wage goes to the current account on the same day every month.
+- The wage is a quiet month: the last 12 months, after tax and costs, divided by 15.
+- Pay reviews are in January, April, July and October. Under two months of wages in the pot means a cut. Good-year money is what's left over once the pot is well past full.
+- The share to set aside for tax and costs is always the person's own figure. The tools never suggest a tax rate.
 
 ### PRIVACY
 

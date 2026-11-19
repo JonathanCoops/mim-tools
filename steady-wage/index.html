@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Steady Wage Planner | Money in Motion</title>
+  <meta name="description" content="A free planner from Money in Motion for income that goes up and down. Put in your last 12 months and see the steady wage you can pay yourself, and the size of pot that keeps it steady.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Steady Wage Planner">
+  <meta property="og:description" content="Self-employed, seasonal or on commission? Turn an up-and-down income into a steady wage. Free and private.">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="theme-color" content="#F9F7E7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#10281A" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../assets/brand/app-icon-512.png">
+  <link rel="preload" href="../assets/brand/fonts/poppins-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/brand/fonts/poppins-latin-900-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../assets/styles.css">
+  <link rel="stylesheet" href="wage.css">
+</head>
+<body data-mim-storage="mim.wage.v1">
+  <a class="skip-link" href="#main">Skip to the planner</a>
+
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="../">
+        <picture>
+          <source srcset="../assets/brand/logo-on-dark.svg" media="(prefers-color-scheme: dark)">
+          <img class="brand-logo" src="../assets/brand/logo.svg" alt="Money in Motion" width="150" height="56">
+        </picture>
+        <span class="brand-sub">Free tools</span>
+      </a>
+    </div>
+  </header>
+
+  <main id="main" class="sw">
+    <div class="container">
+      <div id="wage-app">
+        <noscript>
+          <h1>Steady Wage Planner</h1>
+          <p>This planner needs JavaScript switched on in your browser. Nothing you enter leaves your device.</p>
+        </noscript>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer" data-mim-footer>
+    <div class="container">
+      <p class="footer-disclaimer">Educational tools, not financial advice. Your numbers stay on your device. We don't store or see them.</p>
+    </div>
+  </footer>
+
+  <script src="../assets/config.js"></script>
+  <script src="../assets/site.js"></script>
+  <script src="../assets/pdf.js"></script>
+  <script src="logic.js"></script>
+  <script src="content.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
